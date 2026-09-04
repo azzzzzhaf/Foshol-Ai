@@ -31,7 +31,6 @@
             background-size: 16px 2px;
             background-repeat: repeat-x;
         }
-        /* Slider dots transition */
         .dot { transition: all 0.3s ease; }
         .dot.active { background-color: #dda72b; width: 2rem; border-radius: 1rem; }
     </style>
@@ -41,7 +40,6 @@
     <!-- Navbar -->
     <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <div class="flex items-center">
-            <!-- Updated to match the actual file name foshol-ai.png -->
             <img src="./foshol-ai.png" alt="Foshol AI" class="h-10 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <div class="hidden text-3xl font-bold text-f-dark">
                 Foshol<span class="text-f-gold">AI</span>
@@ -49,66 +47,102 @@
         </div>
         
         <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
-            <a href="#" class="hover:text-f-dark transition">হোম</a>
-            <a href="#about" class="hover:text-f-dark transition">আমাদের লক্ষ্য</a>
-            <a href="#services" class="hover:text-f-dark transition">সার্ভিসসমূহ</a>
-            <a href="#process" class="hover:text-f-dark transition">কীভাবে কাজ করে?</a>
+            <a href="#" class="hover:text-f-dark transition">
+                <span class="lang-bn">হোম</span>
+                <span class="lang-en hidden">Home</span>
+            </a>
+            <a href="#about" class="hover:text-f-dark transition">
+                <span class="lang-bn">আমাদের লক্ষ্য</span>
+                <span class="lang-en hidden">About Us</span>
+            </a>
+            <a href="#services" class="hover:text-f-dark transition">
+                <span class="lang-bn">সার্ভিসসমূহ</span>
+                <span class="lang-en hidden">Services</span>
+            </a>
+            <a href="#process" class="hover:text-f-dark transition">
+                <span class="lang-bn">কীভাবে কাজ করে?</span>
+                <span class="lang-en hidden">How it Works?</span>
+            </a>
         </div>
         
-        <div class="hidden md:flex items-center gap-6">
+        <div class="hidden md:flex items-center gap-4">
+            <!-- Language Toggle Button -->
+            <button id="langBtn" onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition">
+                English
+            </button>
             <a href="#" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-message"></i> ইনবক্স করুন
+                <i class="fa-solid fa-message"></i> 
+                <span class="lang-bn">ইনবক্স করুন</span>
+                <span class="lang-en hidden">Inbox Us</span>
             </a>
         </div>
     </nav>
 
-    <!-- Hero Slider Section (3 Slides) -->
-    <section class="p-4 md:p-6">
+    <!-- Hero Slider Section -->
+    <section class="p-4 md:p-6" id="home">
         <div class="relative w-full h-[80vh] md:h-[75vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl bg-f-dark">
             
-            <!-- Slide 1: Problem -->
+            <!-- Slide 1 -->
             <div class="slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100 z-10">
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.9), rgba(21, 93, 53, 0.4)), url('images/slide1.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-red-500/80 inline-flex px-4 py-1.5 rounded-full w-max">
-                        <i class="fa-solid fa-triangle-exclamation"></i> ফসলের সমস্যা
+                        <i class="fa-solid fa-triangle-exclamation"></i> 
+                        <span class="lang-bn">ফসলের সমস্যা</span>
+                        <span class="lang-en hidden">Crop Problem</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        ফসলের অজানা রোগ নিয়ে <span class="text-red-300">চিন্তিত?</span>
+                        <span class="lang-bn">ফসলের অজানা রোগ নিয়ে <span class="text-red-300">চিন্তিত?</span></span>
+                        <span class="lang-en hidden">Worried about unknown crop <span class="text-red-300">diseases?</span></span>
                     </h1>
-                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">আপনার কষ্টার্জিত ফসলের যেকোনো সমস্যা এখন আর ভয়ের কারণ নয়। প্রযুক্তির ছোঁয়ায় সমাধান এখন আপনার হাতের মুঠোয়।</p>
+                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
+                        <span class="lang-bn">আপনার কষ্টার্জিত ফসলের যেকোনো সমস্যা এখন আর ভয়ের কারণ নয়। প্রযুক্তির ছোঁয়ায় সমাধান এখন আপনার হাতের মুঠোয়।</span>
+                        <span class="lang-en hidden">Any issue with your hard-earned crops is no longer a fear. Solutions are now at your fingertips with technology.</span>
+                    </p>
                 </div>
             </div>
 
-            <!-- Slide 2: Action (Scanning) -->
+            <!-- Slide 2 -->
             <div class="slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 z-0">
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.9), rgba(21, 93, 53, 0.3)), url('images/slide2.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-blue-500/80 inline-flex px-4 py-1.5 rounded-full w-max">
-                        <i class="fa-solid fa-mobile-screen-button"></i> সহজ সমাধান
+                        <i class="fa-solid fa-mobile-screen-button"></i> 
+                        <span class="lang-bn">সহজ সমাধান</span>
+                        <span class="lang-en hidden">Easy Solution</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        স্মার্টফোনে ছবি তুলুন,<br><span class="text-blue-300">ইনবক্স করুন</span>
+                        <span class="lang-bn">স্মার্টফোনে ছবি তুলুন,<br><span class="text-blue-300">ইনবক্স করুন</span></span>
+                        <span class="lang-en hidden">Take a photo,<br><span class="text-blue-300">Inbox us</span></span>
                     </h1>
-                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">আক্রান্ত পাতার একটি পরিষ্কার ছবি তুলে আমাদের ফেসবুক পেজ বা বটে পাঠিয়ে দিন। কোনো অ্যাপ ইনস্টলের ঝামেলা নেই!</p>
+                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
+                        <span class="lang-bn">আক্রান্ত পাতার একটি পরিষ্কার ছবি তুলে আমাদের ফেসবুক পেজ বা বটে পাঠিয়ে দিন। কোনো অ্যাপ ইনস্টলের ঝামেলা নেই!</span>
+                        <span class="lang-en hidden">Take a clear picture of the infected leaf and send it to our Facebook page or bot. No app installation needed!</span>
+                    </p>
                 </div>
             </div>
 
-            <!-- Slide 3: Solution (Happy) -->
+            <!-- Slide 3 -->
             <div class="slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 z-0">
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.8), rgba(21, 93, 53, 0.2)), url('images/slide3.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-f-gold inline-flex px-4 py-1.5 rounded-full w-max text-f-dark">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI ম্যাজিক
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 
+                        <span class="lang-bn">AI ম্যাজিক</span>
+                        <span class="lang-en hidden">AI Magic</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        সেকেন্ডের মধ্যে <br><span class="text-f-gold">সঠিক সমাধান পান</span>
+                        <span class="lang-bn">সেকেন্ডের মধ্যে <br><span class="text-f-gold">সঠিক সমাধান পান</span></span>
+                        <span class="lang-en hidden">Get the exact <br><span class="text-f-gold">solution in seconds</span></span>
                     </h1>
-                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">আমাদের অত্যাধুনিক AI প্রযুক্তি সাথে সাথেই রোগ শনাক্ত করে সম্পূর্ণ বাংলায় সঠিক ওষুধের নাম জানিয়ে দেবে।</p>
+                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
+                        <span class="lang-bn">আমাদের অত্যাধুনিক AI প্রযুক্তি সাথে সাথেই রোগ শনাক্ত করে সম্পূর্ণ বাংলায় সঠিক ওষুধের নাম জানিয়ে দেবে।</span>
+                        <span class="lang-en hidden">Our state-of-the-art AI technology instantly detects diseases and suggests correct medicine.</span>
+                    </p>
                 </div>
             </div>
 
-            <!-- Slider Dots (Updated for 3 slides) -->
+            <!-- Slider Dots -->
             <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-30">
                 <button class="dot active w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(0)"></button>
                 <button class="dot w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(1)"></button>
@@ -126,16 +160,22 @@
             </div>
             <div class="w-full lg:w-1/2">
                 <div class="flex items-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
-                    <i class="fa-solid fa-seedling text-f-gold text-lg"></i> আমাদের লক্ষ্য
+                    <i class="fa-solid fa-seedling text-f-gold text-lg"></i> 
+                    <span class="lang-bn">আমাদের লক্ষ্য</span>
+                    <span class="lang-en hidden">Our Goal</span>
                 </div>
                 <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-snug">
-                    মাঠে বসেই ফসলের সঠিক রোগ নির্ণয় ও সমাধান
+                    <span class="lang-bn">মাঠে বসেই ফসলের সঠিক রোগ নির্ণয় ও সমাধান</span>
+                    <span class="lang-en hidden">Accurate crop disease diagnosis right from the field</span>
                 </h2>
                 <p class="text-gray-600 mb-8 font-medium text-lg leading-relaxed">
-                    ফসল AI এর মাধ্যমে আমরা বাংলাদেশের কৃষকদের ক্ষমতায়ন করতে চাই। এআই (AI) ব্যবহার করে এখন যেকোনো কৃষক বিনামূল্যে তার ফসলের সমস্যা চিহ্নিত করতে পারবেন।
+                    <span class="lang-bn">ফসল AI এর মাধ্যমে আমরা বাংলাদেশের কৃষকদের ক্ষমতায়ন করতে চাই। এআই (AI) ব্যবহার করে এখন যেকোনো কৃষক বিনামূল্যে তার ফসলের সমস্যা চিহ্নিত করতে পারবেন।</span>
+                    <span class="lang-en hidden">Through Foshol AI, we want to empower farmers in Bangladesh. Using AI, any farmer can now identify crop problems completely for free.</span>
                 </p>
                 <a href="#" class="inline-flex items-center gap-3 bg-f-dark text-white px-8 py-3.5 rounded-full font-bold text-base hover:bg-green-900 transition shadow-lg">
-                    <i class="fa-brands fa-facebook-messenger text-xl"></i> আমাদের ম্যাসেজ করুন
+                    <i class="fa-brands fa-facebook-messenger text-xl"></i> 
+                    <span class="lang-bn">আমাদের ম্যাসেজ করুন</span>
+                    <span class="lang-en hidden">Message Us</span>
                 </a>
             </div>
         </div>
@@ -148,30 +188,52 @@
             
             <div class="text-center mb-16 relative z-10">
                 <div class="flex items-center justify-center gap-2 text-f-gold text-sm font-bold uppercase tracking-wider mb-4">
-                    <i class="fa-solid fa-star"></i> আমাদের সেবাসমূহ
+                    <i class="fa-solid fa-star"></i> 
+                    <span class="lang-bn">আমাদের সেবাসমূহ</span>
+                    <span class="lang-en hidden">Our Services</span>
                 </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">কৃষকদের জন্য স্মার্ট সার্ভিস</h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                    <span class="lang-bn">কৃষকদের জন্য স্মার্ট সার্ভিস</span>
+                    <span class="lang-en hidden">Smart Services for Farmers</span>
+                </h2>
             </div>
 
-            <!-- Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-2xl border-b-4 border-f-gold group">
                     <img src="images/service1.jpg" class="w-full h-48 object-cover rounded-2xl mb-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">রোগ ও পোকা শনাক্তকরণ</h3>
-                    <p class="text-gray-600 mb-6 text-base leading-relaxed">ফসলের পাতার ছবি দিলেই আমাদের AI সেকেন্ডের মধ্যে রোগের নাম এবং সমস্যা চিহ্নিত করে দিবে।</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-bn">রোগ ও পোকা শনাক্তকরণ</span>
+                        <span class="lang-en hidden">Disease Detection</span>
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-base leading-relaxed">
+                        <span class="lang-bn">ফসলের পাতার ছবি দিলেই আমাদের AI সেকেন্ডের মধ্যে রোগের নাম এবং সমস্যা চিহ্নিত করে দিবে।</span>
+                        <span class="lang-en hidden">Provide a photo of the crop leaf and our AI will identify the disease and problem in seconds.</span>
+                    </p>
                 </div>
                 <!-- Card 2 -->
                 <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-2xl border-b-4 border-f-gold group">
                     <img src="images/service2.jpg" class="w-full h-48 object-cover rounded-2xl mb-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">আবহাওয়া ভিত্তিক পরামর্শ</h3>
-                    <p class="text-gray-600 mb-6 text-base leading-relaxed">আপনার এলাকার বর্তমান আবহাওয়া অনুযায়ী কবে সার বা সেচ দিতে হবে তার সঠিক গাইডলাইন পাবেন।</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-bn">আবহাওয়া ভিত্তিক পরামর্শ</span>
+                        <span class="lang-en hidden">Weather Advice</span>
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-base leading-relaxed">
+                        <span class="lang-bn">আপনার এলাকার বর্তমান আবহাওয়া অনুযায়ী কবে সার বা সেচ দিতে হবে তার সঠিক গাইডলাইন পাবেন।</span>
+                        <span class="lang-en hidden">Get proper guidelines on when to apply fertilizer or water based on current local weather.</span>
+                    </p>
                 </div>
                 <!-- Card 3 -->
                 <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-2xl border-b-4 border-f-gold group">
                     <img src="images/service3.jpg" class="w-full h-48 object-cover rounded-2xl mb-6">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">সঠিক ঔষধের মাত্রা</h3>
-                    <p class="text-gray-600 mb-6 text-base leading-relaxed">রোগ অনুযায়ী কোন ঔষধ কতটুকু মাত্রায় ব্যবহার করতে হবে, তা পরিষ্কার বাংলায় জানিয়ে দিবে AI।</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-bn">সঠিক ঔষধের মাত্রা</span>
+                        <span class="lang-en hidden">Correct Medicine Dosage</span>
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-base leading-relaxed">
+                        <span class="lang-bn">রোগ অনুযায়ী কোন ঔষধ কতটুকু মাত্রায় ব্যবহার করতে হবে, তা পরিষ্কার বাংলায় জানিয়ে দিবে AI।</span>
+                        <span class="lang-en hidden">AI will clearly inform which medicine to use and in what dosage according to the disease.</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -180,9 +242,14 @@
     <!-- Process Section -->
     <section id="process" class="py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
         <div class="flex items-center justify-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
-            <i class="fa-solid fa-gears text-f-gold"></i> কীভাবে কাজ করে?
+            <i class="fa-solid fa-gears text-f-gold"></i> 
+            <span class="lang-bn">কীভাবে কাজ করে?</span>
+            <span class="lang-en hidden">How it Works?</span>
         </div>
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-20">সহজ ৩টি ধাপে সমাধান</h2>
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-20">
+            <span class="lang-bn">সহজ ৩টি ধাপে সমাধান</span>
+            <span class="lang-en hidden">Solution in 3 Easy Steps</span>
+        </h2>
         
         <div class="relative flex flex-col md:flex-row justify-between items-center w-full max-w-5xl mx-auto">
             <div class="hidden md:block absolute top-[40px] left-[10%] right-[10%] h-[3px] dotted-line z-0"></div>
@@ -192,7 +259,10 @@
                     <i class="fa-solid fa-camera"></i>
                 </div>
                 <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০১</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">ছবি তুলুন</h3>
+                <h3 class="font-bold text-gray-900 text-xl mb-2">
+                    <span class="lang-bn">ছবি তুলুন</span>
+                    <span class="lang-en hidden">Take Photo</span>
+                </h3>
             </div>
 
             <div class="relative z-10 flex flex-col items-center w-56 mb-12 md:mb-0 group">
@@ -200,7 +270,10 @@
                     <i class="fa-brands fa-facebook-messenger"></i>
                 </div>
                 <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০২</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">ইনবক্স করুন</h3>
+                <h3 class="font-bold text-gray-900 text-xl mb-2">
+                    <span class="lang-bn">ইনবক্স করুন</span>
+                    <span class="lang-en hidden">Inbox Us</span>
+                </h3>
             </div>
 
             <div class="relative z-10 flex flex-col items-center w-56 mb-12 md:mb-0 group">
@@ -208,7 +281,10 @@
                     <i class="fa-solid fa-brain"></i>
                 </div>
                 <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০৩</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">AI বিশ্লেষণ</h3>
+                <h3 class="font-bold text-gray-900 text-xl mb-2">
+                    <span class="lang-bn">AI বিশ্লেষণ</span>
+                    <span class="lang-en hidden">AI Analysis</span>
+                </h3>
             </div>
 
             <div class="relative z-10 flex flex-col items-center w-56 group">
@@ -216,7 +292,10 @@
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div class="bg-f-dark text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০৪</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">সমাধান পান</h3>
+                <h3 class="font-bold text-gray-900 text-xl mb-2">
+                    <span class="lang-bn">সমাধান পান</span>
+                    <span class="lang-en hidden">Get Solution</span>
+                </h3>
             </div>
         </div>
     </section>
@@ -229,7 +308,10 @@
                     <div class="flex items-center justify-center md:justify-start gap-2 text-4xl font-bold text-white mb-3">
                         <img src="./foshol-ai.png" class="h-10 object-contain" alt="Logo">
                     </div>
-                    <p class="text-base text-green-100/80">বাংলাদেশের কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</p>
+                    <p class="text-base text-green-100/80">
+                        <span class="lang-bn">বাংলাদেশের কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
+                        <span class="lang-en hidden">Smart agricultural technology for farmers.</span>
+                    </p>
                 </div>
                 <div class="flex space-x-4">
                     <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-f-gold transition duration-300"><i class="fa-brands fa-facebook-f text-xl"></i></a>
@@ -238,13 +320,13 @@
                 </div>
             </div>
             <div class="border-t border-white/10 mt-12 pt-8 text-center text-sm text-green-100/60">
-                <p>&copy; 2024 FosholAI. সর্বস্বত্ব সংরক্ষিত।</p>
+                <p>&copy; 2024 FosholAI. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Slider Script -->
     <script>
+        // --- Image Slider Logic ---
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -278,8 +360,46 @@
             slideInterval = setInterval(nextSlide, 4000);
         }
 
-        // Start auto slider
         slideInterval = setInterval(nextSlide, 4000);
+
+        // --- Smooth Scrolling WITHOUT Hash (#) in URL ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault(); // Prevents default jump and URL change
+                
+                const targetId = this.getAttribute('href').substring(1);
+                
+                if(targetId) {
+                    const targetElement = document.getElementById(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    // For href="#"
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // --- Multi-Language Logic (BN/EN) ---
+        let currentLang = 'bn';
+        function toggleLanguage() {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            
+            // Toggle visibility of spans based on language
+            document.querySelectorAll('.lang-bn').forEach(el => {
+                if(currentLang === 'en') el.classList.add('hidden');
+                else el.classList.remove('hidden');
+            });
+            
+            document.querySelectorAll('.lang-en').forEach(el => {
+                if(currentLang === 'bn') el.classList.add('hidden');
+                else el.classList.remove('hidden');
+            });
+            
+            // Update button text
+            document.getElementById('langBtn').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+        }
     </script>
 </body>
 </html>
