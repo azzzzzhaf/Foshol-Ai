@@ -421,14 +421,28 @@
             <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
         </div>
         <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
-            <div class="chat-message chat-ai">
-                <span class="lang-en">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</span>
-                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসলের কী সমস্যা হচ্ছে আমাকে বিস্তারিত বলতে পারেন।</span>
+            <div class="chat-message chat-ai w-[90%] md:w-[85%]">
+                <span class="lang-en">Hello! I am Foshol AI. Please select your crop or describe the problem:</span>
+                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসল নির্বাচন করুন অথবা সমস্যার কথা লিখুন:</span>
+                
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button onclick="sendSuggested('🌾 Rice', '🌾 ধান')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌾 <span class="lang-en">Rice</span><span class="lang-bn hidden">ধান</span></button>
+                    <button onclick="sendSuggested('🥔 Potato', '🥔 আলু')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥔 <span class="lang-en">Potato</span><span class="lang-bn hidden">আলু</span></button>
+                    <button onclick="sendSuggested('🍅 Tomato', '🍅 টমেটো')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🍅 <span class="lang-en">Tomato</span><span class="lang-bn hidden">টমেটো</span></button>
+                    <button onclick="sendSuggested('🌶️ Chili', '🌶️ মরিচ')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌶️ <span class="lang-en">Chili</span><span class="lang-bn hidden">মরিচ</span></button>
+                    <button onclick="sendSuggested('🥭 Mango', '🥭 আম')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥭 <span class="lang-en">Mango</span><span class="lang-bn hidden">আম</span></button>
+                </div>
             </div>
         </div>
-        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2">
-            <input type="text" id="chat-input" placeholder="Type here..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition">
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2 items-center">
+            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Voice Message">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Upload Photo">
+                <i class="fa-solid fa-camera"></i>
+            </button>
+            <input type="text" id="chat-input" placeholder="Type..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
         </div>
@@ -436,7 +450,7 @@
 
     <script>
         // --- Language Toggle Logic ---
-        let currentLang = localStorage.getItem('foshol_lang') || 'en';
+        let currentLang = localStorage.getItem('foshol_lang') || 'bn';
         
         function applyLanguage() {
             document.querySelectorAll('.lang-en').forEach(el => {
@@ -544,6 +558,12 @@
         // --- AI Chat Logic ---
         function toggleChat() {
             document.getElementById('chat-widget').classList.toggle('chat-hidden');
+        }
+
+        function sendSuggested(enMsg, bnMsg) {
+            const msg = currentLang === 'en' ? enMsg : bnMsg;
+            document.getElementById('chat-input').value = msg;
+            sendChatMessage();
         }
 
         async function sendChatMessage() {
