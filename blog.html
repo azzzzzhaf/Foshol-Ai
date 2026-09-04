@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কৃষি ব্লগ - ফসল AI</title>
+    <title>ব্লগ - ফসল AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -93,7 +93,42 @@
                 <span class="lang-en hidden">Inbox Us</span>
             </a>
         </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden text-f-dark text-3xl focus:outline-none pr-2 transition-transform active:scale-95">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
+        <a href="/" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
+            <span class="lang-bn">হোম</span><span class="lang-en hidden">Home</span>
+        </a>
+        <a href="/about" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
+            <span class="lang-bn">আমাদের লক্ষ্য</span><span class="lang-en hidden">About Us</span>
+        </a>
+        <a href="/services" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
+            <span class="lang-bn">সার্ভিসসমূহ</span><span class="lang-en hidden">Services</span>
+        </a>
+        <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
+            <span class="lang-bn">ব্লগ</span><span class="lang-en hidden">Blog</span>
+        </a>
+        <div class="flex items-center justify-between pt-4 gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
+                <i class="fa-solid fa-language text-lg text-f-gold"></i>
+                <span id="mobileLangBtn">English</span>
+            </button>
+            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-1/2 active:bg-green-800 shadow-md border-b-4 border-green-900">
+                <i class="fa-solid fa-message text-f-gold"></i> 
+                <span class="lang-bn">ইনবক্স</span><span class="lang-en hidden">Inbox</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Page Header -->
     <div class="bg-f-dark py-16 text-center">
@@ -102,86 +137,108 @@
             <span class="lang-en hidden">Agri Blog & Tips</span>
         </h1>
         <p class="text-green-100 max-w-2xl mx-auto">
-            <span class="lang-bn">আধুনিক চাষাবাদ, ফসলের যত্ন এবং নতুন প্রযুক্তি সম্পর্কে জানুন আমাদের বিশেষজ্ঞদের কাছ থেকে।</span>
-            <span class="lang-en hidden">Learn about modern farming, crop care, and new technologies from our experts.</span>
+            <span class="lang-bn">আধুনিক চাষাবাদ, ফসলের যত্ন এবং নতুন কৃষি প্রযুক্তি সম্পর্কে বিস্তারিত জানুন আমাদের ব্লগ থেকে।</span>
+            <span class="lang-en hidden">Learn in detail about modern farming, crop care and new agri technology from our blog.</span>
         </p>
     </div>
 
     <!-- Blog Grid -->
     <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Blog 1 -->
+            <!-- Blog Card 1 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-green-100 flex items-center justify-center">
-                    <i class="fa-solid fa-seedling text-green-300 text-4xl"></i>
+                <div class="h-48 bg-green-100 flex items-center justify-center relative">
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">টিপস</span>
+                    <i class="fa-solid fa-image text-green-300 text-4xl"></i>
                 </div>
                 <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">টিপস</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">ধানের ব্লাস্ট রোগ দমনের কার্যকরী উপায়</h3>
-                    <p class="text-gray-600 text-sm mb-4">উচ্চ আর্দ্রতা ও তাপমাত্রায় ধানের ব্লাস্ট রোগ বেশি হয়। কীভাবে প্রাকৃতিক উপায়ে এটি দমন করবেন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
+                        <span class="lang-bn">ধানের ব্লাস্ট রোগ দমনের কার্যকরী উপায়</span>
+                        <span class="lang-en hidden">Effective ways to control Rice Blast</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-bn">উচ্চ আর্দ্রতা ও তাপমাত্রায় ধানের ব্লাস্ট রোগ বেশি হয়। কীভাবে প্রাকৃতিক ও রাসায়নিক উপায়ে এটি দমন করবেন তা বিস্তারিত জানুন।</span>
+                        <span class="lang-en hidden">Rice blast occurs more in high humidity and temperature. Learn how to control it naturally and chemically.</span>
+                    </p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                        <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> ১২ মার্চ, ২০২৪</span>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">আরও পড়ুন <i class="fa-solid fa-angle-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <!-- Blog 2 -->
+            
+            <!-- Blog Card 2 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-blue-100 flex items-center justify-center">
-                    <i class="fa-solid fa-microchip text-blue-300 text-4xl"></i>
+                <div class="h-48 bg-blue-100 flex items-center justify-center relative">
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">প্রযুক্তি</span>
+                    <i class="fa-solid fa-image text-blue-300 text-4xl"></i>
                 </div>
                 <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">প্রযুক্তি</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">AI দিয়ে যেভাবে ফসলের রোগ চেনা যায়</h3>
-                    <p class="text-gray-600 text-sm mb-4">কৃষকদের স্মার্টফোন এখন শুধু কথা বলার জন্য নয়, ফসলের ডাক্তার হিসেবেও কাজ করতে পারে...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
+                        <span class="lang-bn">AI দিয়ে যেভাবে ফসলের রোগ চেনা যায়</span>
+                        <span class="lang-en hidden">How to identify crop diseases with AI</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-bn">কৃষকদের স্মার্টফোন এখন শুধু কথা বলার জন্য নয়, ফসলের ডাক্তার হিসেবেও কাজ করতে পারে। বিস্তারিত জানুন কীভাবে।</span>
+                        <span class="lang-en hidden">Farmers' smartphones are not just for talking anymore, they act as crop doctors. Learn how in detail.</span>
+                    </p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                        <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> ১৫ ফেব্রুয়ারি, ২০২৪</span>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">আরও পড়ুন <i class="fa-solid fa-angle-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <!-- Blog 3 -->
+
+            <!-- Blog Card 3 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-yellow-100 flex items-center justify-center">
-                    <i class="fa-solid fa-cloud-sun-rain text-yellow-300 text-4xl"></i>
+                <div class="h-48 bg-yellow-100 flex items-center justify-center relative">
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">আবহাওয়া</span>
+                    <i class="fa-solid fa-image text-yellow-300 text-4xl"></i>
                 </div>
                 <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">আবহাওয়া</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">বৃষ্টির আগে সার দেওয়া কি ঠিক?</h3>
-                    <p class="text-gray-600 text-sm mb-4">অনেকেই বৃষ্টির আগে সার দিয়ে থাকেন, কিন্তু এটি মাটির জন্য কতটুকু উপকারী তা জেনে নিন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
+                        <span class="lang-bn">বৃষ্টির আগে সার দেওয়া কি ঠিক?</span>
+                        <span class="lang-en hidden">Is it okay to fertilize before rain?</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-bn">অনেকেই বৃষ্টির আগে সার দিয়ে থাকেন, কিন্তু এটি মাটির জন্য কতটুকু উপকারী তা জেনে নিন এই প্রতিবেদন থেকে।</span>
+                        <span class="lang-en hidden">Many apply fertilizer before rain, find out from this report how beneficial it is for the soil.</span>
+                    </p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                        <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> ০২ জানুয়ারি, ২০২৪</span>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">আরও পড়ুন <i class="fa-solid fa-angle-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <!-- Blog 4 -->
+            
+            <!-- Blog Card 4 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-orange-100 flex items-center justify-center">
-                    <i class="fa-solid fa-wheat-awn text-orange-300 text-4xl"></i>
+                <div class="h-48 bg-purple-100 flex items-center justify-center relative">
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">গাইডলাইন</span>
+                    <i class="fa-solid fa-image text-purple-300 text-4xl"></i>
                 </div>
                 <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">চাষাবাদ</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">উন্নত জাতের গম চাষের নিয়মাবলি</h3>
-                    <p class="text-gray-600 text-sm mb-4">শীতকালে গম চাষ করে কীভাবে দ্বিগুণ ফলন পাওয়া সম্ভব, তার বিস্তারিত নিয়মাবলি ও সার প্রয়োগ...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
+                        <span class="lang-bn">টমেটো চাষের সঠিক নিয়মাবলি</span>
+                        <span class="lang-en hidden">Proper rules for Tomato cultivation</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-bn">শীতকালে টমেটোর ভালো ফলন পেতে বীজ তলা তৈরি থেকে শুরু করে ফসল কাটা পর্যন্ত সম্পূর্ণ গাইডলাইন।</span>
+                        <span class="lang-en hidden">Complete guideline from preparing seedbed to harvesting to get good yield of tomato in winter.</span>
+                    </p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                        <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> ২৮ ডিসেম্বর, ২০২৩</span>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">আরও পড়ুন <i class="fa-solid fa-angle-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <!-- Blog 5 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-purple-100 flex items-center justify-center">
-                    <i class="fa-solid fa-bugs text-purple-300 text-4xl"></i>
-                </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">সতর্কতা</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">মাজরা পোকা দমনে কীটনাশক নির্বাচন</h3>
-                    <p class="text-gray-600 text-sm mb-4">ভুল কীটনাশক ব্যবহারে ফসলের ক্ষতি হতে পারে। মাজরা পোকা দমনে সঠিক ঔষধ কোনটি...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <!-- Blog 6 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-teal-100 flex items-center justify-center">
-                    <i class="fa-solid fa-hand-holding-dollar text-teal-300 text-4xl"></i>
-                </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">মার্কেট</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">সঠিক দামে ফসল বিক্রির কৌশল</h3>
-                    <p class="text-gray-600 text-sm mb-4">মধ্যস্বত্বভোগীদের দৌরাত্ম্য এড়িয়ে সরাসরি বাজারে ফসল বিক্রি করে কীভাবে লাভবান হবেন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
-            </div>
+        </div>
+        
+        <div class="flex justify-center mt-12">
+            <button class="bg-white border-2 border-f-dark text-f-dark hover:bg-f-dark hover:text-white px-8 py-3 rounded-full font-bold transition shadow-sm">
+                <span class="lang-bn">আরও লোড করুন</span>
+                <span class="lang-en hidden">Load More</span>
+            </button>
         </div>
     </section>
 
@@ -269,7 +326,10 @@
                 if(currentLang === 'bn') el.classList.add('hidden');
                 else el.classList.remove('hidden');
             });
-            document.getElementById('langBtn').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+            
+            const text = currentLang === 'bn' ? 'English' : 'বাংলা';
+            if(document.getElementById('langBtn')) document.getElementById('langBtn').innerText = text;
+            if(document.getElementById('mobileLangBtn')) document.getElementById('mobileLangBtn').innerText = text;
         }
 
         // --- AI Chat Logic ---
