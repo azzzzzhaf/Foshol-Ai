@@ -33,9 +33,34 @@
         }
         .dot { transition: all 0.3s ease; }
         .dot.active { background-color: #dda72b; width: 2rem; border-radius: 1rem; }
+        
+        /* Chat Widget Styles */
+        #chat-widget { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .chat-hidden { transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
+        .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .chat-user { background-color: #155d35; color: white; border-bottom-right-radius: 4px; margin-left: auto; }
+        .chat-ai { background-color: #f1f5f9; color: #333; border-bottom-left-radius: 4px; margin-right: auto; }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
 </head>
-<body class="text-gray-800 antialiased font-bengali scroll-smooth">
+<body class="text-gray-800 antialiased font-bengali scroll-smooth relative">
+
+    <!-- Live Weather Top Bar -->
+    <div class="bg-green-900 text-white text-sm py-1.5 px-4 flex justify-between items-center z-50 relative">
+        <div class="flex items-center gap-3">
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            <span class="font-semibold tracking-wide text-xs">LIVE WEATHER (DHAKA)</span>
+        </div>
+        <div id="weather-data" class="flex items-center gap-4 font-bold text-green-100">
+            <i class="fa-solid fa-spinner fa-spin"></i> লোড হচ্ছে...
+        </div>
+    </div>
 
     <!-- Navbar -->
     <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
@@ -59,14 +84,13 @@
                 <span class="lang-bn">সার্ভিসসমূহ</span>
                 <span class="lang-en hidden">Services</span>
             </a>
-            <a href="#process" class="hover:text-f-dark transition">
-                <span class="lang-bn">কীভাবে কাজ করে?</span>
-                <span class="lang-en hidden">How it Works?</span>
+            <a href="#blog" class="hover:text-f-dark transition">
+                <span class="lang-bn">ব্লগ</span>
+                <span class="lang-en hidden">Blog</span>
             </a>
         </div>
         
         <div class="hidden md:flex items-center gap-4">
-            <!-- Language Toggle Button -->
             <button id="langBtn" onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition">
                 English
             </button>
@@ -172,11 +196,6 @@
                     <span class="lang-bn">ফসল AI এর মাধ্যমে আমরা বাংলাদেশের কৃষকদের ক্ষমতায়ন করতে চাই। এআই (AI) ব্যবহার করে এখন যেকোনো কৃষক বিনামূল্যে তার ফসলের সমস্যা চিহ্নিত করতে পারবেন।</span>
                     <span class="lang-en hidden">Through Foshol AI, we want to empower farmers in Bangladesh. Using AI, any farmer can now identify crop problems completely for free.</span>
                 </p>
-                <a href="#" class="inline-flex items-center gap-3 bg-f-dark text-white px-8 py-3.5 rounded-full font-bold text-base hover:bg-green-900 transition shadow-lg">
-                    <i class="fa-brands fa-facebook-messenger text-xl"></i> 
-                    <span class="lang-bn">আমাদের ম্যাসেজ করুন</span>
-                    <span class="lang-en hidden">Message Us</span>
-                </a>
             </div>
         </div>
     </section>
@@ -239,93 +258,115 @@
         </div>
     </section>
 
-    <!-- Process Section -->
-    <section id="process" class="py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
-        <div class="flex items-center justify-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
-            <i class="fa-solid fa-gears text-f-gold"></i> 
-            <span class="lang-bn">কীভাবে কাজ করে?</span>
-            <span class="lang-en hidden">How it Works?</span>
+    <!-- Blog Section -->
+    <section id="blog" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <div class="flex items-center justify-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
+                <i class="fa-solid fa-newspaper text-f-gold"></i> 
+                <span class="lang-bn">কৃষি ব্লগ ও টিপস</span>
+                <span class="lang-en hidden">Agri Blog & Tips</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                <span class="lang-bn">নতুন আধুনিক চাষাবাদ পদ্ধতি</span>
+                <span class="lang-en hidden">Modern Farming Techniques</span>
+            </h2>
         </div>
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-20">
-            <span class="lang-bn">সহজ ৩টি ধাপে সমাধান</span>
-            <span class="lang-en hidden">Solution in 3 Easy Steps</span>
-        </h2>
-        
-        <div class="relative flex flex-col md:flex-row justify-between items-center w-full max-w-5xl mx-auto">
-            <div class="hidden md:block absolute top-[40px] left-[10%] right-[10%] h-[3px] dotted-line z-0"></div>
-            
-            <div class="relative z-10 flex flex-col items-center w-56 mb-12 md:mb-0 group">
-                <div class="w-24 h-24 bg-white border-4 border-f-dark text-f-dark rounded-[2rem] flex items-center justify-center text-3xl shadow-lg mb-6 transform group-hover:rotate-6 transition duration-300">
-                    <i class="fa-solid fa-camera"></i>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Blog Card 1 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
+                <div class="h-48 bg-green-100 flex items-center justify-center">
+                    <i class="fa-solid fa-image text-green-300 text-4xl"></i>
                 </div>
-                <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০১</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">
-                    <span class="lang-bn">ছবি তুলুন</span>
-                    <span class="lang-en hidden">Take Photo</span>
-                </h3>
+                <div class="p-6">
+                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">টিপস</span>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">ধানের ব্লাস্ট রোগ দমনের কার্যকরী উপায়</h3>
+                    <p class="text-gray-600 text-sm mb-4">উচ্চ আর্দ্রতা ও তাপমাত্রায় ধানের ব্লাস্ট রোগ বেশি হয়। কীভাবে প্রাকৃতিক উপায়ে এটি দমন করবেন...</p>
+                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
-
-            <div class="relative z-10 flex flex-col items-center w-56 mb-12 md:mb-0 group">
-                <div class="w-24 h-24 bg-f-dark text-f-gold rounded-[2rem] flex items-center justify-center text-3xl shadow-lg mb-6 transform group-hover:-rotate-6 transition duration-300">
-                    <i class="fa-brands fa-facebook-messenger"></i>
+            <!-- Blog Card 2 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
+                <div class="h-48 bg-blue-100 flex items-center justify-center">
+                    <i class="fa-solid fa-image text-blue-300 text-4xl"></i>
                 </div>
-                <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০২</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">
-                    <span class="lang-bn">ইনবক্স করুন</span>
-                    <span class="lang-en hidden">Inbox Us</span>
-                </h3>
+                <div class="p-6">
+                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">প্রযুক্তি</span>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">AI দিয়ে যেভাবে ফসলের রোগ চেনা যায়</h3>
+                    <p class="text-gray-600 text-sm mb-4">কৃষকদের স্মার্টফোন এখন শুধু কথা বলার জন্য নয়, ফসলের ডাক্তার হিসেবেও কাজ করতে পারে...</p>
+                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
-
-            <div class="relative z-10 flex flex-col items-center w-56 mb-12 md:mb-0 group">
-                <div class="w-24 h-24 bg-white border-4 border-f-dark text-f-dark rounded-[2rem] flex items-center justify-center text-3xl shadow-lg mb-6 transform group-hover:rotate-6 transition duration-300">
-                    <i class="fa-solid fa-brain"></i>
+            <!-- Blog Card 3 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
+                <div class="h-48 bg-yellow-100 flex items-center justify-center">
+                    <i class="fa-solid fa-image text-yellow-300 text-4xl"></i>
                 </div>
-                <div class="bg-f-gold text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০৩</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">
-                    <span class="lang-bn">AI বিশ্লেষণ</span>
-                    <span class="lang-en hidden">AI Analysis</span>
-                </h3>
-            </div>
-
-            <div class="relative z-10 flex flex-col items-center w-56 group">
-                <div class="w-24 h-24 bg-f-gold text-white rounded-[2rem] flex items-center justify-center text-4xl shadow-lg mb-6 transform group-hover:-rotate-6 transition duration-300">
-                    <i class="fa-solid fa-circle-check"></i>
+                <div class="p-6">
+                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">আবহাওয়া</span>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">বৃষ্টির আগে সার দেওয়া কি ঠিক?</h3>
+                    <p class="text-gray-600 text-sm mb-4">অনেকেই বৃষ্টির আগে সার দিয়ে থাকেন, কিন্তু এটি মাটির জন্য কতটুকু উপকারী তা জেনে নিন...</p>
+                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <div class="bg-f-dark text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4 absolute top-[-15px] right-[25px] shadow-md border-2 border-white">০৪</div>
-                <h3 class="font-bold text-gray-900 text-xl mb-2">
-                    <span class="lang-bn">সমাধান পান</span>
-                    <span class="lang-en hidden">Get Solution</span>
-                </h3>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold">
-        <div class="max-w-7xl mx-auto px-6 md:px-12">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center md:text-left">
-                    <div class="flex items-center justify-center md:justify-start gap-2 text-4xl font-bold text-white mb-3">
-                        <img src="./foshol-ai.png" class="h-10 object-contain" alt="Logo">
-                    </div>
-                    <p class="text-base text-green-100/80">
-                        <span class="lang-bn">বাংলাদেশের কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
-                        <span class="lang-en hidden">Smart agricultural technology for farmers.</span>
-                    </p>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-f-gold transition duration-300"><i class="fa-brands fa-facebook-f text-xl"></i></a>
-                    <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-f-gold transition duration-300"><i class="fa-brands fa-telegram text-xl"></i></a>
-                    <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-f-gold transition duration-300"><i class="fa-brands fa-whatsapp text-xl"></i></a>
-                </div>
+        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <div class="flex items-center justify-center gap-2 text-4xl font-bold text-white mb-3">
+                <img src="./foshol-ai.png" class="h-10 object-contain" alt="Logo">
             </div>
-            <div class="border-t border-white/10 mt-12 pt-8 text-center text-sm text-green-100/60">
-                <p>&copy; 2024 FosholAI. All Rights Reserved.</p>
-            </div>
+            <p class="text-base text-green-100/80 mb-8">
+                <span class="lang-bn">বাংলাদেশের কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
+                <span class="lang-en hidden">Smart agricultural technology for farmers.</span>
+            </p>
+            <p>&copy; 2024 FosholAI. All Rights Reserved.</p>
         </div>
     </footer>
 
+    <!-- AI Chat Floating Widget -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
+        <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> ফসল AI সহকারী</div>
+            <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
+            <div class="chat-message chat-ai">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসলের কী সমস্যা হচ্ছে আমাকে বিস্তারিত বলতে পারেন।</div>
+        </div>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2">
+            <input type="text" id="chat-input" placeholder="আপনার সমস্যাটি লিখুন..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <script>
+        // --- Live Weather Fetch ---
+        async function fetchWeather() {
+            try {
+                // Fetching for Dhaka coordinates
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FDhaka');
+                const data = await res.json();
+                const temp = Math.round(data.current.temperature_2m);
+                const humidity = data.current.relative_humidity_2m;
+                
+                document.getElementById('weather-data').innerHTML = `
+                    <i class="fa-solid fa-temperature-half"></i> ${temp}°C 
+                    <span class="mx-2 opacity-50">|</span> 
+                    <i class="fa-solid fa-droplet"></i> আর্দ্রতা: ${humidity}%
+                `;
+            } catch (error) {
+                document.getElementById('weather-data').innerHTML = "আবহাওয়ার তথ্য পাওয়া যায়নি";
+            }
+        }
+        fetchWeather();
+
         // --- Image Slider Logic ---
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
@@ -365,17 +406,12 @@
         // --- Smooth Scrolling WITHOUT Hash (#) in URL ---
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault(); // Prevents default jump and URL change
-                
+                e.preventDefault(); 
                 const targetId = this.getAttribute('href').substring(1);
-                
                 if(targetId) {
                     const targetElement = document.getElementById(targetId);
-                    if(targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
-                    }
+                    if(targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    // For href="#"
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
@@ -385,20 +421,57 @@
         let currentLang = 'bn';
         function toggleLanguage() {
             currentLang = currentLang === 'bn' ? 'en' : 'bn';
-            
-            // Toggle visibility of spans based on language
             document.querySelectorAll('.lang-bn').forEach(el => {
                 if(currentLang === 'en') el.classList.add('hidden');
                 else el.classList.remove('hidden');
             });
-            
             document.querySelectorAll('.lang-en').forEach(el => {
                 if(currentLang === 'bn') el.classList.add('hidden');
                 else el.classList.remove('hidden');
             });
-            
-            // Update button text
             document.getElementById('langBtn').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+        }
+
+        // --- AI Chat Logic ---
+        function toggleChat() {
+            document.getElementById('chat-widget').classList.toggle('chat-hidden');
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if(!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            
+            // Add User Message
+            chatBox.innerHTML += `<div class="chat-message chat-user">${message}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Add Typing Indicator
+            const typingId = "typing-" + Date.now();
+            chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Call Vercel Serverless Function
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await res.json();
+                document.getElementById(typingId).remove();
+                
+                // Add AI Reply
+                chatBox.innerHTML += `<div class="chat-message chat-ai">${data.reply || data.error}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                document.getElementById(typingId).remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">সংযোগ বিচ্ছিন্ন হয়েছে!</div>`;
+            }
         }
     </script>
 </body>
