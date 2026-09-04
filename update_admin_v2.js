@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+
+const dir = 'g:/1. Clude/03. Mine/2. Krishi Ai';
+
+// -------------------------------------------------------------
+// 1. OVERWRITE admin.html WITH FULL ADD/REMOVE FUNCTIONALITY
+// -------------------------------------------------------------
+const adminHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -208,7 +216,7 @@
                 btn.classList.remove('bg-green-800', 'text-white');
                 btn.classList.add('text-green-100');
             });
-            const activeBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+            const activeBtn = document.querySelector(\`.nav-btn[data-tab="\${tabId}"]\`);
             activeBtn.classList.add('bg-green-800', 'text-white');
             activeBtn.classList.remove('text-green-100');
             
@@ -238,12 +246,12 @@
             alertBody.innerHTML = '';
             if(alerts.length === 0) alertBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">No custom alerts found.</td></tr>';
             alerts.forEach((item, index) => {
-                alertBody.innerHTML += `<tr class="hover:bg-gray-50">
-                    <td class="p-4 font-bold">${item.titleEn}</td>
-                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">${item.type}</span></td>
-                    <td class="p-4 text-sm">${item.loc}</td>
-                    <td class="p-4 text-right"><button onclick="deleteAlert(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>`;
+                alertBody.innerHTML += \`<tr class="hover:bg-gray-50">
+                    <td class="p-4 font-bold">\${item.titleEn}</td>
+                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">\${item.type}</span></td>
+                    <td class="p-4 text-sm">\${item.loc}</td>
+                    <td class="p-4 text-right"><button onclick="deleteAlert(\${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>\`;
             });
 
             // Render Blogs Table
@@ -251,12 +259,12 @@
             blogBody.innerHTML = '';
             if(blogs.length === 0) blogBody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">No custom blogs found.</td></tr>';
             blogs.forEach((item, index) => {
-                blogBody.innerHTML += `<tr class="hover:bg-gray-50">
-                    <td class="p-4 font-bold">${item.titleEn}</td>
-                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">${item.category}</span></td>
-                    <td class="p-4 text-sm">${item.date}</td>
-                    <td class="p-4 text-right"><button onclick="deleteBlog(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>`;
+                blogBody.innerHTML += \`<tr class="hover:bg-gray-50">
+                    <td class="p-4 font-bold">\${item.titleEn}</td>
+                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">\${item.category}</span></td>
+                    <td class="p-4 text-sm">\${item.date}</td>
+                    <td class="p-4 text-right"><button onclick="deleteBlog(\${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>\`;
             });
         }
 
@@ -321,4 +329,67 @@
         }
     </script>
 </body>
-</html>
+</html>`;
+
+fs.writeFileSync(path.join(dir, 'admin.html'), adminHtml, 'utf8');
+
+// -------------------------------------------------------------
+// 2. INJECT BLOG DYNAMIC RENDERING SCRIPT TO articles.html & index.html
+// -------------------------------------------------------------
+const dynamicBlogsScript = `
+    <!-- Dynamic Admin Blogs Logic -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const blogs = JSON.parse(localStorage.getItem('foshol_blogs') || '[]');
+            // Find the blog grid
+            const container = document.querySelector('.grid.grid-cols-1.md\\\\:grid-cols-3.gap-8');
+            
+            if (blogs.length > 0 && container) {
+                let dynamicHtml = '';
+                
+                blogs.forEach(blog => {
+                    let badgeColor = 'text-f-dark';
+                    if(blog.category === 'Technology') badgeColor = 'text-f-dark';
+                    else if(blog.category === 'Farming') badgeColor = 'text-f-gold';
+                    else if(blog.category === 'Weather') badgeColor = 'text-orange-500';
+
+                    dynamicHtml += \`
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                        <div class="h-48 bg-gray-200 overflow-hidden relative">
+                            <img src="\${blog.img}" onerror="this.src='https://images.unsplash.com/photo-1592982537447-6f23f03b5eb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold \${badgeColor}">\${blog.category}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                                <span class="lang-en">\${blog.titleEn}</span><span class="lang-bn hidden">\${blog.titleBn}</span>
+                            </h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                                <span class="lang-en">\${blog.descEn}</span><span class="lang-bn hidden">\${blog.descBn}</span>
+                            </p>
+                            <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                                <span><i class="fa-regular fa-calendar mr-1"></i> \${blog.date}</span>
+                                <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>\`;
+                });
+                
+                // Inject at the top of the grid
+                container.innerHTML = dynamicHtml + container.innerHTML;
+                
+                // Re-apply language states for dynamic content
+                setTimeout(applyLanguage, 50);
+            }
+        });
+    </script>
+`;
+
+['articles.html', 'index.html'].forEach(file => {
+    let html = fs.readFileSync(path.join(dir, file), 'utf8');
+    if(!html.includes('Dynamic Admin Blogs Logic')) {
+        html = html.replace('</body>', dynamicBlogsScript + '\n</body>');
+        fs.writeFileSync(path.join(dir, file), html, 'utf8');
+    }
+});
+
+console.log("Admin v2 with Blog CRUD and dynamic rendering implemented successfully!");
