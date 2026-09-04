@@ -6,7 +6,7 @@
     <title>Blog - Foshol AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -18,15 +18,14 @@
                         'f-light': '#f5f9f6',
                     },
                     fontFamily: {
-                        'sans': ['Outfit', 'sans-serif'],
+                        'sans': ['Outfit', 'Hind Siliguri', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #f5f9f6; }
-        /* Chat Widget Styles */
+        body { font-family: 'Outfit', 'Hind Siliguri', sans-serif; background-color: #f5f9f6; }
         #chat-widget { transition: transform 0.3s ease, opacity 0.3s ease; }
         .chat-hidden { transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
         .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
@@ -40,25 +39,52 @@
 </head>
 <body class="text-gray-800 antialiased scroll-smooth relative">
 
+    <!-- Live Weather Top Bar -->
+    <div class="bg-green-900 text-white text-sm py-1.5 px-4 flex justify-between items-center z-50 relative">
+        <div class="flex items-center gap-3">
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            <span class="font-semibold tracking-wide text-xs">
+                <span class="lang-en">LIVE WEATHER (GLOBAL)</span>
+                <span class="lang-bn hidden">লাইভ আবহাওয়া</span>
+            </span>
+        </div>
+        <div id="weather-data" class="flex items-center gap-4 font-bold text-green-100">
+            <i class="fa-solid fa-spinner fa-spin"></i> <span class="lang-en">Loading...</span><span class="lang-bn hidden">লোড হচ্ছে...</span>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
             <img src="./foshol-ai.png" alt="Foshol AI" class="h-10 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div class="hidden text-3xl font-bold text-f-dark">
-                Foshol<span class="text-f-gold">AI</span>
-            </div>
+            <div class="hidden text-3xl font-bold text-f-dark">Foshol<span class="text-f-gold">AI</span></div>
         </div>
         
         <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
-            <a href="/" class="hover:text-f-dark transition">Home</a>
-            <a href="/about" class="hover:text-f-dark transition">About Us</a>
-            <a href="/services" class="hover:text-f-dark transition">Services</a>
-            <a href="/blog" class="text-f-dark transition border-b-2 border-f-dark pb-1">Blog</a>
+            <a href="/" class="hover:text-f-dark transition">
+                <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
+            </a>
+            <a href="/about" class="hover:text-f-dark transition">
+                <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
+            </a>
+            <a href="/services" class="hover:text-f-dark transition">
+                <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
+            </a>
+            <a href="/blog" class="text-f-dark transition border-b-2 border-f-dark pb-1">
+                <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+            </a>
         </div>
         
         <div class="hidden md:flex items-center gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition flex items-center gap-2">
+                <i class="fa-solid fa-language text-f-gold"></i> <span class="lang-btn-text">বাংলা</span>
+            </button>
             <a href="#chat-widget" onclick="toggleChat()" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-message"></i> Inbox Us
+                <i class="fa-solid fa-message"></i> 
+                <span class="lang-en">Inbox Us</span><span class="lang-bn hidden">ইনবক্স করুন</span>
             </a>
         </div>
 
@@ -72,32 +98,40 @@
     <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
         <a href="/" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
-            Home
+            <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
         </a>
         <a href="/about" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
-            About Us
+            <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
         </a>
         <a href="/services" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
-            Services
+            <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
         </a>
         <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
-            Blog
+            <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
         </a>
-        <div class="flex items-center justify-center pt-4">
-            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-full active:bg-green-800 shadow-md border-b-4 border-green-900">
-                <i class="fa-solid fa-message text-f-gold"></i> Inbox
+        <div class="flex items-center justify-between pt-4 gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
+                <i class="fa-solid fa-language text-lg text-f-gold"></i>
+                <span class="lang-btn-text">বাংলা</span>
+            </button>
+            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-1/2 active:bg-green-800 shadow-md border-b-4 border-green-900">
+                <i class="fa-solid fa-message text-f-gold"></i> 
+                <span class="lang-en">Inbox</span><span class="lang-bn hidden">ইনবক্স</span>
             </button>
         </div>
     </div>
 
     <!-- Page Header -->
     <div class="bg-f-dark py-16 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Agri Blog & Tips</h1>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+            <span class="lang-en">Agri Blog & Tips</span><span class="lang-bn hidden">কৃষি ব্লগ ও টিপস</span>
+        </h1>
         <p class="text-green-100 max-w-2xl mx-auto">
-            Learn in detail about modern farming, crop care, and new agricultural technology directly from our experts.
+            <span class="lang-en">Learn in detail about modern farming, crop care, and new agricultural technology directly from our experts.</span>
+            <span class="lang-bn hidden">আধুনিক চাষাবাদ, ফসলের যত্ন এবং নতুন কৃষি প্রযুক্তি সম্পর্কে বিস্তারিত জানুন আমাদের বিশেষজ্ঞদের কাছ থেকে।</span>
         </p>
     </div>
 
@@ -107,19 +141,25 @@
             <!-- Blog Card 1 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
                 <div class="h-48 bg-green-100 flex items-center justify-center relative">
-                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">Tips</span>
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">
+                        <span class="lang-en">Tips</span><span class="lang-bn hidden">টিপস</span>
+                    </span>
                     <i class="fa-solid fa-seedling text-green-300 text-6xl"></i>
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
-                        Effective ways to control Rice Blast
+                        <span class="lang-en">Effective ways to control Rice Blast</span>
+                        <span class="lang-bn hidden">ধানের ব্লাস্ট রোগ দমনের কার্যকরী উপায়</span>
                     </h3>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                        Rice blast occurs more frequently in high humidity and temperature. Learn how to control it naturally and chemically to save your harvest.
+                        <span class="lang-en">Rice blast occurs more frequently in high humidity and temperature. Learn how to control it naturally and chemically to save your harvest.</span>
+                        <span class="lang-bn hidden">উচ্চ আর্দ্রতা ও তাপমাত্রায় ধানের ব্লাস্ট রোগ বেশি হয়। কীভাবে এটি দমন করবেন তা বিস্তারিত জানুন।</span>
                     </p>
                     <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
                         <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> March 12, 2026</span>
-                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">Read More <i class="fa-solid fa-angle-right"></i></button>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">
+                            <span class="lang-en">Read More</span><span class="lang-bn hidden">আরও পড়ুন</span> <i class="fa-solid fa-angle-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -127,19 +167,25 @@
             <!-- Blog Card 2 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
                 <div class="h-48 bg-blue-100 flex items-center justify-center relative">
-                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">Technology</span>
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">
+                        <span class="lang-en">Technology</span><span class="lang-bn hidden">প্রযুক্তি</span>
+                    </span>
                     <i class="fa-solid fa-microchip text-blue-300 text-6xl"></i>
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
-                        How to identify crop diseases with AI
+                        <span class="lang-en">How to identify crop diseases with AI</span>
+                        <span class="lang-bn hidden">AI দিয়ে যেভাবে ফসলের রোগ চেনা যায়</span>
                     </h3>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                        Farmers' smartphones are not just for talking anymore; they act as modern crop doctors. Learn how artificial intelligence is changing agriculture.
+                        <span class="lang-en">Farmers' smartphones are not just for talking anymore; they act as modern crop doctors. Learn how artificial intelligence is changing agriculture.</span>
+                        <span class="lang-bn hidden">কৃষকদের স্মার্টফোন এখন ফসলের ডাক্তার হিসেবে কাজ করতে পারে। বিস্তারিত জানুন কীভাবে।</span>
                     </p>
                     <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
                         <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> February 15, 2026</span>
-                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">Read More <i class="fa-solid fa-angle-right"></i></button>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">
+                            <span class="lang-en">Read More</span><span class="lang-bn hidden">আরও পড়ুন</span> <i class="fa-solid fa-angle-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -147,19 +193,25 @@
             <!-- Blog Card 3 -->
             <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
                 <div class="h-48 bg-yellow-100 flex items-center justify-center relative">
-                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">Weather</span>
+                    <span class="absolute top-4 left-4 bg-white text-f-dark text-xs font-bold px-3 py-1 rounded-full shadow">
+                        <span class="lang-en">Weather</span><span class="lang-bn hidden">আবহাওয়া</span>
+                    </span>
                     <i class="fa-solid fa-cloud-sun-rain text-yellow-300 text-6xl"></i>
                 </div>
                 <div class="p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-3 hover:text-f-dark cursor-pointer transition">
-                        Is it okay to fertilize before rain?
+                        <span class="lang-en">Is it okay to fertilize before rain?</span>
+                        <span class="lang-bn hidden">বৃষ্টির আগে সার দেওয়া কি ঠিক?</span>
                     </h3>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                        Many farmers apply fertilizer before rain, but find out from this report how beneficial or harmful it actually is for the soil and plants.
+                        <span class="lang-en">Many farmers apply fertilizer before rain, but find out from this report how beneficial or harmful it actually is for the soil and plants.</span>
+                        <span class="lang-bn hidden">অনেকেই বৃষ্টির আগে সার দিয়ে থাকেন, কিন্তু এটি মাটির জন্য কতটুকু উপকারী তা জেনে নিন।</span>
                     </p>
                     <div class="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
                         <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> January 02, 2026</span>
-                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">Read More <i class="fa-solid fa-angle-right"></i></button>
+                        <button class="text-f-gold font-bold text-sm hover:text-f-dark transition">
+                            <span class="lang-en">Read More</span><span class="lang-bn hidden">আরও পড়ুন</span> <i class="fa-solid fa-angle-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -167,7 +219,7 @@
         
         <div class="flex justify-center mt-12">
             <button class="bg-white border-2 border-f-dark text-f-dark hover:bg-f-dark hover:text-white px-8 py-3 rounded-full font-bold transition shadow-sm">
-                Load More Articles
+                <span class="lang-en">Load More Articles</span><span class="lang-bn hidden">আরও লোড করুন</span>
             </button>
         </div>
     </section>
@@ -176,30 +228,35 @@
     <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold mt-12">
         <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
             <div class="flex items-center justify-center gap-2 mb-4">
-            <img src="./foshol-ai-footer.png" class="h-12 object-contain" alt="Foshol AI" onerror="this.src='./foshol-ai.png'">
-        </div>
+                <img src="./foshol-ai-footer.png" class="h-12 object-contain" alt="Foshol AI" onerror="this.src='./foshol-ai.png'">
+            </div>
             <p class="text-base text-green-100/80 mb-8">
-                Smart agricultural technology for modern farmers.
+                <span class="lang-en">Smart agricultural technology for modern farmers.</span>
+                <span class="lang-bn hidden">আধুনিক কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
             </p>
             <p>&copy; 2026 FosholAI. All Rights Reserved.</p>
         </div>
     </footer>
 
     <!-- AI Chat Floating Widget -->
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition z-50 animate-bounce">
-        <i class="fa-solid fa-robot"></i>
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center px-5 py-3 hover:scale-105 transition z-50 gap-2 font-bold animate-bounce">
+        <i class="fa-solid fa-robot text-xl"></i>
+        <span class="lang-en">AI Chat</span><span class="lang-bn hidden">এআই চ্যাট</span>
     </button>
 
     <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
         <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
-            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> Foshol AI Assistant</div>
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> <span class="lang-en">Foshol AI Assistant</span><span class="lang-bn hidden">ফসল AI সহকারী</span></div>
             <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
         </div>
         <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
-            <div class="chat-message chat-ai">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</div>
+            <div class="chat-message chat-ai">
+                <span class="lang-en">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</span>
+                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসলের কী সমস্যা হচ্ছে আমাকে বিস্তারিত বলতে পারেন।</span>
+            </div>
         </div>
         <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2">
-            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <input type="text" id="chat-input" placeholder="Type here..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
             <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -207,6 +264,52 @@
     </div>
 
     <script>
+        // --- Language Toggle Logic ---
+        let currentLang = localStorage.getItem('foshol_lang') || 'en';
+        
+        function applyLanguage() {
+            document.querySelectorAll('.lang-en').forEach(el => {
+                if(currentLang === 'en') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            document.querySelectorAll('.lang-bn').forEach(el => {
+                if(currentLang === 'bn') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('.lang-btn-text').forEach(el => {
+                el.innerText = currentLang === 'en' ? 'বাংলা' : 'English';
+            });
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('foshol_lang', currentLang);
+            applyLanguage();
+        }
+        
+        // Apply on load
+        applyLanguage();
+
+        // --- Live Weather Fetch ---
+        async function fetchWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current=temperature_2m,relative_humidity_2m&timezone=auto');
+                const data = await res.json();
+                const temp = Math.round(data.current.temperature_2m);
+                const humidity = data.current.relative_humidity_2m;
+                
+                document.getElementById('weather-data').innerHTML = `
+                    <i class="fa-solid fa-temperature-half"></i> ${temp}°C 
+                    <span class="mx-2 opacity-50">|</span> 
+                    <i class="fa-solid fa-droplet"></i> ${currentLang === 'bn' ? 'আর্দ্রতা' : 'Humidity'}: ${humidity}%
+                `;
+            } catch (error) {
+                document.getElementById('weather-data').innerHTML = currentLang === 'bn' ? 'আবহাওয়া পাওয়া যায়নি' : 'Weather unavailable';
+            }
+        }
+        fetchWeather();
+
         // --- Mobile Menu Logic ---
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
@@ -248,7 +351,7 @@
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ message, lang: currentLang })
                 });
                 
                 const data = await res.json();
@@ -258,7 +361,7 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
                 document.getElementById(typingId).remove();
-                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">Connection lost! Please try again.</div>`;
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">${currentLang === 'bn' ? 'সংযোগ বিচ্ছিন্ন হয়েছে!' : 'Connection lost!'}</div>`;
             }
         }
     </script>

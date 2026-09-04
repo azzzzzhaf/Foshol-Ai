@@ -6,7 +6,7 @@
     <title>Foshol AI - Smart Farming Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -18,23 +18,16 @@
                         'f-light': '#f5f9f6',
                     },
                     fontFamily: {
-                        'sans': ['Outfit', 'sans-serif'],
+                        'sans': ['Outfit', 'Hind Siliguri', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #f5f9f6; }
-        .dotted-line {
-            background-image: linear-gradient(to right, #155d35 50%, transparent 50%);
-            background-size: 16px 2px;
-            background-repeat: repeat-x;
-        }
+        body { font-family: 'Outfit', 'Hind Siliguri', sans-serif; background-color: #f5f9f6; }
         .dot { transition: all 0.3s ease; }
         .dot.active { background-color: #dda72b; width: 2rem; border-radius: 1rem; }
-        
-        /* Chat Widget Styles */
         #chat-widget { transition: transform 0.3s ease, opacity 0.3s ease; }
         .chat-hidden { transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
         .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
@@ -55,10 +48,13 @@
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
-            <span class="font-semibold tracking-wide text-xs">LIVE WEATHER (GLOBAL)</span>
+            <span class="font-semibold tracking-wide text-xs">
+                <span class="lang-en">LIVE WEATHER (GLOBAL)</span>
+                <span class="lang-bn hidden">লাইভ আবহাওয়া</span>
+            </span>
         </div>
         <div id="weather-data" class="flex items-center gap-4 font-bold text-green-100">
-            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+            <i class="fa-solid fa-spinner fa-spin"></i> <span class="lang-en">Loading...</span><span class="lang-bn hidden">লোড হচ্ছে...</span>
         </div>
     </div>
 
@@ -66,21 +62,31 @@
     <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
             <img src="./foshol-ai.png" alt="Foshol AI" class="h-10 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div class="hidden text-3xl font-bold text-f-dark">
-                Foshol<span class="text-f-gold">AI</span>
-            </div>
+            <div class="hidden text-3xl font-bold text-f-dark">Foshol<span class="text-f-gold">AI</span></div>
         </div>
         
         <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
-            <a href="/" class="text-f-dark transition border-b-2 border-f-dark pb-1">Home</a>
-            <a href="/about" class="hover:text-f-dark transition">About Us</a>
-            <a href="/services" class="hover:text-f-dark transition">Services</a>
-            <a href="/blog" class="hover:text-f-dark transition">Blog</a>
+            <a href="/" class="text-f-dark transition border-b-2 border-f-dark pb-1">
+                <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
+            </a>
+            <a href="/about" class="hover:text-f-dark transition">
+                <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
+            </a>
+            <a href="/services" class="hover:text-f-dark transition">
+                <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
+            </a>
+            <a href="/blog" class="hover:text-f-dark transition">
+                <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+            </a>
         </div>
         
         <div class="hidden md:flex items-center gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition flex items-center gap-2">
+                <i class="fa-solid fa-language text-f-gold"></i> <span class="lang-btn-text">বাংলা</span>
+            </button>
             <a href="#chat-widget" onclick="toggleChat()" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
-                <i class="fa-solid fa-message"></i> Inbox Us
+                <i class="fa-solid fa-message"></i> 
+                <span class="lang-en">Inbox Us</span><span class="lang-bn hidden">ইনবক্স করুন</span>
             </a>
         </div>
 
@@ -94,23 +100,28 @@
     <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
         <a href="/" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
-            Home
+            <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
         </a>
         <a href="/about" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
-            About Us
+            <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
         </a>
         <a href="/services" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
-            Services
+            <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
         </a>
         <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
-            Blog
+            <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
         </a>
-        <div class="flex items-center justify-center pt-4">
-            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-full active:bg-green-800 shadow-md border-b-4 border-green-900">
-                <i class="fa-solid fa-message text-f-gold"></i> Inbox
+        <div class="flex items-center justify-between pt-4 gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
+                <i class="fa-solid fa-language text-lg text-f-gold"></i>
+                <span class="lang-btn-text">বাংলা</span>
+            </button>
+            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-1/2 active:bg-green-800 shadow-md border-b-4 border-green-900">
+                <i class="fa-solid fa-message text-f-gold"></i> 
+                <span class="lang-en">Inbox</span><span class="lang-bn hidden">ইনবক্স</span>
             </button>
         </div>
     </div>
@@ -123,16 +134,19 @@
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.9), rgba(21, 93, 53, 0.4)), url('images/slide1.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-red-500/80 inline-flex px-4 py-1.5 rounded-full w-max">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Crop Disease
+                        <i class="fa-solid fa-triangle-exclamation"></i> 
+                        <span class="lang-en">Crop Disease</span><span class="lang-bn hidden">ফসলের রোগ</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        Worried about unknown crop <span class="text-red-300">diseases?</span>
+                        <span class="lang-en">Worried about unknown crop <span class="text-red-300">diseases?</span></span>
+                        <span class="lang-bn hidden">অচেনা ফসলের <span class="text-red-300">রোগ নিয়ে চিন্তিত?</span></span>
                     </h1>
                     <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
-                        Any issue with your hard-earned crops is no longer a fear. Solutions are now at your fingertips with technology.
+                        <span class="lang-en">Any issue with your hard-earned crops is no longer a fear. Solutions are now at your fingertips with technology.</span>
+                        <span class="lang-bn hidden">কষ্টের ফসলের কোনো সমস্যাই আর ভয়ের নয়। প্রযুক্তির সাহায্যে সমাধান এখন আপনার হাতের মুঠোয়।</span>
                     </p>
                     <a href="/services" class="bg-f-gold text-f-dark px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-500 transition w-max">
-                        Explore Solutions
+                        <span class="lang-en">Explore Solutions</span><span class="lang-bn hidden">সমাধান জানুন</span>
                     </a>
                 </div>
             </div>
@@ -142,16 +156,19 @@
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.9), rgba(21, 93, 53, 0.3)), url('images/slide2.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-blue-500/80 inline-flex px-4 py-1.5 rounded-full w-max">
-                        <i class="fa-solid fa-mobile-screen-button"></i> Easy Access
+                        <i class="fa-solid fa-mobile-screen-button"></i> 
+                        <span class="lang-en">Easy Access</span><span class="lang-bn hidden">সহজ ব্যবহার</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        Take a photo,<br><span class="text-blue-300">Inbox us</span>
+                        <span class="lang-en">Take a photo,<br><span class="text-blue-300">Inbox us</span></span>
+                        <span class="lang-bn hidden">ছবি তুলুন,<br><span class="text-blue-300">ইনবক্স করুন</span></span>
                     </h1>
                     <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
-                        Take a clear picture of the infected leaf and send it to our AI chat. No app installation needed!
+                        <span class="lang-en">Take a clear picture of the infected leaf and send it to our AI chat. No app installation needed!</span>
+                        <span class="lang-bn hidden">আক্রান্ত পাতার স্পষ্ট ছবি তুলে আমাদের এআই চ্যাটে পাঠিয়ে দিন। কোনো অ্যাপ ইনস্টলের ঝামেলা নেই!</span>
                     </p>
                     <button onclick="toggleChat()" class="bg-white text-f-dark px-8 py-3 rounded-full font-bold text-lg hover:bg-gray-100 transition w-max">
-                        Chat Now
+                        <span class="lang-en">Chat Now</span><span class="lang-bn hidden">এখনই চ্যাট করুন</span>
                     </button>
                 </div>
             </div>
@@ -161,16 +178,19 @@
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(21, 93, 53, 0.8), rgba(21, 93, 53, 0.2)), url('images/slide3.jpg')"></div>
                 <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
                     <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-f-gold inline-flex px-4 py-1.5 rounded-full w-max text-f-dark">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Magic
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 
+                        <span class="lang-en">AI Magic</span><span class="lang-bn hidden">এআই ম্যাজিক</span>
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-                        Get the exact <br><span class="text-f-gold">solution in seconds</span>
+                        <span class="lang-en">Get the exact <br><span class="text-f-gold">solution in seconds</span></span>
+                        <span class="lang-bn hidden">সঠিক সমাধান <br><span class="text-f-gold">পেয়ে যান সেকেন্ডেই</span></span>
                     </h1>
                     <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl">
-                        Our state-of-the-art AI technology instantly detects diseases and suggests correct medicine dosages.
+                        <span class="lang-en">Our state-of-the-art AI technology instantly detects diseases and suggests correct medicine dosages.</span>
+                        <span class="lang-bn hidden">আমাদের অত্যাধুনিক এআই প্রযুক্তি মুহূর্তেই রোগ নির্ণয় করে এবং সঠিক ঔষধের মাত্রা সাজেস্ট করে।</span>
                     </p>
                     <a href="/about" class="bg-f-dark border border-f-gold text-f-gold px-8 py-3 rounded-full font-bold text-lg hover:bg-green-800 transition w-max">
-                        How It Works
+                        <span class="lang-en">How It Works</span><span class="lang-bn hidden">কীভাবে কাজ করে</span>
                     </a>
                 </div>
             </div>
@@ -184,6 +204,66 @@
         </div>
     </section>
 
+    <!-- How It Works Section (Phone Scan 3 Steps) -->
+    <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto text-center">
+        <div class="mb-12">
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+                <span class="lang-en">How Foshol AI Works</span><span class="lang-bn hidden">ফসল AI কীভাবে কাজ করে</span>
+            </h2>
+            <p class="text-gray-600 text-lg">
+                <span class="lang-en">Scan your crops and get solutions in 3 easy steps.</span>
+                <span class="lang-bn hidden">৩টি সহজ ধাপে আপনার ফসলের রোগ স্ক্যান করে সমাধান পান।</span>
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            <!-- Connecting Line for Desktop -->
+            <div class="hidden md:block absolute top-[40px] left-[15%] right-[15%] h-1.5 bg-green-100 -z-10 rounded-full"></div>
+            
+            <!-- Step 1 -->
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
+                <div class="w-24 h-24 bg-f-dark text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg border-4 border-white group-hover:scale-110 group-hover:rotate-6 transition duration-300">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                    <span class="lang-en">1. Take a Photo</span><span class="lang-bn hidden">১. ছবি তুলুন</span>
+                </h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    <span class="lang-en">Take a clear picture of your infected crop or leaf using your smartphone camera.</span>
+                    <span class="lang-bn hidden">আপনার স্মার্টফোনের ক্যামেরা দিয়ে আক্রান্ত ফসল বা পাতার একটি পরিষ্কার ছবি তুলুন।</span>
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
+                <div class="w-24 h-24 bg-f-gold text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg border-4 border-white group-hover:scale-110 group-hover:-rotate-6 transition duration-300">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                    <span class="lang-en">2. Upload & Scan</span><span class="lang-bn hidden">২. আপলোড ও স্ক্যান</span>
+                </h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    <span class="lang-en">Open our AI chat box and upload the photo. Our AI will instantly scan the image.</span>
+                    <span class="lang-bn hidden">আমাদের এআই চ্যাটবক্সে ছবিটি আপলোড করুন। এআই সাথে সাথেই ছবি স্ক্যান করা শুরু করবে।</span>
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
+                <div class="w-24 h-24 bg-green-500 text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg border-4 border-white group-hover:scale-110 group-hover:rotate-6 transition duration-300">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                    <span class="lang-en">3. Get Solution</span><span class="lang-bn hidden">৩. সাথে সাথে সমাধান</span>
+                </h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    <span class="lang-en">The AI will identify the exact disease and recommend the correct medicine and dosage.</span>
+                    <span class="lang-bn hidden">এআই নির্ভুলভাবে রোগটি শনাক্ত করবে এবং সঠিক ঔষধ ও মাত্রা সাজেস্ট করবে।</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
     <!-- About Preview Section -->
     <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         <div class="flex flex-col lg:flex-row gap-16 items-center">
@@ -193,16 +273,20 @@
             </div>
             <div class="w-full lg:w-1/2">
                 <div class="flex items-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
-                    <i class="fa-solid fa-seedling text-f-gold text-lg"></i> Our Goal
+                    <i class="fa-solid fa-seedling text-f-gold text-lg"></i> 
+                    <span class="lang-en">Our Goal</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
                 </div>
                 <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-snug">
-                    Accurate crop disease diagnosis right from the field
+                    <span class="lang-en">Accurate crop disease diagnosis right from the field</span>
+                    <span class="lang-bn hidden">মাঠে বসেই ফসলের সঠিক রোগ নির্ণয় ও সমাধান</span>
                 </h2>
                 <p class="text-gray-600 mb-8 font-medium text-lg leading-relaxed">
-                    Through Foshol AI, we want to empower farmers globally. Using AI, any farmer can now identify crop problems completely for free, preventing massive harvest losses and boosting agricultural yields.
+                    <span class="lang-en">Through Foshol AI, we want to empower farmers globally. Using AI, any farmer can now identify crop problems completely for free, preventing massive harvest losses and boosting agricultural yields.</span>
+                    <span class="lang-bn hidden">ফসল AI এর মাধ্যমে আমরা কৃষকদের ক্ষমতায়ন করতে চাই। এআই (AI) ব্যবহার করে এখন যেকোনো কৃষক বিনামূল্যে তার ফসলের সমস্যা চিহ্নিত করতে পারবেন, যা ফসলের ক্ষতি কমাবে এবং ফলন বাড়াবে।</span>
                 </p>
                 <a href="/about" class="inline-block bg-f-dark text-white hover:bg-green-800 px-8 py-3 rounded-full font-bold transition shadow-lg">
-                    Learn More <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <span class="lang-en">Learn More <i class="fa-solid fa-arrow-right ml-2"></i></span>
+                    <span class="lang-bn hidden">বিস্তারিত জানুন <i class="fa-solid fa-arrow-right ml-2"></i></span>
                 </a>
             </div>
         </div>
@@ -211,8 +295,13 @@
     <!-- Success Stories Section -->
     <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto bg-f-light rounded-[3rem] my-12 border border-green-100">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Farmer Success Stories</h2>
-            <p class="text-gray-600 text-lg">See how Foshol AI is changing lives across the country.</p>
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+                <span class="lang-en">Farmer Success Stories</span><span class="lang-bn hidden">কৃষকদের সাফল্যের গল্প</span>
+            </h2>
+            <p class="text-gray-600 text-lg">
+                <span class="lang-en">See how Foshol AI is changing lives across the country.</span>
+                <span class="lang-bn hidden">দেখুন কীভাবে ফসল AI সারাদেশের কৃষকদের জীবনে পরিবর্তন আনছে।</span>
+            </p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 flex gap-6 items-start">
@@ -220,8 +309,13 @@
                     <img src="images/about.jpg" class="w-full h-full object-cover" onerror="this.style.display='none'">
                 </div>
                 <div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-2">"Saved my entire tomato harvest"</h4>
-                    <p class="text-gray-600 italic mb-4">"I noticed black spots on my tomatoes. Foshol AI identified it instantly as Blight and suggested the right cure. It saved my livelihood!"</p>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">
+                        <span class="lang-en">"Saved my entire tomato harvest"</span><span class="lang-bn hidden">"আমার টমেটোর পুরো ফলন বাঁচিয়ে দিয়েছে"</span>
+                    </h4>
+                    <p class="text-gray-600 italic mb-4">
+                        <span class="lang-en">"I noticed black spots on my tomatoes. Foshol AI identified it instantly as Blight and suggested the right cure. It saved my livelihood!"</span>
+                        <span class="lang-bn hidden">"আমি আমার টমেটোতে কালো দাগ লক্ষ্য করি। ফসল AI মুহূর্তেই এটিকে ব্লাইট রোগ হিসেবে চিহ্নিত করে এবং সঠিক ঔষধ সাজেস্ট করে। এটি আমার জীবিকা বাঁচিয়েছে!"</span>
+                    </p>
                     <span class="text-sm font-bold text-f-dark">- Rahim Uddin, Rajshahi</span>
                 </div>
             </div>
@@ -230,8 +324,13 @@
                     <img src="images/service2.jpg" class="w-full h-full object-cover" onerror="this.style.display='none'">
                 </div>
                 <div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-2">"Perfect fertilizer calculations"</h4>
-                    <p class="text-gray-600 italic mb-4">"I used to guess how much fertilizer to use and wasted money. Now the app tells me the exact amount for my 2 acres of land."</p>
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">
+                        <span class="lang-en">"Perfect fertilizer calculations"</span><span class="lang-bn hidden">"সঠিক সারের হিসাব"</span>
+                    </h4>
+                    <p class="text-gray-600 italic mb-4">
+                        <span class="lang-en">"I used to guess how much fertilizer to use and wasted money. Now the app tells me the exact amount for my 2 acres of land."</span>
+                        <span class="lang-bn hidden">"আমি আগে আন্দাজ করে সার দিতাম এবং টাকা নষ্ট করতাম। এখন অ্যাপটি আমাকে আমার ২ একর জমির জন্য সঠিক পরিমাণ বলে দেয়।"</span>
+                    </p>
                     <span class="text-sm font-bold text-f-dark">- Abdul Karim, Bogura</span>
                 </div>
             </div>
@@ -246,10 +345,19 @@
                     <i class="fa-solid fa-users"></i>
                 </div>
                 <div class="relative z-10">
-                    <span class="bg-f-gold text-f-dark font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider mb-6 inline-block">New Feature</span>
-                    <h3 class="text-3xl font-bold mb-4">Farmer Community Forum</h3>
-                    <p class="text-green-100 mb-8 text-lg">Connect with thousands of farmers and agricultural experts. Ask questions, share your harvest, and learn together.</p>
-                    <button class="bg-white text-f-dark px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg">Join Community</button>
+                    <span class="bg-f-gold text-f-dark font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider mb-6 inline-block">
+                        <span class="lang-en">New Feature</span><span class="lang-bn hidden">নতুন ফিচার</span>
+                    </span>
+                    <h3 class="text-3xl font-bold mb-4">
+                        <span class="lang-en">Farmer Community Forum</span><span class="lang-bn hidden">কৃষক কমিউনিটি ফোরাম</span>
+                    </h3>
+                    <p class="text-green-100 mb-8 text-lg">
+                        <span class="lang-en">Connect with thousands of farmers and agricultural experts. Ask questions, share your harvest, and learn together.</span>
+                        <span class="lang-bn hidden">হাজার হাজার কৃষক এবং কৃষি বিশেষজ্ঞদের সাথে যুক্ত হোন। প্রশ্ন করুন, আপনার ফসলের ছবি শেয়ার করুন এবং একসাথে শিখুন।</span>
+                    </p>
+                    <button class="bg-white text-f-dark px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg">
+                        <span class="lang-en">Join Community</span><span class="lang-bn hidden">কমিউনিটিতে যুক্ত হোন</span>
+                    </button>
                 </div>
             </div>
             
@@ -258,10 +366,19 @@
                     <i class="fa-solid fa-calendar-days"></i>
                 </div>
                 <div class="relative z-10">
-                    <span class="bg-f-dark text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider mb-6 inline-block">Coming Soon</span>
-                    <h3 class="text-3xl font-bold mb-4 text-gray-900">Smart Crop Calendar</h3>
-                    <p class="text-yellow-100 text-gray-800 mb-8 text-lg font-medium">Get monthly personalized guidelines on exactly what to plant and how to care for it based on your specific region.</p>
-                    <button class="bg-f-dark text-white px-8 py-3 rounded-full font-bold hover:bg-green-900 transition shadow-lg">Explore Calendar</button>
+                    <span class="bg-f-dark text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider mb-6 inline-block">
+                        <span class="lang-en">Coming Soon</span><span class="lang-bn hidden">শীঘ্রই আসছে</span>
+                    </span>
+                    <h3 class="text-3xl font-bold mb-4 text-gray-900">
+                        <span class="lang-en">Smart Crop Calendar</span><span class="lang-bn hidden">স্মার্ট ফসল ক্যালেন্ডার</span>
+                    </h3>
+                    <p class="text-yellow-100 text-gray-800 mb-8 text-lg font-medium">
+                        <span class="lang-en">Get monthly personalized guidelines on exactly what to plant and how to care for it based on your specific region.</span>
+                        <span class="lang-bn hidden">আপনার নির্দিষ্ট অঞ্চলের উপর ভিত্তি করে কোন মাসে কী বুনতে হবে এবং কীভাবে যত্ন নিতে হবে তার গাইডলাইন পান।</span>
+                    </p>
+                    <button class="bg-f-dark text-white px-8 py-3 rounded-full font-bold hover:bg-green-900 transition shadow-lg">
+                        <span class="lang-en">Explore Calendar</span><span class="lang-bn hidden">ক্যালেন্ডার দেখুন</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -271,30 +388,35 @@
     <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold mt-12">
         <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
             <div class="flex items-center justify-center gap-2 mb-4">
-            <img src="./foshol-ai-footer.png" class="h-12 object-contain" alt="Foshol AI" onerror="this.src='./foshol-ai.png'">
-        </div>
+                <img src="./foshol-ai-footer.png" class="h-12 object-contain" alt="Foshol AI" onerror="this.src='./foshol-ai.png'">
+            </div>
             <p class="text-base text-green-100/80 mb-8">
-                Smart agricultural technology for modern farmers.
+                <span class="lang-en">Smart agricultural technology for modern farmers.</span>
+                <span class="lang-bn hidden">আধুনিক কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
             </p>
             <p>&copy; 2026 FosholAI. All Rights Reserved.</p>
         </div>
     </footer>
 
     <!-- AI Chat Floating Widget -->
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition z-50 animate-bounce">
-        <i class="fa-solid fa-robot"></i>
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center px-5 py-3 hover:scale-105 transition z-50 gap-2 font-bold animate-bounce">
+        <i class="fa-solid fa-robot text-xl"></i>
+        <span class="lang-en">AI Chat</span><span class="lang-bn hidden">এআই চ্যাট</span>
     </button>
 
     <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
         <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
-            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> Foshol AI Assistant</div>
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> <span class="lang-en">Foshol AI Assistant</span><span class="lang-bn hidden">ফসল AI সহকারী</span></div>
             <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
         </div>
         <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
-            <div class="chat-message chat-ai">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</div>
+            <div class="chat-message chat-ai">
+                <span class="lang-en">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</span>
+                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসলের কী সমস্যা হচ্ছে আমাকে বিস্তারিত বলতে পারেন।</span>
+            </div>
         </div>
         <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2">
-            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <input type="text" id="chat-input" placeholder="Type here..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
             <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -302,11 +424,44 @@
     </div>
 
     <script>
+        // --- Language Toggle Logic ---
+        let currentLang = localStorage.getItem('foshol_lang') || 'en';
+        
+        function applyLanguage() {
+            document.querySelectorAll('.lang-en').forEach(el => {
+                if(currentLang === 'en') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            document.querySelectorAll('.lang-bn').forEach(el => {
+                if(currentLang === 'bn') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('.lang-btn-text').forEach(el => {
+                el.innerText = currentLang === 'en' ? 'বাংলা' : 'English';
+            });
+            
+            // Adjust body font if necessary
+            if(currentLang === 'bn') {
+                document.body.classList.replace('font-sans', 'font-bengali');
+            } else {
+                document.body.classList.replace('font-bengali', 'font-sans');
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('foshol_lang', currentLang);
+            applyLanguage();
+        }
+        
+        // Apply on load
+        applyLanguage();
+
         // --- Live Weather Fetch ---
         async function fetchWeather() {
             try {
-                // Fetching for a generic global coordinate or using geolocation API if preferred. We'll use a default.
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.71&longitude=-74.00&current=temperature_2m,relative_humidity_2m&timezone=auto');
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current=temperature_2m,relative_humidity_2m&timezone=auto');
                 const data = await res.json();
                 const temp = Math.round(data.current.temperature_2m);
                 const humidity = data.current.relative_humidity_2m;
@@ -314,10 +469,10 @@
                 document.getElementById('weather-data').innerHTML = `
                     <i class="fa-solid fa-temperature-half"></i> ${temp}°C 
                     <span class="mx-2 opacity-50">|</span> 
-                    <i class="fa-solid fa-droplet"></i> Humidity: ${humidity}%
+                    <i class="fa-solid fa-droplet"></i> ${currentLang === 'bn' ? 'আর্দ্রতা' : 'Humidity'}: ${humidity}%
                 `;
             } catch (error) {
-                document.getElementById('weather-data').innerHTML = "Weather data unavailable";
+                document.getElementById('weather-data').innerHTML = currentLang === 'bn' ? 'আবহাওয়া পাওয়া যায়নি' : 'Weather unavailable';
             }
         }
         fetchWeather();
@@ -399,7 +554,7 @@
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ message, lang: currentLang })
                 });
                 
                 const data = await res.json();
@@ -409,7 +564,7 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
                 document.getElementById(typingId).remove();
-                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">Connection lost! Please try again.</div>`;
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">${currentLang === 'bn' ? 'সংযোগ বিচ্ছিন্ন হয়েছে!' : 'Connection lost!'}</div>`;
             }
         }
     </script>
