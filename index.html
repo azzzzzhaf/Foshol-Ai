@@ -216,50 +216,61 @@
             </p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-            <!-- Step 1 -->
-            <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
-                <div class="w-full h-56 bg-gray-100 rounded-2xl overflow-hidden mb-6 shadow-inner relative">
-                    <img src="images/step1-camera.jpg" onerror="this.src='images/slide2.jpg'" alt="Take Photo" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    <div class="absolute top-4 left-4 bg-f-dark text-white w-12 h-12 flex items-center justify-center rounded-full font-bold text-2xl shadow-lg border-2 border-white">১</div>
+        <div class="relative z-10 max-w-6xl mx-auto">
+            <!-- Timeline Line (Connected Steps) -->
+            <div class="hidden md:block absolute top-[24px] left-[16.66%] right-[16.66%] h-0 border-t-[4px] border-dashed border-f-gold/60 z-0"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-full bg-f-dark text-white font-bold text-2xl flex items-center justify-center mb-6 shadow-xl z-10 border-4 border-f-light group-hover:scale-110 transition duration-300 ring-4 ring-f-dark/20">১</div>
+                    <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 w-full group-hover:-translate-y-2 transition duration-300">
+                        <div class="w-full h-48 bg-gray-100 rounded-2xl overflow-hidden mb-5 shadow-inner">
+                            <img src="images/step1-camera.jpg" onerror="this.src='images/slide2.jpg'" alt="Take Photo" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2 px-2 text-center">
+                            <span class="lang-en">Take a Photo</span><span class="lang-bn hidden">ছবি তুলুন</span>
+                        </h3>
+                        <p class="text-gray-600 text-base leading-relaxed px-2 pb-2 text-center">
+                            <span class="lang-en">Take a clear picture of your infected crop or leaf using your smartphone camera.</span>
+                            <span class="lang-bn hidden">আপনার স্মার্টফোনের ক্যামেরা দিয়ে আক্রান্ত ফসল বা পাতার একটি পরিষ্কার ছবি তুলুন।</span>
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3 px-2">
-                    <span class="lang-en">Take a Photo</span><span class="lang-bn hidden">ছবি তুলুন</span>
-                </h3>
-                <p class="text-gray-600 text-base leading-relaxed px-2 pb-2">
-                    <span class="lang-en">Take a clear picture of your infected crop or leaf using your smartphone camera.</span>
-                    <span class="lang-bn hidden">আপনার স্মার্টফোনের ক্যামেরা দিয়ে আক্রান্ত ফসল বা পাতার একটি পরিষ্কার ছবি তুলুন।</span>
-                </p>
-            </div>
 
-            <!-- Step 2 -->
-            <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
-                <div class="w-full h-56 bg-gray-100 rounded-2xl overflow-hidden mb-6 shadow-inner relative">
-                    <img src="images/step2-upload.jpg" onerror="this.src='images/service1.jpg'" alt="Upload" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    <div class="absolute top-4 left-4 bg-f-gold text-white w-12 h-12 flex items-center justify-center rounded-full font-bold text-2xl shadow-lg border-2 border-white">২</div>
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-full bg-f-gold text-white font-bold text-2xl flex items-center justify-center mb-6 shadow-xl z-10 border-4 border-f-light group-hover:scale-110 transition duration-300 ring-4 ring-f-gold/20">২</div>
+                    <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 w-full group-hover:-translate-y-2 transition duration-300">
+                        <div class="w-full h-48 bg-gray-100 rounded-2xl overflow-hidden mb-5 shadow-inner">
+                            <img src="images/step2-upload.jpg" onerror="this.src='images/service1.jpg'" alt="Upload" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2 px-2 text-center">
+                            <span class="lang-en">Upload & Scan</span><span class="lang-bn hidden">আপলোড ও স্ক্যান</span>
+                        </h3>
+                        <p class="text-gray-600 text-base leading-relaxed px-2 pb-2 text-center">
+                            <span class="lang-en">Open our AI chat box and upload the photo. Our AI will instantly scan the image.</span>
+                            <span class="lang-bn hidden">আমাদের এআই চ্যাটবক্সে ছবিটি আপলোড করুন। এআই সাথে সাথেই ছবি স্ক্যান করা শুরু করবে।</span>
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3 px-2">
-                    <span class="lang-en">Upload & Scan</span><span class="lang-bn hidden">আপলোড ও স্ক্যান</span>
-                </h3>
-                <p class="text-gray-600 text-base leading-relaxed px-2 pb-2">
-                    <span class="lang-en">Open our AI chat box and upload the photo. Our AI will instantly scan the image.</span>
-                    <span class="lang-bn hidden">আমাদের এআই চ্যাটবক্সে ছবিটি আপলোড করুন। এআই সাথে সাথেই ছবি স্ক্যান করা শুরু করবে।</span>
-                </p>
-            </div>
 
-            <!-- Step 3 -->
-            <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 relative group hover:-translate-y-2 transition duration-300">
-                <div class="w-full h-56 bg-gray-100 rounded-2xl overflow-hidden mb-6 shadow-inner relative">
-                    <img src="images/step3-solution.jpg" onerror="this.src='images/service3.jpg'" alt="Solution" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                    <div class="absolute top-4 left-4 bg-green-500 text-white w-12 h-12 flex items-center justify-center rounded-full font-bold text-2xl shadow-lg border-2 border-white">৩</div>
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-full bg-green-500 text-white font-bold text-2xl flex items-center justify-center mb-6 shadow-xl z-10 border-4 border-f-light group-hover:scale-110 transition duration-300 ring-4 ring-green-500/20">৩</div>
+                    <div class="bg-white p-5 rounded-[2rem] shadow-xl border border-gray-100 w-full group-hover:-translate-y-2 transition duration-300">
+                        <div class="w-full h-48 bg-gray-100 rounded-2xl overflow-hidden mb-5 shadow-inner">
+                            <img src="images/step3-solution.jpg" onerror="this.src='images/service3.jpg'" alt="Solution" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2 px-2 text-center">
+                            <span class="lang-en">Get Solution</span><span class="lang-bn hidden">সাথে সাথে সমাধান</span>
+                        </h3>
+                        <p class="text-gray-600 text-base leading-relaxed px-2 pb-2 text-center">
+                            <span class="lang-en">The AI will identify the exact disease and recommend the correct medicine and dosage.</span>
+                            <span class="lang-bn hidden">এআই নির্ভুলভাবে রোগটি শনাক্ত করবে এবং সঠিক ঔষধ ও মাত্রা সাজেস্ট করবে।</span>
+                        </p>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3 px-2">
-                    <span class="lang-en">Get Solution</span><span class="lang-bn hidden">সাথে সাথে সমাধান</span>
-                </h3>
-                <p class="text-gray-600 text-base leading-relaxed px-2 pb-2">
-                    <span class="lang-en">The AI will identify the exact disease and recommend the correct medicine and dosage.</span>
-                    <span class="lang-bn hidden">এআই নির্ভুলভাবে রোগটি শনাক্ত করবে এবং সঠিক ঔষধ ও মাত্রা সাজেস্ট করবে।</span>
-                </p>
             </div>
         </div>
     </section>
