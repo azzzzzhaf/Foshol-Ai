@@ -122,7 +122,7 @@
     <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Service 1 -->
-            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group cursor-pointer" onclick="openServiceChat('I want to detect a crop disease.', 'আমি ফসলের রোগ শনাক্ত করতে চাই।')">
                 <img src="images/service1.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
                 <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
                     <span class="lang-en">Disease Detection</span><span class="lang-bn hidden">রোগ ও পোকা শনাক্তকরণ</span>
@@ -131,9 +131,12 @@
                     <span class="lang-en">Simply upload a photo of the infected crop leaf, and our AI will identify the disease and the root problem within seconds.</span>
                     <span class="lang-bn hidden">ফসলের পাতার ছবি দিলেই আমাদের AI সেকেন্ডের মধ্যে রোগের নাম এবং সমস্যা চিহ্নিত করে দিবে।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 2 -->
-            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group cursor-pointer" onclick="openServiceChat('What is the weather forecast for my crop?', 'আমার এলাকার আজকের আবহাওয়া ও কৃষি পরামর্শ জানতে চাই।')">
                 <img src="images/service2.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
                 <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
                     <span class="lang-en">Weather Forecasting</span><span class="lang-bn hidden">আবহাওয়া ভিত্তিক পরামর্শ</span>
@@ -142,9 +145,12 @@
                     <span class="lang-en">Get accurate guidelines on when to apply fertilizer or water based on current local weather conditions in your area.</span>
                     <span class="lang-bn hidden">আপনার এলাকার বর্তমান আবহাওয়া অনুযায়ী কবে সার বা সেচ দিতে হবে তার সঠিক গাইডলাইন পাবেন।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 3 -->
-            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group cursor-pointer" onclick="openServiceChat('I need medicine dosage for my crop disease.', 'আমার ফসলের রোগের জন্য সঠিক ঔষধ ও মাত্রা জানতে চাই।')">
                 <img src="images/service3.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
                 <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
                     <span class="lang-en">Medicine Dosage</span><span class="lang-bn hidden">সঠিক ঔষধের মাত্রা</span>
@@ -153,6 +159,9 @@
                     <span class="lang-en">Our AI will clearly inform you exactly which medicine to use and the proper dosage according to the specific disease detected.</span>
                     <span class="lang-bn hidden">রোগ অনুযায়ী কোন ঔষধ কতটুকু মাত্রায় ব্যবহার করতে হবে, তা পরিষ্কার বাংলায় জানিয়ে দিবে AI।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 4 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -164,6 +173,9 @@
                     <span class="lang-en">If typing is difficult, simply use your voice to ask questions and get instant agricultural solutions directly from our AI.</span>
                     <span class="lang-bn hidden">টাইপ করতে সমস্যা হলে সরাসরি বাংলায় কথা বলে আমাদের এআই এর কাছ থেকে ফসলের সমস্যার সমাধান নিন।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 5 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -175,6 +187,9 @@
                     <span class="lang-en">Stay updated with the exact wholesale prices of daily crops and vegetables to ensure you get the best value for your hard work.</span>
                     <span class="lang-bn hidden">কৃষকরা যেন প্রতারিত না হন, সেজন্য প্রতিদিনের পাইকারি বাজারের চাল, ডাল ও সবজির সঠিক মূল্য জেনে নিন।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 6 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -186,6 +201,9 @@
                     <span class="lang-en">Select your land size and crop name, and our smart calculator will tell you exactly how much fertilizer is needed for optimal growth.</span>
                     <span class="lang-bn hidden">আপনার জমির পরিমাণ এবং ফসলের নাম সিলেক্ট করলেই আমাদের সিস্টেম বলে দিবে ঠিক কতটুকু সার লাগবে।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
 
             <!-- Service 7 -->
@@ -198,6 +216,9 @@
                     <span class="lang-en">If the AI is unsure, it automatically connects you to a certified agronomist for personalized advice.</span>
                     <span class="lang-bn hidden">এআই কোনো রোগ ধরতে ব্যর্থ হলে সাথে সাথেই আপনাকে একজন রেজিস্টার্ড কৃষি বিশেষজ্ঞের সাথে কানেক্ট করে দিবে।</span>
                 </p>
+                <div class="mt-6 text-f-dark font-bold flex items-center justify-center gap-2 group-hover:text-green-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Try Now</span><span class="lang-bn hidden">ব্যবহার করুন</span> <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
             <!-- Service 8 -->
             <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group flex flex-col justify-center text-center">
@@ -209,6 +230,9 @@
                     <span class="lang-en">Order 100% authentic seeds and fertilizers directly from our app and get doorstep delivery.</span>
                     <span class="lang-bn hidden">নকল সার/বীজের প্রতারণা থেকে বাঁচতে আমাদের অ্যাপ থেকে ১০০% আসল পণ্য অর্ডার করুন হোম ডেলিভারিতে।</span>
                 </p>
+                <div class="mt-6 text-f-gold font-bold flex items-center justify-center gap-2 group-hover:text-yellow-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Join Waitlist</span><span class="lang-bn hidden">ওয়েটলিস্টে যুক্ত হোন</span> <i class="fa-solid fa-clock"></i>
+                </div>
             </div>
             <!-- Service 9 -->
             <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group flex flex-col justify-center text-center">
@@ -220,6 +244,9 @@
                     <span class="lang-en">Buy seeds and fertilizers on credit. Get micro-loans based on your farm data and pay after harvest.</span>
                     <span class="lang-bn hidden">ফসল বোনার সময় বাকিতে সার-বীজ কিনুন এবং ফসল কাটার পর বিক্রি করে টাকা পরিশোধ করুন খুব সহজেই।</span>
                 </p>
+                <div class="mt-6 text-f-gold font-bold flex items-center justify-center gap-2 group-hover:text-yellow-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Join Waitlist</span><span class="lang-bn hidden">ওয়েটলিস্টে যুক্ত হোন</span> <i class="fa-solid fa-clock"></i>
+                </div>
             </div>
             <!-- Service 10 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -231,6 +258,9 @@
                     <span class="lang-en">List your upcoming harvest on our platform to secure guaranteed off-take from institutional buyers.</span>
                     <span class="lang-bn hidden">আপনার ফসল কাটার আগেই অ্যাপে জানিয়ে রাখুন এবং শহরের বড় ক্রেতাদের কাছে ন্যায্যমূল্যে সরাসরি বিক্রি করুন।</span>
                 </p>
+                <div class="mt-6 text-f-gold font-bold flex items-center justify-center gap-2 group-hover:text-yellow-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Join Waitlist</span><span class="lang-bn hidden">ওয়েটলিস্টে যুক্ত হোন</span> <i class="fa-solid fa-clock"></i>
+                </div>
             </div>
             <!-- Service 11 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -242,6 +272,9 @@
                     <span class="lang-en">Rent tractors, drones, and harvesters on a daily or hourly basis from farmers in your community.</span>
                     <span class="lang-bn hidden">আপনার এলাকার অন্যান্য কৃষকদের কাছ থেকে ঘণ্টা বা দিন চুক্তিতে ট্রাক্টর, ড্রোন বা আধুনিক মেশিন ভাড়া করুন।</span>
                 </p>
+                <div class="mt-6 text-f-gold font-bold flex items-center justify-center gap-2 group-hover:text-yellow-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Join Waitlist</span><span class="lang-bn hidden">ওয়েটলিস্টে যুক্ত হোন</span> <i class="fa-solid fa-clock"></i>
+                </div>
             </div>
             <!-- Service 12 -->
             <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
@@ -253,6 +286,9 @@
                     <span class="lang-en">Monitor your farm health via satellite and get automatic micro-insurance payouts during severe weather.</span>
                     <span class="lang-bn hidden">স্যাটেলাইটের মাধ্যমে আপনার জমির অবস্থা মনিটর করুন এবং আবহাওয়া খারাপ হলে অটোমেটিক বীমার টাকা পেয়ে যান।</span>
                 </p>
+                <div class="mt-6 text-f-gold font-bold flex items-center justify-center gap-2 group-hover:text-yellow-600 transition opacity-80 group-hover:opacity-100">
+                    <span class="lang-en">Join Waitlist</span><span class="lang-bn hidden">ওয়েটলিস্টে যুক্ত হোন</span> <i class="fa-solid fa-clock"></i>
+                </div>
             </div>
 
         </div>
@@ -361,6 +397,17 @@
             document.getElementById('chat-widget').classList.toggle('chat-hidden');
         }
 
+        
+        function openServiceChat(enPrompt, bnPrompt) {
+            const chatWidget = document.getElementById("chat-widget");
+            if (chatWidget.classList.contains("chat-hidden")) {
+                toggleChat();
+            }
+            const msg = currentLang === "en" ? enPrompt : bnPrompt;
+            document.getElementById("chat-input").value = msg;
+            sendChatMessage();
+        }
+        
         function sendSuggested(enMsg, bnMsg) {
             const msg = currentLang === 'en' ? enMsg : bnMsg;
             document.getElementById('chat-input').value = msg;
