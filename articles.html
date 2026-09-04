@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Foshol AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'f-dark': '#155d35',
+                        'f-gold': '#dda72b',
+                        'f-light': '#f5f9f6',
+                    },
+                    fontFamily: {
+                        'sans': ['Outfit', 'Hind Siliguri', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Outfit', 'Hind Siliguri', sans-serif; background-color: #f5f9f6; }
+        #chat-widget { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .chat-hidden { transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
+        .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .chat-user { background-color: #155d35; color: white; border-bottom-right-radius: 4px; margin-left: auto; }
+        .chat-ai { background-color: #f1f5f9; color: #333; border-bottom-left-radius: 4px; margin-right: auto; }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body class="text-gray-800 antialiased scroll-smooth relative">
+
+    <!-- Navbar -->
+    <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
+            <img src="./foshol-ai.png" alt="Foshol AI" class="h-10 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="hidden text-3xl font-bold text-f-dark">Foshol<span class="text-f-gold">AI</span></div>
+        </div>
+        
+        <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
+            <a href="/" class="hover:text-f-dark transition">
+                <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
+            </a>
+            <a href="/about" class="hover:text-f-dark transition">
+                <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
+            </a>
+            <a href="/services" class="text-f-dark transition border-b-2 border-f-dark pb-1">
+                <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
+            </a>
+            <a href="/blog" class="hover:text-f-dark transition">
+                <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
+            </a>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition flex items-center gap-2">
+                <i class="fa-solid fa-language text-f-gold"></i> <span class="lang-btn-text">বাংলা</span>
+            </button>
+            <a href="#chat-widget" onclick="toggleChat()" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-message"></i> 
+                <span class="lang-en">Inbox Us</span><span class="lang-bn hidden">ইনবক্স করুন</span>
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden text-f-dark text-3xl focus:outline-none pr-2 transition-transform active:scale-95">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
+        <a href="/" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
+            <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
+        </a>
+        <a href="/about" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
+            <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
+        </a>
+        <a href="/services" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
+            <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
+        </a>
+        <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
+            <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
+        </a>
+        <div class="flex items-center justify-between pt-4 gap-4">
+            <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
+                <i class="fa-solid fa-language text-lg text-f-gold"></i>
+                <span class="lang-btn-text">বাংলা</span>
+            </button>
+            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-1/2 active:bg-green-800 shadow-md border-b-4 border-green-900">
+                <i class="fa-solid fa-message text-f-gold"></i> 
+                <span class="lang-en">Inbox</span><span class="lang-bn hidden">ইনবক্স</span>
+            </button>
+        </div>
+    </div>
+
+    
+    <!-- Page Header -->
+    <div class="bg-f-dark py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+            <span class="lang-en">Krishi Blog & Resources</span><span class="lang-bn hidden">কৃষি ব্লগ ও রিসোর্স</span>
+        </h1>
+        <p class="text-green-100 max-w-2xl mx-auto">
+            <span class="lang-en">Read the latest articles, farming techniques, and technology updates to increase your agricultural knowledge.</span>
+            <span class="lang-bn hidden">আধুনিক কৃষি প্রযুক্তি, চাষাবাদের নতুন পদ্ধতি এবং খামার পরিচালনার গুরুত্বপূর্ণ আর্টিকেল পড়ুন।</span>
+        </p>
+    </div>
+    
+    <!-- Blog Section -->
+
+    <!-- Krishi Blog Section -->
+    <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
+        
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-en">How AI is Revolutionizing Agriculture in Bangladesh</span>
+                        <span class="lang-bn hidden">বাংলাদেশে কৃষিখাতে এআই-এর বিপ্লব</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-en">Artificial Intelligence is helping rural farmers detect diseases instantly and increase crop yield by up to 30%.</span>
+                        <span class="lang-bn hidden">কৃত্রিম বুদ্ধিমত্তা ব্যবহার করে প্রান্তিক কৃষকরা এখন মুহূর্তের মধ্যে ফসলের রোগ নির্ণয় করতে পারছেন।</span>
+                    </p>
+                    <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                        <span><i class="fa-regular fa-calendar mr-1"></i> 12 Sep 2026</span>
+                        <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 2 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                <div class="h-48 bg-gray-200 overflow-hidden relative">
+                    <img src="images/blog2.jpg" onerror="this.src='https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-f-gold">Farming</div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-en">Top 5 Organic Fertilizers for Rice Fields</span>
+                        <span class="lang-bn hidden">ধানের জমিতে ৫টি সেরা জৈব সারের ব্যবহার</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-en">Reduce costs and improve soil health by using these highly effective organic fertilizers this season.</span>
+                        <span class="lang-bn hidden">রাসায়নিক সারের খরচ কমিয়ে কীভাবে জৈব সার ব্যবহার করে ধানের ফলন বাড়ানো যায়, তা নিয়ে বিস্তারিত গাইডলাইন।</span>
+                    </p>
+                    <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                        <span><i class="fa-regular fa-calendar mr-1"></i> 10 Sep 2026</span>
+                        <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Card 3 -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                <div class="h-48 bg-gray-200 overflow-hidden relative">
+                    <img src="images/blog3.jpg" onerror="this.src='https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-orange-500">Weather</div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                        <span class="lang-en">How to Protect Crops from Unseasonal Rains</span>
+                        <span class="lang-bn hidden">অসময়ের বৃষ্টি থেকে ফসল রক্ষার উপায়</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        <span class="lang-en">Climate change brings unexpected rain. Learn how to construct proper drainage and save your vegetables.</span>
+                        <span class="lang-bn hidden">জলবায়ু পরিবর্তনের ফলে হঠাৎ বৃষ্টিতে সবজি ক্ষেতের পচন রোধ করতে কী ধরনের ড্রেনেজ ব্যবস্থা নেওয়া উচিত।</span>
+                    </p>
+                    <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                        <span><i class="fa-regular fa-calendar mr-1"></i> 08 Sep 2026</span>
+                        <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </section>
+<!-- Footer -->
+    <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold mt-12">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <img src="./foshol-ai-footer.png" class="h-12 object-contain" alt="Foshol AI" onerror="this.src='./foshol-ai.png'">
+            </div>
+            <p class="text-base text-green-100/80 mb-8">
+                <span class="lang-en">Smart agricultural technology for modern farmers.</span>
+                <span class="lang-bn hidden">আধুনিক কৃষকদের জন্য স্মার্ট কৃষি প্রযুক্তি।</span>
+            </p>
+            <p>&copy; 2026 FosholAI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- AI Chat Floating Widget -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center px-5 py-3 hover:scale-105 transition z-50 gap-2 font-bold animate-bounce">
+        <i class="fa-solid fa-robot text-xl"></i>
+        <span class="lang-en">AI Chat</span><span class="lang-bn hidden">এআই চ্যাট</span>
+    </button>
+
+    <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
+        <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> <span class="lang-en">Foshol AI Assistant</span><span class="lang-bn hidden">ফসল AI সহকারী</span></div>
+            <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
+            <div class="chat-message chat-ai w-[90%] md:w-[85%]">
+                <span class="lang-en">Hello! I am Foshol AI. Please select your crop or describe the problem:</span>
+                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসল নির্বাচন করুন অথবা সমস্যার কথা লিখুন:</span>
+                
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button onclick="sendSuggested('🌾 Rice', '🌾 ধান')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌾 <span class="lang-en">Rice</span><span class="lang-bn hidden">ধান</span></button>
+                    <button onclick="sendSuggested('🥔 Potato', '🥔 আলু')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥔 <span class="lang-en">Potato</span><span class="lang-bn hidden">আলু</span></button>
+                    <button onclick="sendSuggested('🍅 Tomato', '🍅 টমেটো')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🍅 <span class="lang-en">Tomato</span><span class="lang-bn hidden">টমেটো</span></button>
+                    <button onclick="sendSuggested('🌶️ Chili', '🌶️ মরিচ')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌶️ <span class="lang-en">Chili</span><span class="lang-bn hidden">মরিচ</span></button>
+                    <button onclick="sendSuggested('🥭 Mango', '🥭 আম')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥭 <span class="lang-en">Mango</span><span class="lang-bn hidden">আম</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2 items-center">
+            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Voice Message">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Upload Photo">
+                <i class="fa-solid fa-camera"></i>
+            </button>
+            <input type="text" id="chat-input" placeholder="Type..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Language Toggle Logic ---
+        let currentLang = localStorage.getItem('foshol_lang') || 'bn';
+        
+        function applyLanguage() {
+            document.querySelectorAll('.lang-en').forEach(el => {
+                if(currentLang === 'en') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            document.querySelectorAll('.lang-bn').forEach(el => {
+                if(currentLang === 'bn') el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('.lang-btn-text').forEach(el => {
+                el.innerText = currentLang === 'en' ? 'বাংলা' : 'English';
+            });
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('foshol_lang', currentLang);
+            applyLanguage();
+        }
+        
+        // Apply on load
+        applyLanguage();
+
+        // --- Mobile Menu Logic ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.querySelector('#mobile-menu-btn i');
+            if(menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // --- AI Chat Logic ---
+        function toggleChat() {
+            document.getElementById('chat-widget').classList.toggle('chat-hidden');
+        }
+
+        
+        function openServiceChat(enPrompt, bnPrompt) {
+            const chatWidget = document.getElementById("chat-widget");
+            if (chatWidget.classList.contains("chat-hidden")) {
+                toggleChat();
+            }
+            const msg = currentLang === "en" ? enPrompt : bnPrompt;
+            document.getElementById("chat-input").value = msg;
+            sendChatMessage();
+        }
+        
+        function sendSuggested(enMsg, bnMsg) {
+            const msg = currentLang === 'en' ? enMsg : bnMsg;
+            document.getElementById('chat-input').value = msg;
+            sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if(!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            
+            chatBox.innerHTML += `<div class="chat-message chat-user">${message}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const typingId = "typing-" + Date.now();
+            let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            
+            // If message suggests disease detection or image upload
+            if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি')) {
+                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
+                    <div class="relative w-12 h-12">
+                        <i class="fa-solid fa-leaf text-4xl text-green-300 absolute inset-0"></i>
+                        <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
+                    </div>
+                    <span class="text-green-700 font-bold text-xs"><span class="lang-en">Scanning Crop Data...</span><span class="lang-bn hidden">ছবি স্ক্যান করা হচ্ছে...</span></span>
+                </div>`;
+            }
+            chatBox.innerHTML += typingHtml;
+            // applyLanguage again so the dynamic lang spans work inside the new chat block
+            setTimeout(applyLanguage, 10);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, lang: currentLang })
+                });
+                
+                const data = await res.json();
+                document.getElementById(typingId).remove();
+                
+                chatBox.innerHTML += `<div class="chat-message chat-ai">${data.reply || data.error}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                document.getElementById(typingId).remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">${currentLang === 'bn' ? 'সংযোগ বিচ্ছিন্ন হয়েছে!' : 'Connection lost!'}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
