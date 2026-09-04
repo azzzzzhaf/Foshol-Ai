@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Foshol AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'f-dark': '#155d35',
+                        'f-gold': '#dda72b',
+                        'f-light': '#f5f9f6',
+                    },
+                    fontFamily: {
+                        'sans': ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f5f9f6; }
+        /* Chat Widget Styles */
+        #chat-widget { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .chat-hidden { transform: translateY(20px) scale(0.9); opacity: 0; pointer-events: none; }
+        .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .chat-user { background-color: #155d35; color: white; border-bottom-right-radius: 4px; margin-left: auto; }
+        .chat-ai { background-color: #f1f5f9; color: #333; border-bottom-left-radius: 4px; margin-right: auto; }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body class="text-gray-800 antialiased scroll-smooth relative">
+
+    <!-- Navbar -->
+    <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
+            <img src="./foshol-ai.png" alt="Foshol AI" class="h-10 md:h-12 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="hidden text-3xl font-bold text-f-dark">
+                Foshol<span class="text-f-gold">AI</span>
+            </div>
+        </div>
+        
+        <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
+            <a href="/" class="hover:text-f-dark transition">Home</a>
+            <a href="/about" class="hover:text-f-dark transition">About Us</a>
+            <a href="/services" class="text-f-dark transition border-b-2 border-f-dark pb-1">Services</a>
+            <a href="/blog" class="hover:text-f-dark transition">Blog</a>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-4">
+            <a href="#chat-widget" onclick="toggleChat()" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-message"></i> Inbox Us
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden text-f-dark text-3xl focus:outline-none pr-2 transition-transform active:scale-95">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
+        <a href="/" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
+            Home
+        </a>
+        <a href="/about" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
+            About Us
+        </a>
+        <a href="/services" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
+            Services
+        </a>
+        <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
+            Blog
+        </a>
+        <div class="flex items-center justify-center pt-4">
+            <button onclick="toggleChat(); toggleMobileMenu();" class="bg-f-dark text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 w-full active:bg-green-800 shadow-md border-b-4 border-green-900">
+                <i class="fa-solid fa-message text-f-gold"></i> Inbox
+            </button>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="bg-f-dark py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">All Our Services</h1>
+        <p class="text-green-100 max-w-2xl mx-auto">
+            Foshol AI brings 6 special smart services for modern farmers to make agriculture easier, safer, and more profitable.
+        </p>
+    </div>
+
+    <!-- Full Services Grid -->
+    <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Service 1 -->
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+                <img src="images/service1.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Disease Detection</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Simply upload a photo of the infected crop leaf, and our AI will identify the disease and the root problem within seconds.
+                </p>
+            </div>
+            <!-- Service 2 -->
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+                <img src="images/service2.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Weather Forecasting</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Get accurate guidelines on when to apply fertilizer or water based on current local weather conditions in your area.
+                </p>
+            </div>
+            <!-- Service 3 -->
+            <div class="bg-white rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-xl border border-gray-100 group">
+                <img src="images/service3.jpg" class="w-full h-48 object-cover rounded-2xl mb-6" onerror="this.style.display='none'">
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Medicine Dosage</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Our AI will clearly inform you exactly which medicine to use and the proper dosage according to the specific disease detected.
+                </p>
+            </div>
+            <!-- Service 4 -->
+            <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
+                <i class="fa-solid fa-microphone text-6xl text-f-dark mb-6"></i>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Voice Command AI</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    If typing is difficult, simply use your voice to ask questions and get instant agricultural solutions directly from our AI.
+                </p>
+            </div>
+            <!-- Service 5 -->
+            <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
+                <i class="fa-solid fa-chart-line text-6xl text-f-dark mb-6"></i>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Daily Market Prices</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Stay updated with the exact wholesale prices of daily crops and vegetables to ensure you get the best value for your hard work.
+                </p>
+            </div>
+            <!-- Service 6 -->
+            <div class="bg-f-light rounded-[2rem] p-8 hover:-translate-y-3 transition duration-300 shadow-lg border border-f-dark/10 group flex flex-col justify-center text-center">
+                <i class="fa-solid fa-calculator text-6xl text-f-dark mb-6"></i>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">Fertilizer Calculator</h3>
+                <p class="text-gray-600 text-base leading-relaxed">
+                    Select your land size and crop name, and our smart calculator will tell you exactly how much fertilizer is needed for optimal growth.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold mt-12">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <div class="flex items-center justify-center gap-2 text-4xl font-bold text-white mb-3">
+                <img src="./foshol-ai.png" class="h-10 object-contain" alt="Logo" onerror="this.style.display='none'">
+                <span>Foshol<span class="text-f-gold">AI</span></span>
+            </div>
+            <p class="text-base text-green-100/80 mb-8">
+                Smart agricultural technology for modern farmers.
+            </p>
+            <p>&copy; 2026 FosholAI. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- AI Chat Floating Widget -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
+        <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> Foshol AI Assistant</div>
+            <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
+            <div class="chat-message chat-ai">Hello! I am Foshol AI. Please describe the problem with your crops or ask any agricultural questions.</div>
+        </div>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Mobile Menu Logic ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.querySelector('#mobile-menu-btn i');
+            if(menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // --- AI Chat Logic ---
+        function toggleChat() {
+            document.getElementById('chat-widget').classList.toggle('chat-hidden');
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if(!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            
+            chatBox.innerHTML += `<div class="chat-message chat-user">${message}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const typingId = "typing-" + Date.now();
+            chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await res.json();
+                document.getElementById(typingId).remove();
+                
+                chatBox.innerHTML += `<div class="chat-message chat-ai">${data.reply || data.error}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                document.getElementById(typingId).remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">Connection lost! Please try again.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
