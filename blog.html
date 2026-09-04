@@ -383,5 +383,58 @@
             }
         }
     </script>
+
+    <!-- Dynamic Admin Alerts Logic -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const alerts = JSON.parse(localStorage.getItem('foshol_alerts') || '[]');
+            const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.gap-6');
+            
+            if (alerts.length > 0 && container) {
+                let dynamicHtml = '';
+                
+                alerts.forEach(alert => {
+                    let typeClass = 'border-green-500';
+                    let bgBadge = 'bg-green-100 text-green-800';
+                    let icon = '<i class="fa-solid fa-seedling"></i>';
+                    let typeNameEn = 'General Update';
+                    let typeNameBn = 'সাধারণ তথ্য';
+                    let locIconColor = 'text-green-500';
+                    
+                    if(alert.type === 'red') {
+                        typeClass = 'border-red-500'; bgBadge = 'bg-red-100 text-red-800'; icon = '<span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>'; typeNameEn = 'High Alert'; typeNameBn = 'মারাত্মক সতর্কতা'; locIconColor = 'text-red-400';
+                    } else if(alert.type === 'orange') {
+                        typeClass = 'border-orange-500'; bgBadge = 'bg-orange-100 text-orange-800'; icon = '<i class="fa-solid fa-cloud-showers-heavy"></i>'; typeNameEn = 'Weather Warning'; typeNameBn = 'আবহাওয়া সতর্কতা'; locIconColor = 'text-orange-400';
+                    } else if(alert.type === 'yellow') {
+                        typeClass = 'border-yellow-400'; bgBadge = 'bg-yellow-100 text-yellow-800'; icon = '<i class="fa-solid fa-bug"></i>'; typeNameEn = 'Pest Alert'; typeNameBn = 'পোকামাকড় সতর্কতা'; locIconColor = 'text-yellow-500';
+                    }
+
+                    dynamicHtml += `
+                    <div class="bg-white rounded-3xl p-6 shadow-md border-l-8 ${typeClass} hover:-translate-y-2 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="${bgBadge} font-bold px-3 py-1 rounded-full text-xs uppercase flex items-center gap-2">
+                                ${icon} <span class="lang-en">${typeNameEn}</span><span class="lang-bn hidden">${typeNameBn}</span>
+                            </span>
+                            <span class="text-gray-400 text-xs font-bold"><i class="fa-solid fa-clock"></i> ${alert.time}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">
+                            <span class="lang-en">${alert.titleEn}</span><span class="lang-bn hidden">${alert.titleBn}</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                            <span class="lang-en">${alert.msgEn}</span><span class="lang-bn hidden">${alert.msgBn}</span>
+                        </p>
+                        <div class="text-xs font-bold text-gray-500"><i class="fa-solid fa-location-dot ${locIconColor}"></i> ${alert.loc}</div>
+                    </div>`;
+                });
+                
+                // Inject at the top of the grid
+                container.innerHTML = dynamicHtml + container.innerHTML;
+                
+                // Re-apply language states for dynamic content
+                setTimeout(applyLanguage, 50);
+            }
+        });
+    </script>
+
 </body>
 </html>
