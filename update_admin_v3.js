@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+
+const dir = 'g:/1. Clude/03. Mine/2. Krishi Ai';
+
+// -------------------------------------------------------------
+// 1. OVERWRITE admin.html WITH SEO, SLUG, & IMAGE COMPRESSION
+// -------------------------------------------------------------
+const adminHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -166,7 +174,7 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-green-800', 'text-white'); btn.classList.add('text-green-100'); });
-            const activeBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+            const activeBtn = document.querySelector(\`.nav-btn[data-tab="\${tabId}"]\`);
             activeBtn.classList.add('bg-green-800', 'text-white');
             activeBtn.classList.remove('text-green-100');
             document.getElementById('page-title').innerText = { 'dashboard': 'Dashboard Overview', 'alerts': 'Manage AI Alerts', 'blogs': 'Manage Krishi Blogs' }[tabId];
@@ -225,22 +233,22 @@
             const alertBody = document.getElementById('alerts-table-body');
             alertBody.innerHTML = '';
             alerts.forEach((item, index) => {
-                alertBody.innerHTML += `<tr class="hover:bg-gray-50"><td class="p-4 font-bold">${item.titleEn}</td><td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">${item.type}</span></td><td class="p-4 text-sm">${item.loc}</td><td class="p-4 text-right"><button onclick="deleteAlert(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                alertBody.innerHTML += \`<tr class="hover:bg-gray-50"><td class="p-4 font-bold">\${item.titleEn}</td><td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">\${item.type}</span></td><td class="p-4 text-sm">\${item.loc}</td><td class="p-4 text-right"><button onclick="deleteAlert(\${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>\`;
             });
 
             // Blogs Table
             const blogBody = document.getElementById('blogs-table-body');
             blogBody.innerHTML = '';
             blogs.forEach((item, index) => {
-                blogBody.innerHTML += `<tr class="hover:bg-gray-50">
+                blogBody.innerHTML += \`<tr class="hover:bg-gray-50">
                     <td class="p-4">
-                        <div class="font-bold">${item.titleEn}</div>
-                        <div class="text-xs text-blue-500">/${item.slug}</div>
+                        <div class="font-bold">\${item.titleEn}</div>
+                        <div class="text-xs text-blue-500">/\${item.slug}</div>
                     </td>
-                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">${item.category}</span></td>
-                    <td class="p-4 text-sm">${item.date}</td>
-                    <td class="p-4 text-right"><button onclick="deleteBlog(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>`;
+                    <td class="p-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs uppercase">\${item.category}</span></td>
+                    <td class="p-4 text-sm">\${item.date}</td>
+                    <td class="p-4 text-right"><button onclick="deleteBlog(\${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>\`;
             });
         }
 
@@ -298,4 +306,132 @@
         }
     </script>
 </body>
-</html>
+</html>`;
+fs.writeFileSync(path.join(dir, 'admin.html'), adminHtml, 'utf8');
+
+// -------------------------------------------------------------
+// 2. OVERWRITE articles.html (Dynamic SPA routing for Single Blog Post)
+// -------------------------------------------------------------
+let articlesHtml = fs.readFileSync(path.join(dir, 'articles.html'), 'utf8');
+
+// Wrap the existing Blog section in a Grid Container and add a Single Post Container
+articlesHtml = articlesHtml.replace('<section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">', 
+    `<section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
+        <!-- ALL BLOGS GRID -->
+        <div id="blog-grid-container">`);
+articlesHtml = articlesHtml.replace('<!-- Footer -->', 
+        `</div>
+        
+        <!-- SINGLE POST VIEW (Hidden by default) -->
+        <div id="single-post-container" class="hidden bg-white rounded-[3rem] p-8 md:p-16 shadow-lg border border-gray-100 mt-[-5rem] relative z-10 mx-auto max-w-4xl">
+            <a href="/articles" class="inline-block mb-8 text-f-dark font-bold hover:text-green-800 transition bg-green-50 px-4 py-2 rounded-full">
+                <i class="fa-solid fa-arrow-left mr-2"></i> <span class="lang-en">Back to Articles</span><span class="lang-bn hidden">ফিরে যান</span>
+            </a>
+            
+            <span id="sp-category" class="bg-f-gold text-f-dark font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider inline-block mb-4">Category</span>
+            
+            <h1 id="sp-title-en" class="lang-en text-3xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">Title</h1>
+            <h1 id="sp-title-bn" class="lang-bn hidden text-3xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">Title</h1>
+            
+            <div class="flex items-center text-gray-500 font-bold text-sm mb-10 border-b pb-6">
+                <img src="https://ui-avatars.com/api/?name=Foshol+AI&background=155d35&color=fff" class="w-10 h-10 rounded-full mr-3">
+                <span class="mr-6">Foshol Admin</span>
+                <i class="fa-regular fa-calendar mr-2"></i> <span id="sp-date">Date</span>
+            </div>
+            
+            <img id="sp-image" src="" class="w-full h-[400px] object-cover rounded-3xl mb-10 shadow-md">
+            
+            <div class="prose prose-lg max-w-none text-gray-700 leading-loose">
+                <p id="sp-content-en" class="lang-en whitespace-pre-wrap">Content</p>
+                <p id="sp-content-bn" class="lang-bn hidden whitespace-pre-wrap">Content</p>
+            </div>
+        </div>
+    <!-- Footer -->`);
+
+// Overwrite the dynamic javascript at the bottom of articles.html to handle routing & links
+const routingScript = `
+    <!-- Dynamic SPA Routing Logic -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('post');
+            const blogs = JSON.parse(localStorage.getItem('foshol_blogs') || '[]');
+
+            // Handle Single Post Routing
+            if (slug) {
+                const post = blogs.find(b => b.slug === slug);
+                if (post) {
+                    // Update SEO dynamically
+                    document.title = post.titleEn + " - Foshol AI Blog";
+                    if(post.seoDesc) {
+                        let meta = document.createElement('meta'); meta.name = "description"; meta.content = post.seoDesc; document.head.appendChild(meta);
+                    }
+                    if(post.seoKeys) {
+                        let meta = document.createElement('meta'); meta.name = "keywords"; meta.content = post.seoKeys; document.head.appendChild(meta);
+                    }
+
+                    // Render UI
+                    document.getElementById('blog-grid-container').classList.add('hidden');
+                    document.getElementById('single-post-container').classList.remove('hidden');
+                    
+                    document.getElementById('sp-category').innerText = post.category;
+                    document.getElementById('sp-title-en').innerText = post.titleEn;
+                    document.getElementById('sp-title-bn').innerText = post.titleBn;
+                    document.getElementById('sp-date').innerText = post.date;
+                    document.getElementById('sp-image').src = post.img;
+                    document.getElementById('sp-content-en').innerText = post.descEn;
+                    document.getElementById('sp-content-bn').innerText = post.descBn;
+                    
+                    setTimeout(applyLanguage, 50);
+                    return; // Stop rendering grid
+                }
+            }
+
+            // Normal Grid Rendering
+            const container = document.querySelector('#blog-grid-container .grid');
+            if (blogs.length > 0 && container) {
+                let dynamicHtml = '';
+                blogs.forEach(blog => {
+                    let badgeColor = 'text-f-dark';
+                    if(blog.category === 'Technology') badgeColor = 'text-f-dark';
+                    else if(blog.category === 'Farming') badgeColor = 'text-f-gold';
+                    else if(blog.category === 'Weather') badgeColor = 'text-orange-500';
+
+                    dynamicHtml += \`
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="window.location.href='/articles?post=\${blog.slug}'">
+                        <div class="h-48 bg-gray-200 overflow-hidden relative">
+                            <img src="\${blog.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold \${badgeColor}">\${blog.category}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                                <span class="lang-en">\${blog.titleEn}</span><span class="lang-bn hidden">\${blog.titleBn}</span>
+                            </h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                                <span class="lang-en">\${blog.descEn}</span><span class="lang-bn hidden">\${blog.descBn}</span>
+                            </p>
+                            <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                                <span><i class="fa-regular fa-calendar mr-1"></i> \${blog.date}</span>
+                                <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>\`;
+                });
+                container.innerHTML = dynamicHtml + container.innerHTML;
+                setTimeout(applyLanguage, 50);
+            }
+        });
+    </script>
+`;
+
+// Remove the old dynamic script from articles.html and inject the new one
+articlesHtml = articlesHtml.replace(/<!-- Dynamic Admin Blogs Logic -->.*?<\/script>/s, '');
+articlesHtml = articlesHtml.replace('</body>', routingScript + '\n</body>');
+fs.writeFileSync(path.join(dir, 'articles.html'), articlesHtml, 'utf8');
+
+// 3. Update index.html dynamic script to make the cards clickable to ?post=slug
+let indexHtml = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
+indexHtml = indexHtml.replace(/<div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer">/g, '<div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="window.location.href=\'/articles?post=\${blog.slug}\'">');
+fs.writeFileSync(path.join(dir, 'index.html'), indexHtml, 'utf8');
+
+console.log("Admin V3 with SEO, Slug, and Base64 Images implemented!");
