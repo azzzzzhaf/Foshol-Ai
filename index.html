@@ -4,7 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foshol AI - Smart Farming Assistant</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+        // --- Counter Animation ---
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; // The lower the slower
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 15);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            // Simple observer to start animation when visible
+            let observer = new IntersectionObserver(entries => {
+                if(entries[0].isIntersecting) {
+                    updateCount();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(counter);
+        });
+
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -76,7 +102,7 @@
                 <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
             </a>
             <a href="/blog" class="hover:text-f-dark transition">
-                <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+                <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
             </a>
         </div>
         
@@ -112,7 +138,7 @@
         </a>
         <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
-            <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+            <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
         </a>
         <div class="flex items-center justify-between pt-4 gap-4">
             <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
@@ -403,6 +429,35 @@
         </div>
     </section>
 
+    
+    <!-- B2B Partnership -->
+    <section class="py-20 bg-white px-6 md:px-12 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2">
+                <span class="bg-blue-100 text-blue-800 font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider mb-6 inline-block">
+                    <span class="lang-en">B2B & Partnerships</span><span class="lang-bn hidden">বিজনেস ও পার্টনারশিপ</span>
+                </span>
+                <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                    <span class="lang-en">Empower the Agri-Business Ecosystem</span>
+                    <span class="lang-bn hidden">কৃষি ব্যবসার জন্য ডিজিটাল সমাধান</span>
+                </h2>
+                <p class="text-gray-600 text-lg mb-8 leading-relaxed">
+                    <span class="lang-en">Are you an Agri-Input brand (like ACI, Syngenta), NGO, or Government body? Partner with Foshol AI to access real-time crop disease data, climate insights, and connect your products directly to millions of farmers via our API.</span>
+                    <span class="lang-bn hidden">ACI, Syngenta এর মতো ব্র্যান্ড, NGO বা সরকারি প্রতিষ্ঠান? আমাদের API ব্যবহার করে সরাসরি কৃষকদের কাছে আপনার সঠিক সার ও বীজ পৌঁছে দিন। ডাটা দিয়ে ব্যবসাকে করুন আরও উন্নত।</span>
+                </p>
+                <button class="bg-f-dark text-white font-bold px-8 py-3.5 rounded-full hover:bg-green-800 transition shadow-lg">
+                    <span class="lang-en">Partner With Us</span><span class="lang-bn hidden">আমাদের পার্টনার হোন</span>
+                </button>
+            </div>
+            <div class="md:w-1/2 grid grid-cols-2 gap-4 w-full">
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center hover:shadow-lg transition"><i class="fa-solid fa-code text-4xl text-blue-500 mb-4"></i><h4 class="font-bold text-gray-800"><span class="lang-en">API Access</span><span class="lang-bn hidden">এপিআই এক্সেস</span></h4></div>
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center hover:shadow-lg transition"><i class="fa-solid fa-chart-pie text-4xl text-green-500 mb-4"></i><h4 class="font-bold text-gray-800"><span class="lang-en">Data Analytics</span><span class="lang-bn hidden">ডাটা অ্যানালিটিক্স</span></h4></div>
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center hover:shadow-lg transition"><i class="fa-solid fa-bullhorn text-4xl text-orange-500 mb-4"></i><h4 class="font-bold text-gray-800"><span class="lang-en">Targeted Ads</span><span class="lang-bn hidden">টার্গেটেড অ্যাড</span></h4></div>
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center hover:shadow-lg transition"><i class="fa-solid fa-handshake text-4xl text-f-gold mb-4"></i><h4 class="font-bold text-gray-800"><span class="lang-en">Govt / NGOs</span><span class="lang-bn hidden">সরকারি/NGO প্রজেক্ট</span></h4></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Community & Resources -->
     <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -633,7 +688,21 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = "typing-" + Date.now();
-            chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            
+            // If message suggests disease detection or image upload
+            if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি')) {
+                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
+                    <div class="relative w-12 h-12">
+                        <i class="fa-solid fa-leaf text-4xl text-green-300 absolute inset-0"></i>
+                        <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
+                    </div>
+                    <span class="text-green-700 font-bold text-xs"><span class="lang-en">Scanning Crop Data...</span><span class="lang-bn hidden">ছবি স্ক্যান করা হচ্ছে...</span></span>
+                </div>`;
+            }
+            chatBox.innerHTML += typingHtml;
+            // applyLanguage again so the dynamic lang spans work inside the new chat block
+            setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {

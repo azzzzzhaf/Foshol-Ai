@@ -74,7 +74,7 @@
                 <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
             </a>
             <a href="/blog" class="hover:text-f-dark transition">
-                <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+                <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
             </a>
         </div>
         
@@ -110,7 +110,7 @@
         </a>
         <a href="/blog" class="text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 active:bg-gray-50 rounded-lg">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
-            <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+            <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
         </a>
         <div class="flex items-center justify-between pt-4 gap-4">
             <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-700 bg-gray-50 px-6 py-3 rounded-xl font-bold text-sm w-1/2 flex items-center justify-center gap-2 active:bg-gray-200">
@@ -345,7 +345,21 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = "typing-" + Date.now();
-            chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            
+            // If message suggests disease detection or image upload
+            if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি')) {
+                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
+                    <div class="relative w-12 h-12">
+                        <i class="fa-solid fa-leaf text-4xl text-green-300 absolute inset-0"></i>
+                        <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
+                    </div>
+                    <span class="text-green-700 font-bold text-xs"><span class="lang-en">Scanning Crop Data...</span><span class="lang-bn hidden">ছবি স্ক্যান করা হচ্ছে...</span></span>
+                </div>`;
+            }
+            chatBox.innerHTML += typingHtml;
+            // applyLanguage again so the dynamic lang spans work inside the new chat block
+            setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
