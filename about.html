@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কৃষি ব্লগ - ফসল AI</title>
+    <title>আমাদের লক্ষ্য - ফসল AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
                 <span class="lang-bn">হোম</span>
                 <span class="lang-en hidden">Home</span>
             </a>
-            <a href="/about" class="hover:text-f-dark transition">
+            <a href="/about" class="text-f-dark transition border-b-2 border-f-dark pb-1">
                 <span class="lang-bn">আমাদের লক্ষ্য</span>
                 <span class="lang-en hidden">About Us</span>
             </a>
@@ -77,7 +77,7 @@
                 <span class="lang-bn">সার্ভিসসমূহ</span>
                 <span class="lang-en hidden">Services</span>
             </a>
-            <a href="/blog" class="text-f-dark transition border-b-2 border-f-dark pb-1">
+            <a href="/blog" class="hover:text-f-dark transition">
                 <span class="lang-bn">ব্লগ</span>
                 <span class="lang-en hidden">Blog</span>
             </a>
@@ -98,89 +98,85 @@
     <!-- Page Header -->
     <div class="bg-f-dark py-16 text-center">
         <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-            <span class="lang-bn">কৃষি ব্লগ ও টিপস</span>
-            <span class="lang-en hidden">Agri Blog & Tips</span>
+            <span class="lang-bn">আমাদের লক্ষ্য ও উদ্দেশ্য</span>
+            <span class="lang-en hidden">Our Mission & Vision</span>
         </h1>
         <p class="text-green-100 max-w-2xl mx-auto">
-            <span class="lang-bn">আধুনিক চাষাবাদ, ফসলের যত্ন এবং নতুন প্রযুক্তি সম্পর্কে জানুন আমাদের বিশেষজ্ঞদের কাছ থেকে।</span>
-            <span class="lang-en hidden">Learn about modern farming, crop care, and new technologies from our experts.</span>
+            <span class="lang-bn">প্রযুক্তির মাধ্যমে বাংলাদেশের প্রতিটি কৃষকের হাতে সঠিক তথ্য ও সমাধান পৌঁছে দেওয়াই আমাদের মূল লক্ষ্য।</span>
+            <span class="lang-en hidden">Our main goal is to deliver accurate information and solutions to every farmer in Bangladesh through technology.</span>
         </p>
     </div>
 
-    <!-- Blog Grid -->
-    <section class="py-16 px-6 md:px-12 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Blog 1 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-green-100 flex items-center justify-center">
-                    <i class="fa-solid fa-seedling text-green-300 text-4xl"></i>
-                </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">টিপস</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">ধানের ব্লাস্ট রোগ দমনের কার্যকরী উপায়</h3>
-                    <p class="text-gray-600 text-sm mb-4">উচ্চ আর্দ্রতা ও তাপমাত্রায় ধানের ব্লাস্ট রোগ বেশি হয়। কীভাবে প্রাকৃতিক উপায়ে এটি দমন করবেন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
+    <!-- About Content Section -->
+    <section class="py-20 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="flex flex-col lg:flex-row gap-16 items-center mb-24">
+            <div class="w-full lg:w-1/2 relative">
+                <div class="absolute inset-0 bg-f-gold rounded-[3rem] transform -rotate-3 opacity-30"></div>
+                <img src="images/about.jpg" alt="Farmers inspecting crop" class="relative z-10 rounded-[2.5rem] w-full h-[450px] object-cover shadow-2xl border-4 border-white">
             </div>
-            <!-- Blog 2 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-blue-100 flex items-center justify-center">
-                    <i class="fa-solid fa-microchip text-blue-300 text-4xl"></i>
+            <div class="w-full lg:w-1/2">
+                <div class="flex items-center gap-2 text-f-dark text-sm font-bold uppercase tracking-wider mb-4">
+                    <i class="fa-solid fa-seedling text-f-gold text-lg"></i> 
+                    <span class="lang-bn">কৃষকের ক্ষমতায়ন</span>
+                    <span class="lang-en hidden">Farmer Empowerment</span>
                 </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">প্রযুক্তি</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">AI দিয়ে যেভাবে ফসলের রোগ চেনা যায়</h3>
-                    <p class="text-gray-600 text-sm mb-4">কৃষকদের স্মার্টফোন এখন শুধু কথা বলার জন্য নয়, ফসলের ডাক্তার হিসেবেও কাজ করতে পারে...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
+                <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 leading-snug">
+                    <span class="lang-bn">মাঠে বসেই ফসলের সঠিক রোগ নির্ণয় ও সমাধান</span>
+                    <span class="lang-en hidden">Accurate crop disease diagnosis right from the field</span>
+                </h2>
+                <p class="text-gray-600 mb-6 font-medium text-lg leading-relaxed">
+                    <span class="lang-bn">ফসল AI এর মাধ্যমে আমরা বাংলাদেশের কৃষকদের ক্ষমতায়ন করতে চাই। এআই (AI) ব্যবহার করে এখন যেকোনো কৃষক বিনামূল্যে তার ফসলের সমস্যা চিহ্নিত করতে পারবেন।</span>
+                    <span class="lang-en hidden">Through Foshol AI, we want to empower farmers in Bangladesh. Using AI, any farmer can now identify crop problems completely for free.</span>
+                </p>
+                <p class="text-gray-600 mb-8 font-medium text-lg leading-relaxed">
+                    <span class="lang-bn">আমরা বিশ্বাস করি, কৃষকরা যদি সঠিক সময়ে সঠিক তথ্য ও পরামর্শ পান, তবে ফসলের উৎপাদন বহুগুণ বৃদ্ধি করা সম্ভব। আমাদের এই উদ্যোগ কৃষকদের আর্থিক সচ্ছলতা আনতে সাহায্য করবে।</span>
+                    <span class="lang-en hidden">We believe that if farmers get the right information and advice at the right time, crop production can be multiplied. This initiative will help bring financial solvency to farmers.</span>
+                </p>
             </div>
-            <!-- Blog 3 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-yellow-100 flex items-center justify-center">
-                    <i class="fa-solid fa-cloud-sun-rain text-yellow-300 text-4xl"></i>
+        </div>
+
+        <!-- Extra Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mt-12">
+            <div class="bg-white p-8 rounded-[2rem] shadow-lg border border-gray-100 hover:-translate-y-2 transition duration-300">
+                <div class="w-20 h-20 bg-f-light text-f-dark rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fa-solid fa-bullseye"></i>
                 </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">আবহাওয়া</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">বৃষ্টির আগে সার দেওয়া কি ঠিক?</h3>
-                    <p class="text-gray-600 text-sm mb-4">অনেকেই বৃষ্টির আগে সার দিয়ে থাকেন, কিন্তু এটি মাটির জন্য কতটুকু উপকারী তা জেনে নিন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    <span class="lang-bn">আমাদের মিশন</span>
+                    <span class="lang-en hidden">Our Mission</span>
+                </h3>
+                <p class="text-gray-600">
+                    <span class="lang-bn">প্রতিটি গ্রামে আধুনিক কৃষি প্রযুক্তি পৌঁছে দেওয়া এবং কৃষকদের স্মার্ট চাষাবাদে উদ্বুদ্ধ করা।</span>
+                    <span class="lang-en hidden">Delivering modern agri-technology to every village and inspiring farmers towards smart farming.</span>
+                </p>
             </div>
-            <!-- Blog 4 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-orange-100 flex items-center justify-center">
-                    <i class="fa-solid fa-wheat-awn text-orange-300 text-4xl"></i>
+            
+            <div class="bg-white p-8 rounded-[2rem] shadow-lg border border-gray-100 hover:-translate-y-2 transition duration-300">
+                <div class="w-20 h-20 bg-f-light text-f-dark rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fa-solid fa-eye"></i>
                 </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">চাষাবাদ</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">উন্নত জাতের গম চাষের নিয়মাবলি</h3>
-                    <p class="text-gray-600 text-sm mb-4">শীতকালে গম চাষ করে কীভাবে দ্বিগুণ ফলন পাওয়া সম্ভব, তার বিস্তারিত নিয়মাবলি ও সার প্রয়োগ...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    <span class="lang-bn">আমাদের ভিশন</span>
+                    <span class="lang-en hidden">Our Vision</span>
+                </h3>
+                <p class="text-gray-600">
+                    <span class="lang-bn">কৃষিতে আর্টিফিশিয়াল ইন্টেলিজেন্স ব্যবহার করে বাংলাদেশের খাদ্য নিরাপত্তাকে আরও শক্তিশালী করা।</span>
+                    <span class="lang-en hidden">Strengthening Bangladesh's food security by using Artificial Intelligence in agriculture.</span>
+                </p>
             </div>
-            <!-- Blog 5 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-purple-100 flex items-center justify-center">
-                    <i class="fa-solid fa-bugs text-purple-300 text-4xl"></i>
+            
+            <div class="bg-white p-8 rounded-[2rem] shadow-lg border border-gray-100 hover:-translate-y-2 transition duration-300">
+                <div class="w-20 h-20 bg-f-light text-f-dark rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+                    <i class="fa-solid fa-handshake-angle"></i>
                 </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">সতর্কতা</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">মাজরা পোকা দমনে কীটনাশক নির্বাচন</h3>
-                    <p class="text-gray-600 text-sm mb-4">ভুল কীটনাশক ব্যবহারে ফসলের ক্ষতি হতে পারে। মাজরা পোকা দমনে সঠিক ঔষধ কোনটি...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <!-- Blog 6 -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition">
-                <div class="h-48 bg-teal-100 flex items-center justify-center">
-                    <i class="fa-solid fa-hand-holding-dollar text-teal-300 text-4xl"></i>
-                </div>
-                <div class="p-6">
-                    <span class="bg-f-light text-f-dark text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">মার্কেট</span>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">সঠিক দামে ফসল বিক্রির কৌশল</h3>
-                    <p class="text-gray-600 text-sm mb-4">মধ্যস্বত্বভোগীদের দৌরাত্ম্য এড়িয়ে সরাসরি বাজারে ফসল বিক্রি করে কীভাবে লাভবান হবেন...</p>
-                    <a href="#" class="text-f-gold font-bold hover:text-f-dark transition text-sm">আরও পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    <span class="lang-bn">আমাদের প্রতিশ্রুতি</span>
+                    <span class="lang-en hidden">Our Promise</span>
+                </h3>
+                <p class="text-gray-600">
+                    <span class="lang-bn">কৃষকদের যেকোনো প্রয়োজনে সবসময় বিনামূল্যে সঠিক ও নির্ভরযোগ্য পরামর্শ প্রদান করা।</span>
+                    <span class="lang-en hidden">Always providing accurate and reliable advice for free whenever farmers need it.</span>
+                </p>
             </div>
         </div>
     </section>
