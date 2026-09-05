@@ -440,11 +440,26 @@
         if (!localStorage.getItem('foshol_products')) {
             const defaults = [
                 { titleEn: 'Premium Urea Fertilizer (50kg)', titleBn: 'প্রিমিয়াম ইউরিয়া সার (৫০ কেজি)', price: '1200', img: 'https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?w=500', category: 'Fertilizer' },
-                { titleEn: 'High-Yield BRRI Dhan 28 Seeds', titleBn: 'উচ্চ ফলনশীল ব্রি ধান ২৮ বীজ', price: '850', img: 'https://images.unsplash.com/photo-1586201375761-83865001e8ac?w=500', category: 'Seeds' },
+                { titleEn: 'High-Yield BRRI Dhan 28 Seeds', titleBn: 'উচ্চ ফলনশীল ব্রি ধান ২৮ বীজ', price: '850', img: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500', category: 'Seeds' },
                 { titleEn: 'Organic Pesticide (500ml)', titleBn: 'জৈব কীটনাশক (৫০০ মিলি)', price: '450', img: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=500', category: 'Pesticide' },
-                { titleEn: 'Modern Farming Tractor Rent (Per Day)', titleBn: 'আধুনিক ট্রাক্টর ভাড়া (প্রতিদিন)', price: '3000', img: 'https://images.unsplash.com/photo-1592982537447-6f23f03b5eb4?w=500', category: 'Equipment' }
+                { titleEn: 'Modern Farming Tractor Rent (Per Day)', titleBn: 'আধুনিক ট্রাক্টর ভাড়া (প্রতিদিন)', price: '3000', img: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500', category: 'Equipment' }
             ];
             localStorage.setItem('foshol_products', JSON.stringify(defaults));
+        } else {
+            let stored = JSON.parse(localStorage.getItem('foshol_products') || '[]');
+            let changed = false;
+            stored = stored.map(p => {
+                if (p.img && p.img.includes('1586201375761')) {
+                    p.img = 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500';
+                    changed = true;
+                }
+                if (p.img && p.img.includes('1592982537447')) {
+                    p.img = 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500';
+                    changed = true;
+                }
+                return p;
+            });
+            if (changed) localStorage.setItem('foshol_products', JSON.stringify(stored));
         }
 
         function loadStore() {
