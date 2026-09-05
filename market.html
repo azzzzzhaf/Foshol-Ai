@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices - Foshol AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { 'f-dark': '#155d35', 'f-light': '#e8f5e9', 'f-gold': '#ffb300' } } } }
+    </script>
+    <style>
+        .chat-hidden { transform: translateY(150%); opacity: 0; pointer-events: none; }
+        #chat-widget { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    
+    <!-- NAVBAR INJECTED HERE -->
+    ${NAVBAR_PLACEHOLDER}
+
+    <!-- Header -->
+    <div class="bg-orange-500 py-12 text-center">
+        <h1 class="text-4xl font-bold text-white mb-4">
+            <span class="lang-en">Daily Market Prices</span><span class="lang-bn hidden">দৈনিক বাজার দর</span>
+        </h1>
+        <p class="text-orange-100 max-w-2xl mx-auto">
+            <span class="lang-en">Compare the farmer's selling price with the actual retail market price in your region.</span>
+            <span class="lang-bn hidden">আপনার এলাকার কৃষকের বিক্রয় মূল্য এবং বাজারের খুচরা মূল্যের পার্থক্য দেখুন।</span>
+        </p>
+    </div>
+
+    <!-- Main Content -->
+    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto">
+        <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 p-8 md:p-10 relative mt-[-4rem]">
+            
+            <!-- Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-100 pb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-chart-line text-orange-500 mr-2"></i> <span class="lang-en">Price Comparison Chart</span><span class="lang-bn hidden">বাজার মূল্যের তালিকা</span></h2>
+                    <p class="text-sm text-gray-500 mt-1"><span class="lang-en">Prices are shown per KG in BDT (৳)</span><span class="lang-bn hidden">মূল্য প্রতি কেজি টাকায় (৳) দেওয়া হলো</span></p>
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider"><span class="lang-en">Select Location</span><span class="lang-bn hidden">এলাকা নির্বাচন করুন</span></label>
+                    <div class="relative">
+                        <select id="location-select" onchange="updateChart()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 appearance-none outline-none focus:ring-2 focus:ring-orange-500">
+                            <option value="Dhaka">Dhaka (Karwan Bazar)</option>
+                            <option value="Rajshahi">Rajshahi (Baneswar)</option>
+                            <option value="Bogura">Bogura (Mahasthan)</option>
+                            <option value="Sylhet">Sylhet (Bandar Bazar)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="relative h-[400px] w-full">
+                <canvas id="marketChart"></canvas>
+            </div>
+            
+            <!-- Analysis Insight -->
+            <div class="mt-8 bg-orange-50 p-6 rounded-2xl border border-orange-100 flex items-start gap-4">
+                <div class="w-12 h-12 bg-orange-200 text-orange-600 rounded-full flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-lightbulb"></i></div>
+                <div>
+                    <h4 class="font-bold text-orange-900 mb-1"><span class="lang-en">Foshol AI Insight</span><span class="lang-bn hidden">ফসল এআই ইনসাইট</span></h4>
+                    <p class="text-orange-800 text-sm">
+                        <span class="lang-en">Middlemen margins are currently highest on <b>Onions</b> and <b>Green Chilies</b>. Farmers are recommended to hold stock if possible or sell directly to verified B2B buyers using Foshol AI.</span>
+                        <span class="lang-bn hidden">বর্তমানে <b>পেঁয়াজ</b> এবং <b>কাঁচামরিচে</b> মধ্যস্বত্বভোগীদের লাভ সবচেয়ে বেশি। কৃষকদের পরামর্শ দেওয়া হচ্ছে সরাসরি ফসলের B2B পার্টনারদের কাছে বিক্রি করার জন্য।</span>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER INJECTED HERE -->
+    ${FOOTER_PLACEHOLDER}
+
+    <script>
+        // Data for different locations
+        const marketData = {
+            'Dhaka': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [25, 45, 80, 30, 40],
+                retailPrice: [45, 90, 160, 60, 80]
+            },
+            'Rajshahi': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [18, 38, 60, 20, 25],
+                retailPrice: [30, 70, 100, 40, 45]
+            },
+            'Bogura': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [20, 40, 65, 22, 28],
+                retailPrice: [35, 75, 110, 45, 50]
+            },
+            'Sylhet': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [28, 50, 90, 35, 45],
+                retailPrice: [50, 100, 180, 70, 90]
+            }
+        };
+
+        let myChart = null;
+
+        function initChart() {
+            const ctx = document.getElementById('marketChart').getContext('2d');
+            
+            // Set global font
+            Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: currentLang === 'en' ? marketData['Dhaka'].labelsEn : marketData['Dhaka'].labelsBn,
+                    datasets: [
+                        {
+                            label: currentLang === 'en' ? 'Farmer Selling Price (৳)' : 'কৃষকের বিক্রয় মূল্য (৳)',
+                            data: marketData['Dhaka'].farmerPrice,
+                            backgroundColor: '#155d35', // f-dark
+                            borderRadius: 6,
+                            borderSkipped: false
+                        },
+                        {
+                            label: currentLang === 'en' ? 'Retail Market Price (৳)' : 'খুচরা বাজার মূল্য (৳)',
+                            data: marketData['Dhaka'].retailPrice,
+                            backgroundColor: '#ffb300', // f-gold
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { weight: 'bold', size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleFont: { size: 16 },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ৳' + context.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [5, 5], color: '#e5e7eb' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold', size: 14 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            const location = document.getElementById('location-select').value;
+            const data = marketData[location];
+            
+            myChart.data.labels = currentLang === 'en' ? data.labelsEn : data.labelsBn;
+            myChart.data.datasets[0].data = data.farmerPrice;
+            myChart.data.datasets[1].data = data.retailPrice;
+            
+            myChart.data.datasets[0].label = currentLang === 'en' ? 'Farmer Selling Price (৳)' : 'কৃষকের বিক্রয় মূল্য (৳)';
+            myChart.data.datasets[1].label = currentLang === 'en' ? 'Retail Market Price (৳)' : 'খুচরা বাজার মূল্য (৳)';
+            
+            myChart.update();
+        }
+
+        // Wait for page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            
+            // Hook into the global toggleLanguage function to update chart labels automatically
+            const originalToggle = window.toggleLanguage;
+            window.toggleLanguage = function() {
+                originalToggle();
+                setTimeout(updateChart, 50); // Update chart after language switch
+            };
+        });
+    </script>
+</body>
+</html>
