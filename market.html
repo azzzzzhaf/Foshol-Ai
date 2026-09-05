@@ -75,6 +75,13 @@
         </div>
     </section>
 
+    
+    <!-- FLOATING AI BUTTON -->
+    <button onclick="askAI()" class="fixed right-6 bottom-24 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-40 flex items-center gap-3 group border-2 border-white">
+        <i class="fa-solid fa-robot text-2xl group-hover:animate-bounce"></i>
+        <span class="font-bold pr-2 max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap"><span class="lang-en">Chat with AI</span><span class="lang-bn hidden">এআই-কে প্রশ্ন করুন</span></span>
+    </button>
+
     <!-- FOOTER INJECTED HERE -->
     ${FOOTER_PLACEHOLDER}
 
@@ -176,6 +183,14 @@
                     }
                 }
             });
+        }
+
+        
+        function askAI() {
+            const loc = document.getElementById('location-select').options[document.getElementById('location-select').selectedIndex].text;
+            const msgEn = `I am checking the crop market prices in ${loc}. What crops should I sell today for the highest profit?`;
+            const msgBn = `আমি ${loc}-এর বাজারের ফসলের দাম দেখছি। আজ কোন ফসল বিক্রি করলে আমি সবচেয়ে বেশি লাভ পাবো?`;
+            openServiceChat(msgEn, msgBn);
         }
 
         function updateChart() {

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const dir = 'g:/1. Clude/03. Mine/2. Krishi Ai';
-const files = ['index.html', 'about.html', 'services.html', 'blog.html', 'articles.html', 'store.html', 'admin.html'];
+const files = ['index.html', 'about.html', 'services.html', 'blog.html', 'articles.html', 'store.html', 'admin.html', 'market.html', 'weather.html', 'medicine.html', 'fertilizer.html'];
 
 const desktopNavMenu = `
         <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
