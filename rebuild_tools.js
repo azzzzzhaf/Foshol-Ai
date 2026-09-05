@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    
+const fs = require('fs');
+const path = require('path');
+
+const dir = 'g:/1. Clude/03. Mine/2. Krishi Ai';
+
+// -------------------------------------------------------------
+// STANDARD REUSABLE BLOCKS
+// -------------------------------------------------------------
+
+const standardHead = (title) => `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicine Dosage - Foshol AI</title>
+    <title>${title} - Foshol AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,13 +42,9 @@
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
     </style>
+`;
 
-    <style>
-        #global-chat-btn { display: none !important; }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-    
+const standardTopWeather = `
     <!-- Live Weather Top Bar -->
     <div class="bg-green-900 text-white text-sm py-1.5 px-4 flex justify-between items-center z-50 relative">
         <div class="flex items-center gap-3">
@@ -59,8 +61,9 @@
             <i class="fa-solid fa-spinner fa-spin"></i> <span class="lang-en">Loading...</span><span class="lang-bn hidden">লোড হচ্ছে...</span>
         </div>
     </div>
+`;
 
-    
+const standardNavbar = (activePath) => `
     <!-- Navbar -->
     <nav class="bg-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
@@ -69,22 +72,22 @@
         </div>
         
         <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
-            <a href="/" class="desktop-link hover:text-f-dark transition" data-path="/">
+            <a href="/" class="desktop-link ${activePath === '/' ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/">
                 <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
             </a>
-            <a href="/about" class="desktop-link hover:text-f-dark transition" data-path="/about">
+            <a href="/about" class="desktop-link ${activePath === '/about' ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/about">
                 <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
             </a>
-            <a href="/services" class="desktop-link text-f-dark border-b-2 border-f-dark pb-1" data-path="/services">
+            <a href="/services" class="desktop-link ${['/services', '/weather', '/medicine', '/fertilizer', '/market'].includes(activePath) ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/services">
                 <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
             </a>
-            <a href="/store" class="desktop-link hover:text-f-dark transition" data-path="/store">
+            <a href="/store" class="desktop-link ${activePath === '/store' ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/store">
                 <span class="lang-en">Store</span><span class="lang-bn hidden">দোকান</span>
             </a>
-            <a href="/blog" class="desktop-link hover:text-f-dark transition" data-path="/blog">
+            <a href="/blog" class="desktop-link ${activePath === '/blog' ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/blog">
                 <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
             </a>
-            <a href="/articles" class="desktop-link hover:text-f-dark transition" data-path="/articles">
+            <a href="/articles" class="desktop-link ${activePath === '/articles' ? 'text-f-dark border-b-2 border-f-dark pb-1' : 'hover:text-f-dark transition'}" data-path="/articles">
                 <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
             </a>
         </div>
@@ -110,27 +113,27 @@
 
     <!-- Mobile Menu Dropdown -->
     <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-4 border-t border-gray-100 transition-all duration-300">
-        <a href="/" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg " data-path="/">
+        <a href="/" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${activePath === '/' ? 'bg-gray-50' : ''}" data-path="/">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
             <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
         </a>
-        <a href="/about" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg " data-path="/about">
+        <a href="/about" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${activePath === '/about' ? 'bg-gray-50' : ''}" data-path="/about">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-seedling"></i></div>
             <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
         </a>
-        <a href="/services" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg bg-gray-50" data-path="/services">
+        <a href="/services" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${['/services', '/weather', '/medicine', '/fertilizer', '/market'].includes(activePath) ? 'bg-gray-50' : ''}" data-path="/services">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-star"></i></div>
             <span class="lang-en">Services</span><span class="lang-bn hidden">সার্ভিসসমূহ</span>
         </a>
-        <a href="/store" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg " data-path="/store">
+        <a href="/store" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${activePath === '/store' ? 'bg-gray-50' : ''}" data-path="/store">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-store"></i></div>
             <span class="lang-en">Store</span><span class="lang-bn hidden">দোকান</span>
         </a>
-        <a href="/blog" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg " data-path="/blog">
+        <a href="/blog" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${activePath === '/blog' ? 'bg-gray-50' : ''}" data-path="/blog">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-newspaper"></i></div>
             <span class="lang-en">AI Alerts</span><span class="lang-bn hidden">কৃষি অ্যালার্ট</span>
         </a>
-        <a href="/articles" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg " data-path="/articles">
+        <a href="/articles" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-2 flex items-center gap-3 rounded-lg ${activePath === '/articles' ? 'bg-gray-50' : ''}" data-path="/articles">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-book-open"></i></div>
             <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
         </a>
@@ -145,50 +148,9 @@
             </button>
         </div>
     </div>
+`;
 
-    
-    <div class="bg-teal-700 py-16 text-center relative overflow-hidden">
-        <div class="relative z-10 max-w-4xl mx-auto px-6">
-            <span class="bg-teal-600 text-white font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">Certified Agro-Chemical Guide</span>
-            <h1 class="text-4xl md:text-5xl font-black text-white mb-4"><span class="lang-en">Crop Medicine & Dosage</span><span class="lang-bn hidden">ফসলের সঠিক ঔষধ ও প্রয়োগমাত্রা</span></h1>
-            <p class="text-teal-100 max-w-2xl mx-auto text-base md:text-lg"><span class="lang-en">Avoid chemical overdosing. Get government-approved fungicide, pesticide, and herbicide recommendations for your crops.</span><span class="lang-bn hidden">অতিরিক্ত কীটনাশক ব্যবহারের ক্ষতি থেকে বাঁচুন। অনুমোদিত ঔষধ ও সঠিক প্রয়োগমাত্রা জেনে নিন।</span></p>
-        </div>
-    </div>
-
-    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto mt-[-3rem] relative z-20">
-        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 border border-gray-100">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-100">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">1. Select Crop</span><span class="lang-bn hidden">১. ফসল নির্বাচন করুন</span></label>
-                    <select id="crop-select" onchange="updateMed()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
-                        <option value="Rice">Rice / Paddy (ধান)</option>
-                        <option value="Potato">Potato (আলু)</option>
-                        <option value="Tomato">Tomato / Vegetables (টমেটো / সবজি)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">2. Select Problem Type</span><span class="lang-bn hidden">২. রোগের ধরন নির্বাচন করুন</span></label>
-                    <select id="prob-select" onchange="updateMed()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
-                        <option value="Fungus">Fungal Infection / Blight (ছত্রাক / পচন)</option>
-                        <option value="Insects">Insects / Stem Borer (মাজরা / পোকা)</option>
-                        <option value="Nutrient">Nutrient Deficiency (পুষ্টি ঘাটতি / পাতা হলুদ)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><i class="fa-solid fa-prescription-bottle-medical text-teal-600"></i> <span class="lang-en">Recommended Treatment Protocols</span><span class="lang-bn hidden">অনুমোদিত ঔষধ ও প্রেসক্রিপশন</span></h3>
-            
-            <div id="med-results" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-        </div>
-    </section>
-
-    <!-- CONTEXT-AWARE FLOATING AI BUTTON -->
-    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform z-40 flex items-center gap-3 border-2 border-white">
-        <i class="fa-solid fa-robot text-2xl animate-pulse"></i>
-        <span class="font-bold pr-2"><span class="lang-en">Ask Medicine AI</span><span class="lang-bn hidden">ঔষধ এআই পরামর্শ</span></span>
-    </button>
-
-    
+const standardFooter = `
     <!-- Footer -->
     <footer class="bg-f-dark text-gray-300 py-16 border-t-[12px] border-f-gold mt-16">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
@@ -251,8 +213,9 @@
             </div>
         </div>
     </footer>
+`;
 
-    
+const standardChatWidget = `
     <!-- Global AI Chat Floating Button -->
     <button id="global-chat-btn" onclick="toggleChat()" class="fixed bottom-6 right-6 bg-f-gold text-white rounded-full shadow-2xl flex items-center justify-center px-5 py-3 hover:scale-105 transition z-50 gap-2 font-bold animate-bounce">
         <i class="fa-solid fa-robot text-xl"></i>
@@ -292,8 +255,9 @@
             </button>
         </div>
     </div>
+`;
 
-    
+const standardPitchModal = `
     <!-- INVESTOR PITCH DECK MODAL -->
     <div id="pitch-modal" class="hidden fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white max-w-2xl w-full rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
@@ -370,8 +334,9 @@
             </div>
         </div>
     </div>
+`;
 
-    
+const standardGlobalScript = `
     <!-- Standard Global Scripts -->
     <script>
         // --- Language Toggle Logic ---
@@ -419,21 +384,21 @@
                 else if (code >= 50 && code < 80) { icon = 'fa-cloud-rain text-blue-300'; descEn = 'Rainy'; descBn = 'বৃষ্টি'; }
                 else if (code >= 80) { icon = 'fa-cloud-bolt text-yellow-300'; descEn = 'Storm'; descBn = 'ঝড়ো আবহাওয়া'; }
 
-                weatherEl.innerHTML = `
+                weatherEl.innerHTML = \`
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
                         <span>Dhaka</span>
                         <span class="mx-1">•</span>
-                        <i class="fa-solid ${icon}"></i>
-                        <span>${temp}°C</span>
+                        <i class="fa-solid \${icon}"></i>
+                        <span>\${temp}°C</span>
                         <span class="mx-1">•</span>
-                        <span class="lang-en">${descEn}</span>
-                        <span class="lang-bn hidden">${descBn}</span>
+                        <span class="lang-en">\${descEn}</span>
+                        <span class="lang-bn hidden">\${descBn}</span>
                     </div>
-                `;
+                \`;
                 applyLanguage();
             } catch (err) {
-                weatherEl.innerHTML = `
+                weatherEl.innerHTML = \`
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
                         <span>Dhaka</span>
@@ -444,7 +409,7 @@
                         <span class="lang-en">Sunny</span>
                         <span class="lang-bn hidden">রৌদ্রোজ্জ্বল</span>
                     </div>
-                `;
+                \`;
                 applyLanguage();
             }
         }
@@ -505,21 +470,21 @@
             const chatBox = document.getElementById('chat-box');
             if(!chatBox) return;
             
-            chatBox.innerHTML += `<div class="chat-message chat-user">${message}</div>`;
+            chatBox.innerHTML += \`<div class="chat-message chat-user">\${message}</div>\`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = "typing-" + Date.now();
-            let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
+            let typingHtml = \`<div id="\${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>\`;
             
             if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি') || message.includes('leaf') || message.includes('scan') || message.includes('ব্লাইট')) {
-                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
+                typingHtml = \`<div id="\${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
                     <div class="relative w-12 h-12">
                         <i class="fa-solid fa-leaf text-4xl text-green-500 absolute inset-0"></i>
                         <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
                     </div>
                     <span class="text-green-700 font-bold text-xs"><span class="lang-en">AI Leaf Scanner analyzing image...</span><span class="lang-bn hidden">এআই লিফ স্ক্যানার ছবি বিশ্লেষণ করছে...</span></span>
-                </div>`;
+                </div>\`;
             }
             chatBox.innerHTML += typingHtml;
             setTimeout(applyLanguage, 10);
@@ -552,13 +517,208 @@
                 }
 
                 const finalReply = currentLang === 'en' ? replyEn : replyBn;
-                chatBox.innerHTML += `<div class="chat-message chat-ai">${finalReply}</div>`;
+                chatBox.innerHTML += \`<div class="chat-message chat-ai">\${finalReply}</div>\`;
                 setTimeout(applyLanguage, 10);
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 1200);
         }
     </script>
+`;
 
+// -------------------------------------------------------------
+// 1. REBUILD WEATHER.HTML
+// -------------------------------------------------------------
+const weatherHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    ${standardHead('Weather Forecast')}
+    <style>
+        /* Hide global floating chat button on tool page */
+        #global-chat-btn { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    ${standardTopWeather}
+    ${standardNavbar('/weather')}
+    
+    <div class="bg-blue-600 py-16 text-center relative overflow-hidden">
+        <div class="relative z-10 max-w-4xl mx-auto px-6">
+            <span class="bg-blue-500 text-white font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">Hyperlocal Agro Weather</span>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4"><span class="lang-en">7-Day Farming Weather</span><span class="lang-bn hidden">৭ দিনের কৃষি আবহাওয়া পূর্বাভাস</span></h1>
+            <p class="text-blue-100 max-w-2xl mx-auto text-base md:text-lg"><span class="lang-en">Real-time localized meteorological forecasts and AI farming advisories to prevent unseasonal crop damage.</span><span class="lang-bn hidden">অসময়ের বৃষ্টি বা খরার ক্ষতি এড়াতে কৃষকদের জন্য এআই-চালিত স্থানীয় আবহাওয়া পূর্বাভাস।</span></p>
+        </div>
+    </div>
+
+    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto mt-[-3rem] relative z-20">
+        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 border border-gray-100">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b border-gray-100 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-cloud-sun-rain text-blue-500 mr-2"></i> <span class="lang-en">Forecast Outlook</span><span class="lang-bn hidden">পূর্বাভাস বিস্তারিত</span></h2>
+                    <p class="text-sm text-gray-500 mt-1"><span class="lang-en">Select your district to view custom irrigation guidelines</span><span class="lang-bn hidden">সেচ ও সার প্রয়োগের সঠিক পরামর্শ দেখতে জেলা নির্বাচন করুন</span></p>
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider"><span class="lang-en">Select Region</span><span class="lang-bn hidden">অঞ্চল নির্বাচন</span></label>
+                    <select id="loc-select" onchange="updateWeather()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Dhaka">Dhaka (ঢাকা)</option>
+                        <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
+                        <option value="Sylhet">Sylhet (সিলেট)</option>
+                        <option value="Bogura">Bogura (বগুড়া)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="weather-grid">
+                <!-- populated by JS -->
+            </div>
+
+            <!-- Agro Insight Card -->
+            <div class="mt-8 bg-blue-50 p-6 rounded-2xl border border-blue-100 flex items-start gap-4">
+                <div class="w-12 h-12 bg-blue-200 text-blue-700 rounded-2xl flex items-center justify-center text-2xl shrink-0"><i class="fa-solid fa-umbrella"></i></div>
+                <div>
+                    <h4 class="font-bold text-blue-950 mb-1"><span class="lang-en">AI Agricultural Advisory</span><span class="lang-bn hidden">এআই কৃষি পরামর্শ</span></h4>
+                    <p class="text-blue-900 text-sm leading-relaxed" id="weather-advice">
+                        <span class="lang-en">Clear weather expected today. Ideal for paddy pesticide spraying and crop weeding. Avoid nitrogen fertilizer if afternoon heat exceeds 34°C.</span>
+                        <span class="lang-bn hidden">আজকের আবহাওয়া পরিষ্কার থাকবে। ধানের ক্ষেতে কীটনাশক স্প্রে ও আগাছা পরিষ্কারের জন্য উপযুক্ত দিন। তাপমাত্রা ৩৪°C ছাড়িয়ে গেলে ইউরিয়া সার দেওয়া বন্ধ রাখুন।</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEXT-AWARE FLOATING AI BUTTON -->
+    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform z-40 flex items-center gap-3 border-2 border-white">
+        <i class="fa-solid fa-robot text-2xl animate-pulse"></i>
+        <span class="font-bold pr-2"><span class="lang-en">Ask Weather AI</span><span class="lang-bn hidden">আবহাওয়া এআই চ্যাট</span></span>
+    </button>
+
+    ${standardFooter}
+    ${standardChatWidget}
+    ${standardPitchModal}
+    ${standardGlobalScript}
+
+    <script>
+        const weatherData = {
+            'Dhaka': [
+                {dayEn:'Today', dayBn:'আজ', icon:'fa-cloud-sun', temp:'32°C', descEn:'Partly Cloudy', descBn:'আংশিক মেঘলা'},
+                {dayEn:'Tomorrow', dayBn:'আগামীকাল', icon:'fa-sun', temp:'34°C', descEn:'Sunny', descBn:'রৌদ্রোজ্জ্বল'},
+                {dayEn:'Wed', dayBn:'বুধ', icon:'fa-cloud-rain', temp:'28°C', descEn:'Light Rain', descBn:'হালকা বৃষ্টি'},
+                {dayEn:'Thu', dayBn:'বৃহঃ', icon:'fa-cloud-showers-heavy', temp:'26°C', descEn:'Heavy Rain', descBn:'ভারী বৃষ্টি'},
+                {dayEn:'Fri', dayBn:'শুক্র', icon:'fa-cloud', temp:'29°C', descEn:'Cloudy', descBn:'মেঘলা'}
+            ],
+            'Rajshahi': [
+                {dayEn:'Today', dayBn:'আজ', icon:'fa-sun', temp:'36°C', descEn:'Intense Sun', descBn:'তীব্র রোদ'},
+                {dayEn:'Tomorrow', dayBn:'আগামীকাল', icon:'fa-sun', temp:'37°C', descEn:'Dry Heat', descBn:'শুকনো গরম'},
+                {dayEn:'Wed', dayBn:'বুধ', icon:'fa-cloud-sun', temp:'35°C', descEn:'Partly Cloudy', descBn:'আংশিক মেঘলা'},
+                {dayEn:'Thu', dayBn:'বৃহঃ', icon:'fa-cloud-sun', temp:'34°C', descEn:'Partly Cloudy', descBn:'আংশিক মেঘলা'},
+                {dayEn:'Fri', dayBn:'শুক্র', icon:'fa-sun', temp:'36°C', descEn:'Sunny', descBn:'রৌদ্রোজ্জ্বল'}
+            ],
+            'Sylhet': [
+                {dayEn:'Today', dayBn:'আজ', icon:'fa-cloud-showers-heavy', temp:'25°C', descEn:'Heavy Rain', descBn:'ভারী বৃষ্টি'},
+                {dayEn:'Tomorrow', dayBn:'আগামীকাল', icon:'fa-cloud-rain', temp:'26°C', descEn:'Rain', descBn:'বৃষ্টি'},
+                {dayEn:'Wed', dayBn:'বুধ', icon:'fa-cloud-rain', temp:'26°C', descEn:'Rain', descBn:'বৃষ্টি'},
+                {dayEn:'Thu', dayBn:'বৃহঃ', icon:'fa-cloud', temp:'28°C', descEn:'Cloudy', descBn:'মেঘলা'},
+                {dayEn:'Fri', dayBn:'শুক্র', icon:'fa-cloud-sun', temp:'29°C', descEn:'Partly Cloudy', descBn:'আংশিক মেঘলা'}
+            ],
+            'Bogura': [
+                {dayEn:'Today', dayBn:'আজ', icon:'fa-sun', temp:'33°C', descEn:'Sunny', descBn:'রৌদ্রোজ্জ্বল'},
+                {dayEn:'Tomorrow', dayBn:'আগামীকাল', icon:'fa-cloud-sun', temp:'32°C', descEn:'Pleasant', descBn:'মনোরম'},
+                {dayEn:'Wed', dayBn:'বুধ', icon:'fa-cloud-rain', temp:'29°C', descEn:'Scattered Rain', descBn:'বিক্ষিপ্ত বৃষ্টি'},
+                {dayEn:'Thu', dayBn:'বৃহঃ', icon:'fa-cloud', temp:'30°C', descEn:'Overcast', descBn:'মেঘলা'},
+                {dayEn:'Fri', dayBn:'শুক্র', icon:'fa-cloud-sun', temp:'32°C', descEn:'Clear Sky', descBn:'পরিষ্কার আকাশ'}
+            ]
+        };
+
+        function updateWeather() {
+            const loc = document.getElementById('loc-select').value;
+            const data = weatherData[loc] || weatherData['Dhaka'];
+            let html = '';
+            data.forEach((d, i) => {
+                const isToday = i === 0;
+                html += \`
+                    <div class="\${isToday ? 'col-span-2 md:col-span-1 bg-blue-50 border-blue-200 shadow-sm' : 'bg-gray-50 border-gray-100'} border rounded-2xl p-4 text-center flex flex-col items-center justify-center transition hover:shadow-md">
+                        <div class="font-bold text-gray-500 mb-2">\${currentLang === 'en' ? d.dayEn : d.dayBn}</div>
+                        <i class="fa-solid \${d.icon} text-4xl \${d.icon.includes('rain') || d.icon.includes('showers') ? 'text-blue-500' : 'text-amber-500'} mb-3"></i>
+                        <div class="text-2xl font-black text-gray-900">\${d.temp}</div>
+                        <div class="text-xs font-bold text-gray-500 mt-1">\${currentLang === 'en' ? d.descEn : d.descBn}</div>
+                    </div>
+                \`;
+            });
+            document.getElementById('weather-grid').innerHTML = html;
+        }
+
+        function askAI() {
+            const loc = document.getElementById('loc-select').value;
+            const msgEn = \`I am checking the 7-day farming weather for \${loc}. What agricultural actions should I take this week?\`;
+            const msgBn = \`আমি \${loc}-এর ৭ দিনের কৃষি আবহাওয়া দেখছি। এই সপ্তাহে আমার জমিতে কী কী কৃষি পদক্ষেপ নেওয়া উচিত?\`;
+            openServiceChat(msgEn, msgBn);
+        }
+
+        window.addEventListener('DOMContentLoaded', updateWeather);
+    </script>
+</body>
+</html>`;
+fs.writeFileSync(path.join(dir, 'weather.html'), weatherHtml, 'utf8');
+
+// -------------------------------------------------------------
+// 2. REBUILD MEDICINE.HTML
+// -------------------------------------------------------------
+const medicineHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    ${standardHead('Medicine Dosage')}
+    <style>
+        #global-chat-btn { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    ${standardTopWeather}
+    ${standardNavbar('/medicine')}
+    
+    <div class="bg-teal-700 py-16 text-center relative overflow-hidden">
+        <div class="relative z-10 max-w-4xl mx-auto px-6">
+            <span class="bg-teal-600 text-white font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">Certified Agro-Chemical Guide</span>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4"><span class="lang-en">Crop Medicine & Dosage</span><span class="lang-bn hidden">ফসলের সঠিক ঔষধ ও প্রয়োগমাত্রা</span></h1>
+            <p class="text-teal-100 max-w-2xl mx-auto text-base md:text-lg"><span class="lang-en">Avoid chemical overdosing. Get government-approved fungicide, pesticide, and herbicide recommendations for your crops.</span><span class="lang-bn hidden">অতিরিক্ত কীটনাশক ব্যবহারের ক্ষতি থেকে বাঁচুন। অনুমোদিত ঔষধ ও সঠিক প্রয়োগমাত্রা জেনে নিন।</span></p>
+        </div>
+    </div>
+
+    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto mt-[-3rem] relative z-20">
+        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-100">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">1. Select Crop</span><span class="lang-bn hidden">১. ফসল নির্বাচন করুন</span></label>
+                    <select id="crop-select" onchange="updateMed()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="Rice">Rice / Paddy (ধান)</option>
+                        <option value="Potato">Potato (আলু)</option>
+                        <option value="Tomato">Tomato / Vegetables (টমেটো / সবজি)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">2. Select Problem Type</span><span class="lang-bn hidden">২. রোগের ধরন নির্বাচন করুন</span></label>
+                    <select id="prob-select" onchange="updateMed()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="Fungus">Fungal Infection / Blight (ছত্রাক / পচন)</option>
+                        <option value="Insects">Insects / Stem Borer (মাজরা / পোকা)</option>
+                        <option value="Nutrient">Nutrient Deficiency (পুষ্টি ঘাটতি / পাতা হলুদ)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><i class="fa-solid fa-prescription-bottle-medical text-teal-600"></i> <span class="lang-en">Recommended Treatment Protocols</span><span class="lang-bn hidden">অনুমোদিত ঔষধ ও প্রেসক্রিপশন</span></h3>
+            
+            <div id="med-results" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- CONTEXT-AWARE FLOATING AI BUTTON -->
+    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform z-40 flex items-center gap-3 border-2 border-white">
+        <i class="fa-solid fa-robot text-2xl animate-pulse"></i>
+        <span class="font-bold pr-2"><span class="lang-en">Ask Medicine AI</span><span class="lang-bn hidden">ঔষধ এআই পরামর্শ</span></span>
+    </button>
+
+    ${standardFooter}
+    ${standardChatWidget}
+    ${standardPitchModal}
+    ${standardGlobalScript}
 
     <script>
         const meds = {
@@ -605,22 +765,22 @@
                 html = '<div class="col-span-2 text-center py-10 text-gray-500 font-bold">Please select another combination.</div>';
             } else {
                 data.forEach(m => {
-                    html += `
+                    html += \`
                         <div class="bg-teal-50 border border-teal-100 rounded-3xl p-6 flex flex-col justify-between hover:shadow-md transition">
                             <div>
                                 <div class="flex justify-between items-start mb-2">
-                                    <span class="bg-teal-200 text-teal-800 text-xs font-black uppercase px-2.5 py-1 rounded-lg">${m.brand}</span>
+                                    <span class="bg-teal-200 text-teal-800 text-xs font-black uppercase px-2.5 py-1 rounded-lg">\${m.brand}</span>
                                     <span class="text-xs text-gray-400 font-bold">Govt. Verified</span>
                                 </div>
-                                <h4 class="text-lg font-black text-teal-950 mb-1">${currentLang === 'en' ? m.nameEn : m.nameBn}</h4>
-                                <p class="text-sm text-gray-600 mb-4 leading-relaxed">${currentLang === 'en' ? m.descEn : m.descBn}</p>
+                                <h4 class="text-lg font-black text-teal-950 mb-1">\${currentLang === 'en' ? m.nameEn : m.nameBn}</h4>
+                                <p class="text-sm text-gray-600 mb-4 leading-relaxed">\${currentLang === 'en' ? m.descEn : m.descBn}</p>
                             </div>
                             <div class="bg-white border border-teal-100 p-3.5 rounded-2xl flex items-center justify-between">
                                 <span class="text-xs font-bold text-gray-500 uppercase">Exact Dosage:</span>
-                                <span class="text-teal-700 font-black text-sm">${currentLang === 'en' ? m.doseEn : m.doseBn}</span>
+                                <span class="text-teal-700 font-black text-sm">\${currentLang === 'en' ? m.doseEn : m.doseBn}</span>
                             </div>
                         </div>
-                    `;
+                    \`;
                 });
             }
             document.getElementById('med-results').innerHTML = html;
@@ -632,12 +792,359 @@
             const crop = cropSel.options[cropSel.selectedIndex].text;
             const prob = probSel.options[probSel.selectedIndex].text;
             
-            const msgEn = `I am having ${prob} issues on my ${crop}. Can you give me detailed mixing and spraying instructions?`;
-            const msgBn = `আমার ${crop}-এ ${prob}-এর সমস্যা হয়েছে। কীভাবে ঔষধ মিশিয়ে স্প্রে করব তার বিস্তারিত নিয়ম বলে দিন।`;
+            const msgEn = \`I am having \${prob} issues on my \${crop}. Can you give me detailed mixing and spraying instructions?\`;
+            const msgBn = \`আমার \${crop}-এ \${prob}-এর সমস্যা হয়েছে। কীভাবে ঔষধ মিশিয়ে স্প্রে করব তার বিস্তারিত নিয়ম বলে দিন।\`;
             openServiceChat(msgEn, msgBn);
         }
 
         window.addEventListener('DOMContentLoaded', updateMed);
     </script>
 </body>
-</html>
+</html>`;
+fs.writeFileSync(path.join(dir, 'medicine.html'), medicineHtml, 'utf8');
+
+// -------------------------------------------------------------
+// 3. REBUILD FERTILIZER.HTML
+// -------------------------------------------------------------
+const fertilizerHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    ${standardHead('Fertilizer Calculator')}
+    <style>
+        #global-chat-btn { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    ${standardTopWeather}
+    ${standardNavbar('/fertilizer')}
+    
+    <div class="bg-purple-700 py-16 text-center relative overflow-hidden">
+        <div class="relative z-10 max-w-4xl mx-auto px-6">
+            <span class="bg-purple-600 text-white font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">Soil Health Optimization</span>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4"><span class="lang-en">Smart Fertilizer Calculator</span><span class="lang-bn hidden">স্মার্ট সার ক্যালকুলেটর</span></h1>
+            <p class="text-purple-100 max-w-2xl mx-auto text-base md:text-lg"><span class="lang-en">Calculate exact N-P-K nutrient requirements for your land to minimize costs and maximize harvest yield.</span><span class="lang-bn hidden">জমির সঠিক পরিমাণ অনুযায়ী ইউরিয়া, টিএসপি এবং পটাশ সারের পরিমাণ হিসাব করুন নিমিষেই।</span></p>
+        </div>
+    </div>
+
+    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto mt-[-3rem] relative z-20">
+        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 border border-gray-100 grid grid-cols-1 md:grid-cols-5 gap-8">
+            <div class="md:col-span-2 space-y-6">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">Select Target Crop</span><span class="lang-bn hidden">ফসল নির্বাচন করুন</span></label>
+                    <select id="fert-crop" onchange="calcFert()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="Rice">High-Yield Paddy / BRRI Dhan (উচ্চ ফলনশীল ধান)</option>
+                        <option value="Potato">Potato / Diamond (গোল আলু)</option>
+                        <option value="Maize">Maize / Hybrid Corn (হাইব্রিড ভুট্টা)</option>
+                        <option value="Mustard">Mustard / Oilseeds (সরিষা)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider"><span class="lang-en">Land Size (Decimal / Shotok)</span><span class="lang-bn hidden">জমির পরিমাণ (শতক)</span></label>
+                    <div class="relative">
+                        <input type="number" id="fert-land" value="33" min="1" oninput="calcFert()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-black text-xl rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 pr-20">
+                        <span class="absolute right-4 top-4 text-xs font-bold text-gray-400 uppercase">Decimals</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 mt-1 font-bold">1 Bigha = 33 Decimals (১ বিঘা = ৩৩ শতক)</p>
+                </div>
+
+                <div class="p-4 bg-purple-50 rounded-2xl border border-purple-100 text-xs text-purple-900 leading-relaxed font-bold">
+                    <i class="fa-solid fa-lightbulb text-purple-600 mr-1"></i>
+                    <span class="lang-en">Foshol AI Rule: Always split Urea application into 3 stages (Seedling, Vegetative, Panicle).</span>
+                    <span class="lang-bn hidden">ইউরিয়া সার সবসময় ৩ কিস্তিতে প্রয়োগ করবেন। একবারে দিলে অপচয় হয়।</span>
+                </div>
+            </div>
+            
+            <div class="md:col-span-3 bg-gradient-to-br from-purple-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border border-purple-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-6 border-b border-purple-200/60 pb-3">
+                        <h3 class="text-lg font-black text-purple-950"><span class="lang-en">Exact Fertilizer Requirements</span><span class="lang-bn hidden">প্রয়োজনীয় সারের চূড়ান্ত হিসাব</span></h3>
+                        <span class="bg-purple-200 text-purple-800 text-xs font-black px-2.5 py-1 rounded-lg uppercase">BARI / BRRI Standard</span>
+                    </div>
+                    <div class="space-y-3.5" id="fert-results">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-purple-200/60 flex justify-between items-center text-xs text-purple-800">
+                    <span>Authentic inputs available in <a href="/store" class="font-bold underline text-f-dark">Foshol Store</a></span>
+                    <button onclick="askAI()" class="font-bold text-purple-950 hover:underline"><i class="fa-solid fa-calculator mr-1"></i> Get Split Schedule</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEXT-AWARE FLOATING AI BUTTON -->
+    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform z-40 flex items-center gap-3 border-2 border-white">
+        <i class="fa-solid fa-robot text-2xl animate-pulse"></i>
+        <span class="font-bold pr-2"><span class="lang-en">Ask Fertilizer AI</span><span class="lang-bn hidden">সারের এআই পরামর্শ</span></span>
+    </button>
+
+    ${standardFooter}
+    ${standardChatWidget}
+    ${standardPitchModal}
+    ${standardGlobalScript}
+
+    <script>
+        const rates = {
+            'Rice': { Urea: 0.9, TSP: 0.45, MoP: 0.5, Gypsum: 0.3, Zinc: 0.03 },
+            'Potato': { Urea: 1.2, TSP: 0.85, MoP: 1.1, Gypsum: 0.5, Zinc: 0.04 },
+            'Maize': { Urea: 1.5, TSP: 0.9, MoP: 0.8, Gypsum: 0.4, Zinc: 0.05 },
+            'Mustard': { Urea: 0.8, TSP: 0.6, MoP: 0.4, Gypsum: 0.6, Zinc: 0.03 }
+        };
+
+        function calcFert() {
+            const crop = document.getElementById('fert-crop').value;
+            const land = parseFloat(document.getElementById('fert-land').value) || 0;
+            const r = rates[crop] || rates['Rice'];
+            
+            const html = \`
+                <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs">N</div>
+                        <div>
+                            <div class="font-bold text-gray-900">Urea (ইউরিয়া)</div>
+                            <div class="text-[11px] text-gray-400">Nitrogen source for fast growth</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-900 text-xl">\${(r.Urea * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                </div>
+                <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-black text-xs">P</div>
+                        <div>
+                            <div class="font-bold text-gray-900">TSP / DAP (টিএসপি)</div>
+                            <div class="text-[11px] text-gray-400">Phosphorus for strong roots</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-900 text-xl">\${(r.TSP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                </div>
+                <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-black text-xs">K</div>
+                        <div>
+                            <div class="font-bold text-gray-900">MoP (মিউরেট অব পটাশ)</div>
+                            <div class="text-[11px] text-gray-400">Potassium for disease resistance</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-900 text-xl">\${(r.MoP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                </div>
+                <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs">S</div>
+                        <div>
+                            <div class="font-bold text-gray-900">Gypsum (জিপসাম / গন্ধক)</div>
+                            <div class="text-[11px] text-gray-400">Sulfur for soil conditioning</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-900 text-xl">\${(r.Gypsum * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                </div>
+            \`;
+            document.getElementById('fert-results').innerHTML = html;
+        }
+
+        function askAI() {
+            const cropSel = document.getElementById('fert-crop');
+            const crop = cropSel.options[cropSel.selectedIndex].text;
+            const land = document.getElementById('fert-land').value;
+            
+            const msgEn = \`I am preparing \${land} decimals of land for \${crop}. How many installments should I apply the calculated Urea, TSP, and MoP in?\`;
+            const msgBn = \`আমি \${land} শতক জমিতে \${crop}-এর জন্য সারের হিসাব করেছি। এই সারগুলো ঠিক কয় কিস্তিতে জমিতে প্রয়োগ করব?\`;
+            openServiceChat(msgEn, msgBn);
+        }
+
+        window.addEventListener('DOMContentLoaded', calcFert);
+    </script>
+</body>
+</html>`;
+fs.writeFileSync(path.join(dir, 'fertilizer.html'), fertilizerHtml, 'utf8');
+
+// -------------------------------------------------------------
+// 4. REBUILD MARKET.HTML
+// -------------------------------------------------------------
+const marketHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    ${standardHead('Daily Market Prices')}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #global-chat-btn { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    ${standardTopWeather}
+    ${standardNavbar('/market')}
+    
+    <div class="bg-gradient-to-r from-orange-500 to-amber-600 py-16 text-center relative overflow-hidden">
+        <div class="relative z-10 max-w-4xl mx-auto px-6">
+            <span class="bg-orange-600 text-white font-bold text-xs uppercase px-3 py-1 rounded-full mb-3 inline-block">Transparent Wholesale Index</span>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4"><span class="lang-en">Daily Agricultural Mandi Prices</span><span class="lang-bn hidden">দৈনিক পাইকারি বাজার দর ও তুলনা</span></h1>
+            <p class="text-orange-100 max-w-2xl mx-auto text-base md:text-lg"><span class="lang-en">Eliminating middleman exploitation. Compare farmgate selling prices directly with retail wholesale markets across Bangladesh.</span><span class="lang-bn hidden">মধ্যস্বত্বভোগীদের দৌরাত্ম্য কমাতে পাইকারি ও খুচরা বাজারের আসল মূল্যের লাইভ তুলনা।</span></p>
+        </div>
+    </div>
+
+    <section class="py-12 px-6 md:px-12 max-w-5xl mx-auto mt-[-3rem] relative z-20">
+        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 border border-gray-100">
+            <!-- Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 border-b border-gray-100 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-chart-simple text-orange-500 mr-2"></i> <span class="lang-en">Farmgate vs Retail Comparison</span><span class="lang-bn hidden">কৃষক মূল্য বনাম বাজার মূল্য</span></h2>
+                    <p class="text-sm text-gray-500 mt-1"><span class="lang-en">Prices displayed per Kilogram in BDT (৳)</span><span class="lang-bn hidden">প্রতি কেজি ফসলের দর টাকায় (৳) প্রদর্শিত</span></p>
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider"><span class="lang-en">Select Market Hub</span><span class="lang-bn hidden">আড়ৎ নির্বাচন</span></label>
+                    <select id="location-select" onchange="updateChart()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="Dhaka">Dhaka (Karwan Bazar / কাওরান বাজার)</option>
+                        <option value="Rajshahi">Rajshahi (Baneswar / বানেশ্বর)</option>
+                        <option value="Bogura">Bogura (Mahasthan / মহাস্থান)</option>
+                        <option value="Sylhet">Sylhet (Bandar Bazar / বন্দর বাজার)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="relative h-[380px] w-full">
+                <canvas id="marketChart"></canvas>
+            </div>
+            
+            <!-- Analysis Insight -->
+            <div class="mt-8 bg-orange-50 p-6 rounded-2xl border border-orange-100 flex items-start gap-4">
+                <div class="w-12 h-12 bg-orange-200 text-orange-700 rounded-2xl flex items-center justify-center text-2xl shrink-0"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                <div>
+                    <h4 class="font-bold text-orange-950 mb-1"><span class="lang-en">Foshol AI Market Intelligence</span><span class="lang-bn hidden">এআই বাজার অ্যানালাইসিস</span></h4>
+                    <p class="text-orange-900 text-sm leading-relaxed" id="market-insight">
+                        <span class="lang-en">Middleman margin is currently highest on <b>Onions (100% markup)</b> and <b>Green Chilies</b>. Farmers in Rajshahi and Bogura are advised to pool volume and sell directly via Foshol B2B verified buyers.</span>
+                        <span class="lang-bn hidden">বর্তমানে <b>পেঁয়াজে ১০০%</b> এবং <b>কাঁচামরিচে দ্বিগুণের বেশি</b> লাভ করছে মধ্যস্বত্বভোগীরা। কৃষকদের পরামর্শ দেওয়া হচ্ছে একা না বেচে দলগতভাবে ফসল এআই-এর ভেরিফাইড বায়ারদের কাছে সরাসরি বিক্রি করতে।</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTEXT-AWARE FLOATING AI BUTTON -->
+    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform z-40 flex items-center gap-3 border-2 border-white">
+        <i class="fa-solid fa-robot text-2xl animate-pulse"></i>
+        <span class="font-bold pr-2"><span class="lang-en">Ask Price Advisor</span><span class="lang-bn hidden">বাজার দর এআই</span></span>
+    </button>
+
+    ${standardFooter}
+    ${standardChatWidget}
+    ${standardPitchModal}
+    ${standardGlobalScript}
+
+    <script>
+        const marketData = {
+            'Dhaka': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [25, 45, 80, 30, 40],
+                retailPrice: [45, 90, 160, 60, 80]
+            },
+            'Rajshahi': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [18, 38, 60, 20, 25],
+                retailPrice: [30, 70, 100, 40, 45]
+            },
+            'Bogura': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [20, 40, 65, 22, 28],
+                retailPrice: [35, 75, 110, 45, 50]
+            },
+            'Sylhet': {
+                labelsEn: ['Potato', 'Onion', 'Green Chili', 'Tomato', 'Brinjal'],
+                labelsBn: ['আলু', 'পেঁয়াজ', 'কাঁচামরিচ', 'টমেটো', 'বেগুন'],
+                farmerPrice: [28, 50, 90, 35, 45],
+                retailPrice: [50, 100, 180, 70, 90]
+            }
+        };
+
+        let myChart = null;
+
+        function initChart() {
+            const ctx = document.getElementById('marketChart').getContext('2d');
+            Chart.defaults.font.family = "'Outfit', 'Hind Siliguri', sans-serif";
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: currentLang === 'en' ? marketData['Dhaka'].labelsEn : marketData['Dhaka'].labelsBn,
+                    datasets: [
+                        {
+                            label: currentLang === 'en' ? "Farmer Farmgate Price (৳)" : "কৃষকের বিক্রয় মূল্য (৳)",
+                            data: marketData['Dhaka'].farmerPrice,
+                            backgroundColor: '#155d35',
+                            borderRadius: 8,
+                            borderSkipped: false
+                        },
+                        {
+                            label: currentLang === 'en' ? "Retail Market Price (৳)" : "খুচরা বাজার মূল্য (৳)",
+                            data: marketData['Dhaka'].retailPrice,
+                            backgroundColor: '#dda72b',
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { usePointStyle: true, padding: 20, font: { weight: 'bold', size: 13 } }
+                        },
+                        tooltip: {
+                            backgroundColor: '#155d35',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            callbacks: {
+                                label: (ctx) => ctx.dataset.label + ': ৳' + ctx.raw + ' / KG'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [4, 4], color: '#f0f0f0' },
+                            ticks: { callback: (v) => '৳' + v }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold', size: 13 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            const location = document.getElementById('location-select').value;
+            const data = marketData[location] || marketData['Dhaka'];
+            
+            if(!myChart) return;
+            myChart.data.labels = currentLang === 'en' ? data.labelsEn : data.labelsBn;
+            myChart.data.datasets[0].data = data.farmerPrice;
+            myChart.data.datasets[1].data = data.retailPrice;
+            
+            myChart.data.datasets[0].label = currentLang === 'en' ? "Farmer Farmgate Price (৳)" : "কৃষকের বিক্রয় মূল্য (৳)";
+            myChart.data.datasets[1].label = currentLang === 'en' ? "Retail Market Price (৳)" : "খুচরা বাজার মূল্য (৳)";
+            myChart.update();
+        }
+
+        function askAI() {
+            const loc = document.getElementById('location-select').options[document.getElementById('location-select').selectedIndex].text;
+            const msgEn = \`I am checking the wholesale vs retail prices in \${loc}. Which crop yields the highest net margin today?\`;
+            const msgBn = \`আমি \${loc}-এর পাইকারি বনাম খুচরা বাজার দর দেখছি। আজ কোন ফসল সরাসরি বিক্রি করলে সবচেয়ে বেশি লাভ হবে?\`;
+            openServiceChat(msgEn, msgBn);
+        }
+
+        window.addEventListener('DOMContentLoaded', initChart);
+    </script>
+</body>
+</html>`;
+fs.writeFileSync(path.join(dir, 'market.html'), marketHtml, 'utf8');
+
+console.log('Component 1: Rebuilt 4 tool pages with clean architecture!');
