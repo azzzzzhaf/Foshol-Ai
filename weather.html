@@ -3,6 +3,11 @@
 <head>
     ${HEAD}
     <title>Weather Forecast - Foshol AI</title>
+
+    <style>
+        /* Hide global AI chat button on tool pages */
+        button[onclick="toggleChat()"].fixed.bottom-6.right-6 { display: none !important; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     ${NAVBAR}
@@ -30,7 +35,7 @@
     </section>
 
     <!-- FLOATING AI BUTTON -->
-    <button onclick="askAI()" class="fixed right-6 bottom-24 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-40 flex items-center gap-3 group border-2 border-white">
+    <button onclick="askAI()" class="fixed right-6 bottom-6 bg-f-dark text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-40 flex items-center gap-3 group border-2 border-white">
         <i class="fa-solid fa-robot text-2xl group-hover:animate-bounce"></i>
         <span class="font-bold pr-2 max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap"><span class="lang-en">Chat with AI</span><span class="lang-bn hidden">এআই-কে প্রশ্ন করুন</span></span>
     </button>
@@ -71,6 +76,20 @@
         window.addEventListener('DOMContentLoaded', updateWeather);
         const origToggleW = window.toggleLanguage;
         window.toggleLanguage = function() { origToggleW(); setTimeout(updateWeather, 50); };
+    </script>
+
+    <script>
+        if (typeof openServiceChat === 'undefined') {
+            window.openServiceChat = function(enPrompt, bnPrompt) {
+                const chatWidget = document.getElementById("chat-widget");
+                if (chatWidget && chatWidget.classList.contains("chat-hidden")) {
+                    toggleChat();
+                }
+                const msg = currentLang === "en" ? enPrompt : bnPrompt;
+                document.getElementById('chat-input').value = msg;
+                sendChatMessage();
+            };
+        }
     </script>
 </body>
 </html>

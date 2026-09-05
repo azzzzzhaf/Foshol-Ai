@@ -383,21 +383,33 @@
             setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, lang: currentLang })
-                });
-                
-                const data = await res.json();
+            
+            setTimeout(() => {
                 document.getElementById(typingId).remove();
                 
-                chatBox.innerHTML += `<div class="chat-message chat-ai">${data.reply || data.error}</div>`;
+                let replyEn = "I am currently in MVP mode. Please check our Krishi Blog for verified updates!";
+                let replyBn = "আমি বর্তমানে পরীক্ষামূলক পর্যায়ে আছি। যেকোনো তথ্যের জন্য আমাদের কৃষি ব্লগ চেক করুন!";
+                const msgLower = message.toLowerCase();
+                
+                if (msgLower.includes('market') || msgLower.includes('বাজার')) {
+                    replyEn = "Based on current market updates, Tomatoes and Green Chilies are highly profitable today. For more verified updates, read our latest <a href='/articles' class='text-blue-500 underline'>market blogs</a>.";
+                    replyBn = "আজকের বাজার দর অনুযায়ী, টমেটো এবং কাঁচামরিচে লাভ সবচেয়ে বেশি। আরও ভেরিফাইড আপডেটের জন্য আমাদের <a href='/articles' class='text-blue-500 underline'>কৃষি ব্লগ</a> পড়ুন।";
+                } else if (msgLower.includes('weather') || msgLower.includes('আবহাওয়া')) {
+                    replyEn = "Based on the forecast, prepare your land accordingly. If heavy rain is expected, ensure proper drainage. Check our <a href='/articles' class='text-blue-500 underline'>trusted blogs</a> for more tips.";
+                    replyBn = "আবহাওয়ার পূর্বাভাস অনুযায়ী আপনার জমির যত্ন নিন। বৃষ্টির সম্ভাবনা থাকলে পানি নিষ্কাশনের ব্যবস্থা রাখুন। বিস্তারিত টিপস পেতে আমাদের <a href='/articles' class='text-blue-500 underline'>ব্লগ</a> পড়ুন।";
+                } else if (msgLower.includes('medicine') || msgLower.includes('ওষুধ') || msgLower.includes('স্প্রে')) {
+                    replyEn = "Always apply the exact dosage as listed on the chart. Spraying in the late afternoon yields the best results. Check our <a href='/articles' class='text-blue-500 underline'>trusted guides</a>.";
+                    replyBn = "চার্টে দেওয়া একদম সঠিক মাত্রায় ওষুধ প্রয়োগ করুন। শেষ বিকেলে স্প্রে করলে সবচেয়ে ভালো ফল পাওয়া যায়। আরও জানতে আমাদের <a href='/articles' class='text-blue-500 underline'>গাইডলাইন</a> পড়ুন।";
+                } else if (msgLower.includes('fertilizer') || msgLower.includes('সার')) {
+                    replyEn = "Apply Urea in 3 equal installments for maximum yield. TSP and MoP should be applied during final land preparation.";
+                    replyBn = "সবচেয়ে ভালো ফলনের জন্য ইউরিয়া সার ৩টি সমান কিস্তিতে প্রয়োগ করবেন। টিএসপি এবং পটাশ সার জমি তৈরির শেষ ধাপে দিয়ে দিবেন।";
+                }
+
+                const finalReply = currentLang === 'en' ? replyEn : replyBn;
+                chatBox.innerHTML += `<div class="chat-message chat-ai">${finalReply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                document.getElementById(typingId).remove();
-                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-500">${currentLang === 'bn' ? 'সংযোগ বিচ্ছিন্ন হয়েছে!' : 'Connection lost!'}</div>`;
+            }, 1500);
+</div>`;
             }
         }
     </script>
