@@ -269,6 +269,120 @@
 
         </div>
 
+        
+        <!-- EUROPEAN SATELLITE NDVI FIELD MONITORING SIMULATOR -->
+        <div class="my-20 bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-gray-100 overflow-hidden relative">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10 pb-6 border-b border-gray-100">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-indigo-100 text-indigo-800 font-black text-xs uppercase px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-satellite mr-1"></i> Sentinel-2 & Copernicus Satellite Data
+                        </span>
+                        <span class="bg-green-100 text-green-800 font-bold text-xs px-2.5 py-1 rounded-full">OneSoil & Atfarm Standard</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-gray-900">
+                        <span class="lang-en">Satellite NDVI Field Health Monitoring</span>
+                        <span class="lang-bn hidden">স্যাটেলাইট ক্রপ হেলথ ও বায়োমাস মনিটরিং</span>
+                    </h2>
+                    <p class="text-gray-500 text-sm md:text-base mt-1">
+                        <span class="lang-en">Monitor vegetative biomass, detect hidden disease patches, and prevent waterlogging from space at 10-meter resolution.</span>
+                        <span class="lang-bn hidden">মহাকাশের স্যাটেলাইট ডাটা দিয়ে ফসলের পাতা, ক্লোরোফিল ও মাটির আর্দ্রতা পরীক্ষা করে জমির রোগগ্রস্ত অংশ ঘরে বসেই চিহ্নিত করুন।</span>
+                    </p>
+                </div>
+
+                <!-- Plot Selector Dropdown -->
+                <div class="w-full lg:w-72">
+                    <label class="block text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Select Monitored Field Plot</label>
+                    <select id="satellite-plot-select" onchange="updateSatelliteDemo()" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="plotA">Plot A: Boro Paddy (Rajshahi • 2.4 Acres)</option>
+                        <option value="plotB">Plot B: Diamond Potato (Munshiganj • 1.8 Acres)</option>
+                        <option value="plotC">Plot C: Mustard & Corn (Bogura • 3.1 Acres)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Interactive Visualizer Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-gray-900 text-white rounded-[2.5rem] p-6 md:p-8 overflow-hidden relative">
+                <!-- Left: Satellite Map Viewport -->
+                <div class="lg:col-span-7 relative h-[360px] md:h-[420px] rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl group">
+                    <img id="satellite-img" src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1000" class="w-full h-full object-cover transition-all duration-700 brightness-95" alt="Field Satellite View">
+                    
+                    <!-- NDVI Heatmap Canvas Simulation Overlay -->
+                    <div id="ndvi-overlay" class="absolute inset-0 bg-gradient-to-tr from-emerald-500/50 via-amber-400/40 to-red-500/50 mix-blend-multiply opacity-90 transition-opacity duration-500"></div>
+
+                    <!-- Scan Coordinates Badge -->
+                    <div class="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 text-xs font-mono flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <span id="satellite-coords">LAT: 24.3636° N • LON: 88.6241° E</span>
+                    </div>
+
+                    <!-- NDVI Legend Overlay -->
+                    <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-md p-3 rounded-2xl border border-white/10 flex flex-wrap justify-between items-center text-[11px] font-bold">
+                        <span class="text-gray-300">NDVI Scale:</span>
+                        <span class="flex items-center gap-1 text-emerald-400"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> High Biomass (&gt;0.75)</span>
+                        <span class="flex items-center gap-1 text-amber-300"><span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span> Moisture Stress (0.50)</span>
+                        <span class="flex items-center gap-1 text-red-400"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Disease Patch (&lt;0.35)</span>
+                    </div>
+
+                    <!-- Toggle View Mode Button -->
+                    <button onclick="toggleNdviMode()" class="absolute top-4 right-4 bg-white text-gray-900 font-bold px-3 py-1.5 rounded-xl text-xs hover:bg-gray-100 shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-indigo-600"></i> <span id="ndvi-toggle-text">Toggle TrueColor View</span>
+                    </button>
+                </div>
+
+                <!-- Right: Agronomic Telemetry Dashboard -->
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                        <div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-wider">Vegetative Index (NDVI)</div>
+                            <div class="text-3xl font-black text-emerald-400 flex items-center gap-2" id="sat-ndvi-score">
+                                0.78 <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold px-2 py-0.5 rounded-full uppercase">Healthy Canopy</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-gray-400 font-bold block uppercase">Satellite Pass</span>
+                            <span class="text-sm font-bold text-white">Sentinel-2 • 4h ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Health Indices -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/10">
+                            <div class="text-xs text-gray-400 font-bold uppercase">Nitrogen Uptake</div>
+                            <div class="text-lg font-black text-white mt-0.5" id="sat-nitrogen">84 kg N/ha</div>
+                            <div class="text-[11px] text-emerald-400 font-bold">Optimal Range</div>
+                        </div>
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/10">
+                            <div class="text-xs text-gray-400 font-bold uppercase">Soil Moisture</div>
+                            <div class="text-lg font-black text-white mt-0.5" id="sat-moisture">68% Field Cap.</div>
+                            <div class="text-[11px] text-amber-300 font-bold">Dry Patch (Zone B)</div>
+                        </div>
+                    </div>
+
+                    <!-- AI Diagnostic Prescription from Satellite -->
+                    <div class="bg-white/10 p-5 rounded-2xl border border-white/10 space-y-2">
+                        <div class="text-xs font-black text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                            <span class="lang-en">Anomaly Detected in Northeast Quadrant</span>
+                            <span class="lang-bn hidden">উত্তর-পূর্ব কোণে অসঙ্গতি শনাক্ত হয়েছে</span>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed" id="sat-anomaly-desc">
+                            NDVI drop of 18% detected over 0.4 acres in Sector B2. Likely early-stage fungal blight or irrigation blockage. High-resolution ground scouting recommended.
+                        </p>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="openServiceChat('Show me the satellite NDVI analysis for my farm plot in detail', 'আমার জমিতে স্যাটেলাইট NDVI এনালাইসিস করে বিস্তারিত রিপোর্ট দিন')" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3 px-4 rounded-xl text-xs hover:shadow-lg transition flex items-center justify-center gap-2 shadow">
+                            <i class="fa-solid fa-robot"></i> <span class="lang-en">Chat with Satellite AI</span><span class="lang-bn hidden">স্যাটেলাইট এআই রিপোর্ট</span>
+                        </button>
+                        <button onclick="openPitchModal()" class="border border-white/30 text-white font-bold py-3 px-4 rounded-xl text-xs hover:bg-white/10 transition">
+                            <i class="fa-solid fa-chart-line mr-1"></i> Data API
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Category B: Ecosystem (Page-like) -->
         <div class="text-center mb-10 pt-10 border-t border-gray-200">
             <span class="bg-yellow-100 text-yellow-800 font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider inline-block mb-4">
@@ -662,6 +776,70 @@
         function closePitchModal() {
             const m = document.getElementById('pitch-modal');
             if(m) m.classList.add('hidden');
+        }
+    </script>
+
+
+    <!-- Satellite NDVI Simulator Logic -->
+    <script>
+        const plotData = {
+            'plotA': {
+                img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1000',
+                coords: 'LAT: 24.3636° N • LON: 88.6241° E (Rajshahi)',
+                ndvi: '0.78',
+                ndviStatus: 'Healthy Canopy (গাছের ঘন বৃদ্ধি)',
+                nitrogen: '84 kg N/ha',
+                moisture: '68% Field Cap.',
+                descEn: 'NDVI drop of 18% detected over 0.4 acres in Sector B2. Likely early-stage fungal blight or irrigation blockage. Ground scouting recommended.',
+                descBn: 'সেক্টর বি২-এর ০.৪ একর অংশে ১৮% পাতার ঘনত্ব হ্রাস পেয়েছে। সম্ভাব্য ব্লাস্ট রোগ অথবা পানি স্বল্পতার কারণে এমন হতে পারে। মাঠ পরিদর্শনের পরামর্শ রইল।'
+            },
+            'plotB': {
+                img: 'https://images.unsplash.com/photo-1592982537447-6f23f03b5eb4?w=1000',
+                coords: 'LAT: 23.5422° N • LON: 90.5305° E (Munshiganj)',
+                ndvi: '0.62',
+                ndviStatus: 'Moisture Stressed (আর্দ্রতা ঘাটতি)',
+                nitrogen: '65 kg N/ha',
+                moisture: '42% Field Cap. (Low)',
+                descEn: 'Low soil moisture detected across central ridge. Immediate shallow irrigation recommended within 24 hours to prevent tuber heat stress.',
+                descBn: 'মাটির আর্দ্রতা ৪২%-এ নেমে গেছে। আলুর গঠন ঠিক রাখতে আগামী ২৪ ঘণ্টার মধ্যে হালকা সেচ দেওয়ার জন্য এআই জোরালো পরামর্শ দিচ্ছে।'
+            },
+            'plotC': {
+                img: 'https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?w=1000',
+                coords: 'LAT: 24.8465° N • LON: 89.3777° E (Bogura)',
+                ndvi: '0.85',
+                ndviStatus: 'Peak Vegetative Stage (সর্বোচ্চ ফলন সম্ভাবনা)',
+                nitrogen: '95 kg N/ha',
+                moisture: '74% Field Cap.',
+                descEn: 'Exceptional canopy density and chlorophyll index. Projected harvest yield +22% higher than regional average.',
+                descBn: 'জমির পাতার ক্লোরোফিল ও ঘনত্ব চমৎকার অবস্থায় আছে। চলতি মৌসুমে আঞ্চলিক গড় ফলনের চেয়ে ২২% বেশি উৎপাদনের সম্ভাবনা দেখা যাচ্ছে।'
+            }
+        };
+
+        let ndviVisible = true;
+
+        function updateSatelliteDemo() {
+            const plotKey = document.getElementById('satellite-plot-select').value;
+            const p = plotData[plotKey];
+            
+            document.getElementById('satellite-img').src = p.img;
+            document.getElementById('satellite-coords').innerText = p.coords;
+            document.getElementById('sat-ndvi-score').innerHTML = p.ndvi + ' <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold px-2 py-0.5 rounded-full uppercase">' + p.ndviStatus + '</span>';
+            document.getElementById('sat-nitrogen').innerText = p.nitrogen;
+            document.getElementById('sat-moisture').innerText = p.moisture;
+            document.getElementById('sat-anomaly-desc').innerHTML = currentLang === 'en' ? p.descEn : p.descBn;
+        }
+
+        function toggleNdviMode() {
+            ndviVisible = !ndviVisible;
+            const overlay = document.getElementById('ndvi-overlay');
+            const text = document.getElementById('ndvi-toggle-text');
+            if(ndviVisible) {
+                overlay.style.opacity = '0.9';
+                text.innerText = 'Toggle TrueColor View';
+            } else {
+                overlay.style.opacity = '0';
+                text.innerText = 'Show NDVI Heatmap';
+            }
         }
     </script>
 
