@@ -117,18 +117,52 @@
             </div>
         </div>
     </main>
+    <!-- Admin Login Screen (Hidden by default) -->
+    <div id="admin-login-screen" class="fixed inset-0 bg-f-dark z-40 hidden flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+            <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-black text-gray-800 mb-2">Admin Portal</h2>
+            <p class="text-gray-500 text-sm mb-6 font-bold">Restricted Access</p>
+            
+            <div id="admin-alert" class="hidden mb-4 p-3 rounded-xl text-sm font-bold text-red-600 bg-red-50 border border-red-200"></div>
+
+            <form id="admin-login-form" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Admin Email</label>
+                    <input type="email" id="admin-email" value="levi6t9@gmail.com" readonly class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 font-bold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Admin Password</label>
+                    <input type="password" id="admin-pass" value="Foshol$$1" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 font-bold">
+                </div>
+                <button type="submit" id="admin-submit-btn" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition shadow-lg mt-2">
+                    Access Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Firebase Auth Logic -->
     <script type="module">
-        import { auth, signOut, onAuthStateChanged } from './firebase-config.js';
+        import { auth, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from './firebase-config.js';
 
         const loader = document.getElementById('loader');
+        const loginScreen = document.getElementById('admin-login-screen');
+        const alertBox = document.getElementById('admin-alert');
+        const submitBtn = document.getElementById('admin-submit-btn');
         
+        let isCheckingAuth = true;
+
         // Protect Route
         onAuthStateChanged(auth, (user) => {
+            isCheckingAuth = false;
             if (!user) {
-                // Not logged in, kick out
-                window.location.href = '/login.html';
+                // Not logged in, show admin login screen
+                loader.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+                loginScreen.classList.add('flex');
             } else if (user.email !== 'levi6t9@gmail.com') {
                 // Not the admin, kick out
                 alert("Access Denied: This dashboard is for Admins only.");
@@ -136,6 +170,8 @@
             } else {
                 // Logged in as Admin, show panel
                 loader.classList.add('hidden');
+                loginScreen.classList.add('hidden');
+                loginScreen.classList.remove('flex');
                 
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-name').innerText = user.displayName || 'Foshol Admin';
@@ -149,9 +185,39 @@
             }
         });
 
+        // Admin Auto-Login / Auto-Create Logic
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+            submitBtn.disabled = true;
+            alertBox.classList.add('hidden');
+
+            try {
+                // Try to login first
+                await signInWithEmailAndPassword(auth, email, pass);
+                // onAuthStateChanged will hide the login screen automatically
+            } catch (error) {
+                // If login fails (user might not exist yet), try creating the account instantly!
+                try {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                    // Account created and logged in automatically!
+                } catch (createError) {
+                    // Actual error (e.g., wrong password, disabled account)
+                    console.error("Auth Error:", error, createError);
+                    alertBox.innerText = "Error: Invalid Password or Account Issue.";
+                    alertBox.classList.remove('hidden');
+                    submitBtn.innerHTML = 'Access Dashboard';
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
-                window.location.href = '/login.html';
+                window.location.reload();
             });
         });
     </script>
