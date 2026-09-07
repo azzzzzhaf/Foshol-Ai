@@ -1605,61 +1605,66 @@
         });
     </script>
 
-    <!-- Dynamic Admin Blogs Logic -->
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            // Auto-heal any legacy/broken cached blogs in localStorage
-            let blogs = JSON.parse(localStorage.getItem('foshol_blogs') || '[]');
-            let healed = false;
-            blogs = blogs.map(blog => {
-                if (blog.img && (blog.img.includes('1598514982205') || blog.img.includes('1592982537447') || blog.img.includes('1581091226825') || blog.img.includes('1586201375761'))) {
-                    healed = true;
-                    if (blog.category === 'Technology') blog.img = 'https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                    else if (blog.category === 'Weather') blog.img = 'https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                    else blog.img = 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                }
-                return blog;
-            });
-            if (healed) localStorage.setItem('foshol_blogs', JSON.stringify(blogs));
+    <!-- Dynamic Admin Blogs Logic (Firebase) -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-            // Find ONLY the official blog grid by ID (preventing injection into How It Works or anywhere else)
+        window.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('krishi-blog-grid');
-            
-            if (blogs.length > 0 && container) {
-                // If blogs from admin or custom exist, replace inner content or prepend to official blog container
-                let dynamicHtml = '';
-                
-                blogs.forEach(blog => {
-                    let badgeColor = 'text-f-dark';
-                    if(blog.category === 'Technology') badgeColor = 'text-f-dark';
-                    else if(blog.category === 'Farming') badgeColor = 'text-f-gold';
-                    else if(blog.category === 'Weather') badgeColor = 'text-orange-500';
+            if (!container) return;
 
-                    dynamicHtml += `
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="window.location.href='/articles?post=${blog.slug || ''}'">
-                        <div class="h-48 bg-gray-200 overflow-hidden relative">
-                            <img src="${blog.img}" onerror="this.src='images/service1.jpg'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${blog.category}</div>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
-                                <span class="lang-en">${blog.titleEn}</span><span class="lang-bn hidden">${blog.titleBn}</span>
-                            </h3>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-                                <span class="lang-en">${blog.descEn}</span><span class="lang-bn hidden">${blog.descBn}</span>
-                            </p>
-                            <div class="flex items-center justify-between text-xs font-bold text-gray-400">
-                                <span><i class="fa-regular fa-calendar mr-1"></i> ${blog.date}</span>
-                                <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+            try {
+                const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    let dynamicHtml = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const blog = doc.data();
+                        
+                        let badgeColor = 'text-f-dark';
+                        if(blog.category === 'Technology') badgeColor = 'text-f-dark';
+                        else if(blog.category === 'Farming') badgeColor = 'text-f-gold';
+                        else if(blog.category === 'Weather') badgeColor = 'text-orange-500';
+
+                        // Format Date
+                        const dateObj = blog.createdAt ? blog.createdAt.toDate() : new Date();
+                        const dateStr = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                        // Support legacy localStorage blogs (titleEn/titleBn) and new Firestore blogs (title)
+                        const titleEn = blog.titleEn || blog.title;
+                        const titleBn = blog.titleBn || blog.title;
+                        const descEn = blog.descEn || blog.content;
+                        const descBn = blog.descBn || blog.content;
+
+                        dynamicHtml += `
+                        <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer" onclick="window.location.href='/articles?post=${blog.slug || ''}'">
+                            <div class="h-48 bg-gray-200 overflow-hidden relative">
+                                <img src="${blog.img}" onerror="this.src='https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${blog.category}</div>
                             </div>
-                        </div>
-                    </div>`;
-                });
-                
-                container.innerHTML = dynamicHtml;
-                
-                // Re-apply language states for dynamic content
-                setTimeout(applyLanguage, 50);
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-f-dark transition">
+                                    <span class="lang-en">${titleEn}</span><span class="lang-bn hidden">${titleBn}</span>
+                                </h3>
+                                <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                                    <span class="lang-en">${descEn}</span><span class="lang-bn hidden">${descBn}</span>
+                                </p>
+                                <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                                    <span><i class="fa-regular fa-calendar mr-1"></i> ${dateStr}</span>
+                                    <span class="text-f-dark group-hover:translate-x-2 transition"><span class="lang-en">Read More</span><span class="lang-bn hidden">পড়ুন</span> <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    
+                    container.innerHTML = dynamicHtml;
+                    setTimeout(() => { if(typeof applyLanguage === 'function') applyLanguage() }, 50);
+                }
+            } catch (e) {
+                console.error("Error loading live blogs:", e);
             }
         });
     </script>
