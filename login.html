@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Foshol AI Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'f-dark': '#155d35',
+                        'f-gold': '#ffb900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden border border-green-100 relative">
+        <!-- Loader Overlay -->
+        <div id="loader" class="absolute inset-0 bg-white/90 z-50 flex-col items-center justify-center hidden">
+            <i class="fa-solid fa-spinner fa-spin text-4xl text-f-dark mb-2"></i>
+            <span class="font-bold text-gray-600">Please wait...</span>
+        </div>
+
+        <div class="p-8 text-center bg-f-dark text-white rounded-b-[2rem]">
+            <a href="/" class="text-3xl font-black tracking-tighter flex items-center justify-center gap-2 mb-2">
+                <i class="fa-solid fa-leaf text-f-gold"></i> Foshol<span class="text-f-gold">.</span>Ai
+            </a>
+            <p class="text-green-100 text-sm">Secure Admin Portal</p>
+        </div>
+
+        <div class="p-8 space-y-6">
+            <div id="alert-box" class="hidden p-3 rounded-xl text-sm font-bold text-center"></div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-f-dark focus:ring-1 focus:ring-f-dark transition" placeholder="admin@foshol.ai">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-sm font-bold text-gray-700">Password</label>
+                        <a href="#" onclick="toggleMode('forgot')" class="text-xs text-f-dark hover:underline">Forgot password?</a>
+                    </div>
+                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-f-dark focus:ring-1 focus:ring-f-dark transition" placeholder="••••••••">
+                </div>
+                
+                <button type="submit" id="main-btn" class="w-full bg-f-dark text-white font-bold py-3 rounded-xl hover:bg-green-800 transition shadow-lg active:scale-95">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="text-center text-sm text-gray-500 font-bold">
+                <span id="mode-text">Don't have an account?</span> 
+                <a href="#" id="mode-link" onclick="toggleMode('signup')" class="text-f-dark hover:underline">Create Account</a>
+            </div>
+
+            <div class="relative flex items-center justify-center border-t border-gray-200 mt-6 pt-6">
+                <span class="absolute bg-white px-3 text-xs text-gray-400 font-bold uppercase tracking-wider -top-2">Or continue with</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button id="google-btn" class="flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-xl hover:bg-gray-50 transition active:scale-95 text-sm font-bold">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5"> Google
+                </button>
+                <button id="facebook-btn" class="flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-xl hover:bg-blue-50 transition active:scale-95 text-sm font-bold text-blue-700">
+                    <i class="fa-brands fa-facebook text-xl"></i> Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Auth Logic -->
+    <script type="module">
+        import { auth, googleProvider, facebookProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from './firebase-config.js';
+
+        let currentMode = 'login'; // login, signup, forgot
+        
+        const form = document.getElementById('login-form');
+        const emailInput = document.getElementById('email');
+        const passInput = document.getElementById('password');
+        const mainBtn = document.getElementById('main-btn');
+        const modeText = document.getElementById('mode-text');
+        const modeLink = document.getElementById('mode-link');
+        const alertBox = document.getElementById('alert-box');
+        const loader = document.getElementById('loader');
+
+        // Check if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = '/admin.html';
+            }
+        });
+
+        window.toggleMode = (mode) => {
+            currentMode = mode;
+            alertBox.classList.add('hidden');
+            
+            if (mode === 'signup') {
+                passInput.parentElement.classList.remove('hidden');
+                passInput.required = true;
+                mainBtn.innerText = 'Create Account';
+                modeText.innerText = 'Already have an account?';
+                modeLink.innerText = 'Sign In';
+                modeLink.setAttribute('onclick', "toggleMode('login')");
+            } else if (mode === 'forgot') {
+                passInput.parentElement.classList.add('hidden');
+                passInput.required = false;
+                mainBtn.innerText = 'Send Reset Email';
+                modeText.innerText = 'Remembered your password?';
+                modeLink.innerText = 'Sign In';
+                modeLink.setAttribute('onclick', "toggleMode('login')");
+            } else {
+                // login
+                passInput.parentElement.classList.remove('hidden');
+                passInput.required = true;
+                mainBtn.innerText = 'Sign In';
+                modeText.innerText = "Don't have an account?";
+                modeLink.innerText = 'Create Account';
+                modeLink.setAttribute('onclick', "toggleMode('signup')");
+            }
+        }
+
+        function showAlert(msg, isError = true) {
+            alertBox.innerText = msg;
+            alertBox.className = `p-3 rounded-xl text-sm font-bold text-center ${isError ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'}`;
+            alertBox.classList.remove('hidden');
+        }
+
+        function toggleLoader(show) {
+            if(show) loader.classList.replace('hidden', 'flex');
+            else loader.classList.replace('flex', 'hidden');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passInput.value;
+            
+            toggleLoader(true);
+            try {
+                if (currentMode === 'login') {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // onAuthStateChanged will redirect
+                } else if (currentMode === 'signup') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showAlert("Account created successfully!", false);
+                } else if (currentMode === 'forgot') {
+                    await sendPasswordResetEmail(auth, email);
+                    showAlert("Password reset email sent. Please check your inbox.", false);
+                    toggleMode('login');
+                }
+            } catch (error) {
+                console.error(error);
+                let msg = error.message;
+                if(error.code === 'auth/invalid-credential') msg = 'Invalid email or password.';
+                if(error.code === 'auth/email-already-in-use') msg = 'This email is already registered.';
+                if(error.code === 'auth/weak-password') msg = 'Password should be at least 6 characters.';
+                showAlert(msg, true);
+            }
+            toggleLoader(false);
+        });
+
+        // Google Login
+        document.getElementById('google-btn').addEventListener('click', async () => {
+            toggleLoader(true);
+            try {
+                await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                console.error(error);
+                showAlert(error.message, true);
+                toggleLoader(false);
+            }
+        });
+
+        // Facebook Login
+        document.getElementById('facebook-btn').addEventListener('click', async () => {
+            toggleLoader(true);
+            try {
+                await signInWithPopup(auth, facebookProvider);
+            } catch (error) {
+                console.error(error);
+                showAlert(error.message, true);
+                toggleLoader(false);
+            }
+        });
+
+    </script>
+</body>
+</html>

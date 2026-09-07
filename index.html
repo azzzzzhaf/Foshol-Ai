@@ -132,6 +132,9 @@
             <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition flex items-center gap-2">
                 <i class="fa-solid fa-language text-f-gold"></i> <span class="lang-btn-text">বাংলা</span>
             </button>
+            <a href="/login.html" id="nav-login-btn" class="border border-f-dark text-f-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-green-50 transition flex items-center gap-2">
+                <i class="fa-solid fa-user"></i> <span class="lang-en">Login</span><span class="lang-bn hidden">লগিন</span>
+            </a>
             <a href="#chat-widget" onclick="toggleChat()" class="bg-f-gold text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-600 transition shadow-md flex items-center gap-2">
                 <i class="fa-solid fa-message"></i> 
                 <span class="lang-en">Inbox Us</span><span class="lang-bn hidden">ইনবক্স করুন</span>
@@ -185,6 +188,10 @@
         <a href="/articles" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 rounded-lg" data-path="/articles">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-book-open"></i></div>
             <span class="lang-en">Blog</span><span class="lang-bn hidden">ব্লগ</span>
+        </a>
+        <a href="/login.html" id="mobile-login-btn" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 rounded-lg">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-user"></i></div>
+            <span class="lang-en">Login</span><span class="lang-bn hidden">লগিন</span>
         </a>
         
         <div class="flex items-center justify-between pt-4 gap-4">
@@ -1540,6 +1547,41 @@
                 // Background update without prompt
                 requestWeatherUpdate(false);
             }
+        });
+    </script>
+
+    <!-- Firebase Auth Check -->
+    <script type="module">
+        import { auth, onAuthStateChanged } from './firebase-config.js';
+
+        onAuthStateChanged(auth, (user) => {
+            const deskBtn = document.getElementById('nav-login-btn');
+            const mobBtn = document.getElementById('mobile-login-btn');
+            
+            if (user) {
+                // Auto logged in! Change Login button to Dashboard
+                const dashHtml = `<i class="fa-solid fa-chart-pie"></i> <span class="lang-en">Dashboard</span><span class="lang-bn hidden">ড্যাশবোর্ড</span>`;
+                
+                if (deskBtn) {
+                    deskBtn.href = '/admin.html';
+                    deskBtn.innerHTML = dashHtml;
+                    deskBtn.className = "border border-f-dark bg-f-dark text-white px-4 py-1.5 rounded-full font-bold text-sm hover:bg-green-800 transition flex items-center gap-2";
+                }
+                if (mobBtn) {
+                    mobBtn.href = '/admin.html';
+                    mobBtn.innerHTML = `<div class="w-8 h-8 rounded-full bg-f-dark flex items-center justify-center text-white"><i class="fa-solid fa-chart-pie"></i></div> <span class="lang-en">Dashboard</span><span class="lang-bn hidden">ড্যাশবোর্ড</span>`;
+                }
+            } else {
+                // Not logged in, keep as Login
+                const loginHtml = `<i class="fa-solid fa-user"></i> <span class="lang-en">Login</span><span class="lang-bn hidden">লগিন</span>`;
+                if (deskBtn) {
+                    deskBtn.href = '/login.html';
+                    deskBtn.innerHTML = loginHtml;
+                }
+            }
+            
+            // Re-apply language translations to new buttons if needed
+            if(typeof applyLanguage === 'function') applyLanguage();
         });
     </script>
 
