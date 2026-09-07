@@ -86,7 +86,7 @@ async function generateTextWithGemini(userText, apiKey) {
 Answer strictly in clear, farmer-friendly Bengali (Bangla). Keep instructions practical, safe, and helpful for rural farmers.
 User asks: "${userText}"`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -129,7 +129,7 @@ async function analyzeImageWithGemini(imageUrl, userText, apiKey) {
 
 ভাষা খুব সহজ, সম্মানসূচক এবং সরাসরি বাংলাদেশি কৃষকদের উপযোগী রাখুন।`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
