@@ -1200,15 +1200,29 @@
                 return;
             }
 
-            // Request microphone permission first
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-                // Stop the stream immediately, we just needed permission
-                stream.getTracks().forEach(track => track.stop());
+            // Check if mediaDevices exists before asking permission (fixes old mobile/webviews)
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                // If not supported, try starting SpeechRec directly
+                startSpeechRecognition(SpeechRec, micBtn, input, chatBox);
+            } else {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    startSpeechRecognition(SpeechRec, micBtn, input, chatBox);
+                }).catch(function(err) {
+                    console.error('Mic permission denied:', err);
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Click 🔒 to Allow.' : 'মাইক্রোফোন ব্লক করা আছে। Address Bar-এ 🔒 আইকনে ক্লিক করে Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            }
+        }
 
-                recognition = new SpeechRec();
-                recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
-                recognition.continuous = false;
-                recognition.interimResults = false;
+        function startSpeechRecognition(SpeechRec, micBtn, input, chatBox) {
+            recognition = new SpeechRec();
+            recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
+            recognition.continuous = false;
+            recognition.interimResults = false;
 
                 recognition.onstart = () => {
                     isRecording = true;
@@ -1241,13 +1255,6 @@
                 };
 
                 recognition.start();
-            }).catch(function(err) {
-                console.error('Mic permission denied:', err);
-                if (chatBox) {
-                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Click the 🔒 icon in address bar and Allow Microphone.' : 'মাইক্রোফোন ব্লক করা আছে। Address Bar-এ 🔒 আইকনে ক্লিক করে Microphone Allow করুন।'}</div>`;
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            });
         }
 
         // --- Photo / Leaf Camera Upload Logic ---
@@ -1286,18 +1293,23 @@
 
                 // 3. Send to Gemini /api/chat with base64 image
                 try {
+                    const photoMessage = currentLang === 'en' ? 'Analyze this plant leaf photo and diagnose disease, dosage and cure.' : 'এই ফসলের পাতার ছবি পরীক্ষা করে রোগ নির্ণয়, ঔষধের মাত্রা ও প্রতিকার জানান।';
+                    
                     const res = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            message: currentLang === 'en' ? 'Analyze this plant leaf photo and diagnose disease, dosage and cure.' : 'এই ফসলের পাতার ছবি পরীক্ষা করে রোগ নির্ণয়, ঔষধের মাত্রা ও প্রতিকার জানান।',
+                            message: photoMessage,
                             image: {
                                 data: base64Url,
                                 mimeType: file.type || 'image/jpeg'
                             },
-                            lang: currentLang
+                            lang: currentLang,
+                            history: chatHistory
                         })
                     });
+                    
+                    updateChatHistory('user', photoMessage); // store user context
 
                     const data = await res.json();
                     const scanEl = document.getElementById(typingId);
@@ -1309,6 +1321,7 @@
                     }
 
                     chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${replyText}</div>`;
+                    updateChatHistory('model', replyText.replace(/<[^>]*>?/gm, '')); // store reply
                     setTimeout(applyLanguage, 10);
                     chatBox.scrollTop = chatBox.scrollHeight;
                 } catch (err) {
@@ -1319,6 +1332,20 @@
                 }
             };
             reader.readAsDataURL(file);
+        }
+
+        // --- Chat History Management (15 Minutes Expiration) ---
+        let chatHistory = [];
+        let lastChatTime = 0;
+
+        function updateChatHistory(role, text) {
+            const now = Date.now();
+            // Clear history if more than 15 minutes have passed (15 * 60 * 1000 ms)
+            if (now - lastChatTime > 15 * 60 * 1000) {
+                chatHistory = [];
+            }
+            chatHistory.push({ role, text });
+            lastChatTime = now;
         }
 
         // --- Live Send Chat Message Logic ---
@@ -1343,8 +1370,12 @@
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, lang: currentLang })
+                    body: JSON.stringify({ message, lang: currentLang, history: chatHistory })
                 });
+                
+                // Add user message to local history *after* attempting to send
+                updateChatHistory('user', message);
+
                 const data = await res.json();
                 
                 const typingEl = document.getElementById(typingId);
@@ -1352,6 +1383,7 @@
 
                 if (data.reply) {
                     chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
+                    updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, '')); // store plain text
                 } else {
                     throw new Error(data.error || 'No reply from server');
                 }

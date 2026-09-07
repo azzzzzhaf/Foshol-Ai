@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { message, image, lang = 'bn' } = req.body || {};
+    const { message, image, lang = 'bn', history = [] } = req.body || {};
     if (!message && !image) {
         return res.status(400).json({ error: 'Message or image is required' });
     }
@@ -32,18 +32,45 @@ export default async function handler(req, res) {
 1. Identify the crop and the disease/pest (or say if it looks healthy).
 2. Explain symptoms and severity.
 3. Provide recommended treatment protocol including chemical names and exact dosages (e.g. g or ml per Liter of water).
-4. Give organic/preventative farm management advice. Keep response concise and well formatted with bullet points.`
-            : `You are Foshol AI, an intelligent agricultural assistant for farmers in Bangladesh. ${promptLang} Provide accurate, practical farming advice, crop disease solutions, fertilizer dosages, mandi market price insights, or weather guidance. Keep it concise, structured, and easy to understand.`;
+4. Give organic/preventative farm management advice. Keep response concise and well formatted with bullet points.
+IMPORTANT: Do NOT greet the user again if this is a follow-up message in an ongoing conversation. Just answer directly.`
+            : `You are Foshol AI, an intelligent agricultural assistant for farmers in Bangladesh. ${promptLang} Provide accurate, practical farming advice, crop disease solutions, fertilizer dosages, mandi market price insights, or weather guidance. Keep it concise, structured, and easy to understand.
+IMPORTANT: Do NOT greet the user again if this is a follow-up message in an ongoing conversation. Just answer the question directly without repeating greetings like Salam or Hello.`;
 
-        const parts = [{ text: `${systemInstruction}\nUser message: ${message || 'Please analyze this crop leaf photo.'}` }];
+        // Build multi-turn conversation for Gemini
+        const contents = [];
+
+        // Add system instruction as the first user message
+        contents.push({
+            role: 'user',
+            parts: [{ text: systemInstruction + '\n(System instruction above. Now respond to the conversation below.)' }]
+        });
+        contents.push({
+            role: 'model',
+            parts: [{ text: lang === 'en' ? 'Understood. I am Foshol AI, ready to help farmers. I will answer directly without repeating greetings.' : 'বুঝেছি। আমি ফসল এআই, কৃষকদের সাহায্য করতে প্রস্তুত। আমি সরাসরি উত্তর দেব, বারবার সালাম দেব না।' }]
+        });
+
+        // Add conversation history (previous messages)
+        if (history && history.length > 0) {
+            for (const msg of history) {
+                if (msg.role === 'user' || msg.role === 'model') {
+                    contents.push({
+                        role: msg.role,
+                        parts: [{ text: msg.text }]
+                    });
+                }
+            }
+        }
+
+        // Add current user message
+        const currentParts = [{ text: message || 'Please analyze this crop leaf photo.' }];
 
         if (image && image.data) {
             let base64Data = image.data;
-            // Strip data URL prefix if present
             if (base64Data.includes(',')) {
                 base64Data = base64Data.split(',')[1];
             }
-            parts.push({
+            currentParts.push({
                 inline_data: {
                     mime_type: image.mimeType || 'image/jpeg',
                     data: base64Data
@@ -51,16 +78,14 @@ export default async function handler(req, res) {
             });
         }
 
+        contents.push({ role: 'user', parts: currentParts });
+
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(geminiUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{ parts }]
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents })
         });
 
         const responseText = await response.text();
