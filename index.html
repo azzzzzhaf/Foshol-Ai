@@ -895,10 +895,14 @@
         <span class="lang-en">AI Chat</span><span class="lang-bn hidden">এআই চ্যাট</span>
     </button>
 
-    <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[400px]">
-        <div class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center">
+    <div id="chat-widget" class="fixed bottom-24 right-6 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col" style="width:380px; height:500px; min-width:300px; min-height:350px; max-width:90vw; max-height:85vh; resize:both; overflow:hidden;">
+        <!-- Chat Header (Draggable) -->
+        <div id="chat-header" class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center select-none" style="cursor:move;">
             <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> <span class="lang-en">Foshol AI Assistant</span><span class="lang-bn hidden">ফসল AI সহকারী</span></div>
-            <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+            <div class="flex items-center gap-2">
+                <button onclick="expandChatWidget()" class="text-white/70 hover:text-white text-sm" title="Expand"><i class="fa-solid fa-expand"></i></button>
+                <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+            </div>
         </div>
         <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
             <div class="chat-message chat-ai w-[90%] md:w-[85%]">
@@ -1071,6 +1075,95 @@
         function toggleChat() {
             document.getElementById('chat-widget').classList.toggle('chat-hidden');
         }
+
+        // --- Expand Chat Widget to Full Screen ---
+        let chatExpanded = false;
+        function expandChatWidget() {
+            const widget = document.getElementById('chat-widget');
+            if (!chatExpanded) {
+                widget.style.width = '90vw';
+                widget.style.height = '85vh';
+                widget.style.bottom = '5vh';
+                widget.style.right = '5vw';
+                widget.style.borderRadius = '1.5rem';
+                chatExpanded = true;
+            } else {
+                widget.style.width = '380px';
+                widget.style.height = '500px';
+                widget.style.bottom = '96px';
+                widget.style.right = '24px';
+                chatExpanded = false;
+            }
+        }
+
+        // --- Drag Chat Widget by Header ---
+        (function() {
+            const header = document.getElementById('chat-header');
+            const widget = document.getElementById('chat-widget');
+            if (!header || !widget) return;
+
+            let isDragging = false, startX, startY, origLeft, origTop;
+
+            header.addEventListener('mousedown', function(e) {
+                if (e.target.closest('button')) return; // Don't drag when clicking buttons
+                isDragging = true;
+                const rect = widget.getBoundingClientRect();
+                startX = e.clientX;
+                startY = e.clientY;
+                origLeft = rect.left;
+                origTop = rect.top;
+                widget.style.transition = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                widget.style.left = (origLeft + dx) + 'px';
+                widget.style.top = (origTop + dy) + 'px';
+                widget.style.right = 'auto';
+                widget.style.bottom = 'auto';
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    widget.style.transition = '';
+                }
+            });
+
+            // Touch support for mobile
+            header.addEventListener('touchstart', function(e) {
+                if (e.target.closest('button')) return;
+                isDragging = true;
+                const touch = e.touches[0];
+                const rect = widget.getBoundingClientRect();
+                startX = touch.clientX;
+                startY = touch.clientY;
+                origLeft = rect.left;
+                origTop = rect.top;
+                widget.style.transition = 'none';
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                widget.style.left = (origLeft + dx) + 'px';
+                widget.style.top = (origTop + dy) + 'px';
+                widget.style.right = 'auto';
+                widget.style.bottom = 'auto';
+            }, { passive: true });
+
+            document.addEventListener('touchend', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    widget.style.transition = '';
+                }
+            });
+        })();
 
         function sendSuggested(enMsg, bnMsg) {
             const msg = currentLang === 'en' ? enMsg : bnMsg;
