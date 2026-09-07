@@ -40,7 +40,7 @@ export default async function handler(req, res) {
                 }
             }
 
-            // Respond 200 OK AFTER processing so Vercel Serverless Function does not terminate prematurely
+            // Respond 200 OK AFTER processing
             return res.status(200).send('EVENT_RECEIVED');
         }
 
@@ -67,7 +67,6 @@ async function handleMessage(senderId, message, pageAccessToken, geminiApiKey) {
     if (imageAttachment && imageAttachment.payload?.url) {
         const imageUrl = imageAttachment.payload.url;
         console.log('Received image from user:', imageUrl);
-        
         replyText = await analyzeImageWithGemini(imageUrl, message.text, geminiApiKey);
     } else if (message.text) {
         console.log('Received text from user:', message.text);
@@ -80,14 +79,14 @@ async function handleMessage(senderId, message, pageAccessToken, geminiApiKey) {
     await sendMessengerReply(senderId, replyText, pageAccessToken);
 }
 
-// Generate Text Reply using Gemini 1.5 Flash
+// Generate Text Reply using Gemini 2.0 Flash
 async function generateTextWithGemini(userText, apiKey) {
     try {
         const prompt = `You are Foshol AI (ফসল এআই), an expert agronomist and crop doctor in Bangladesh.
 Answer strictly in clear, farmer-friendly Bengali (Bangla). Keep instructions practical, safe, and helpful for rural farmers.
 User asks: "${userText}"`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -95,15 +94,23 @@ User asks: "${userText}"`;
             })
         });
 
-        const data = await response.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'দুঃখিত, বিষয়টি বুঝতে পারিনি। দয়া করে আবার স্পষ্ট করে লিখুন।';
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Gemini returned non-JSON:', responseText.substring(0, 300));
+            return 'দুঃখিত, সাময়িক সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।';
+        }
+
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'দুঃখিত, বিষয়টি বুঝতে পারিনি। দয়া করে আবার স্পষ্ট করে লিখুন।';
     } catch (e) {
         console.error('Gemini Text Error:', e);
-        return 'দুঃখিত, সাময়িক সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।';
+        return 'দুঃখিত, সাময়িক সমস্যা হচ্ছে। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।';
     }
 }
 
-// Analyze Crop Leaf Photo using Gemini 1.5 Flash Multimodal Vision
+// Analyze Crop Leaf Photo using Gemini 2.0 Flash Multimodal Vision
 async function analyzeImageWithGemini(imageUrl, userText, apiKey) {
     try {
         // Fetch the image from Facebook CDN and convert to base64
@@ -113,16 +120,16 @@ async function analyzeImageWithGemini(imageUrl, userText, apiKey) {
         const mimeType = imgResponse.headers.get('content-type') || 'image/jpeg';
 
         const prompt = `আপনি ফসল এআই (Foshol AI) - বাংলাদেশি কৃষকদের প্রধান প্ল্যান্ট প্যাথলজিস্ট ও কৃষি বিশেষজ্ঞ।
-ব্যবহারকারী এই ফসলের/পাতার ছবিটি পাঠিয়েছেন ${userText ? `এবং লিখেছেন: "${userText}"` : ''}।
-ছবিটি খুব মনোযোগ দিয়ে বিশ্লেষণ করুন এবং বাংলায় নিচের ফরমেটে উত্তর দিন:
+ব্যবহারকারী এই ফসলের/পাতার ছবিটি পাঠিয়েছেন ${userText ? `এবং লিখেছেন: "${userText}"` : ''}।
+ছবিটি খুব মনোযোগ দিয়ে বিশ্লেষণ করুন এবং বাংলায় নিচের ফরমেটে উত্তর দিন:
 🌱 ১. ফসলের নাম ও সম্ভাব্য রোগের নাম
 🔍 ২. প্রধান লক্ষণ ও ক্ষয়ক্ষতির ঝুঁকি
 💊 ৩. প্রেসক্রিপশন ও ঔষধের সঠিক ডোজ (১ লিটার পানিতে কত গ্রাম বা মিলি)
-🌿 ৪. জৈব বা ঘরোয়া প্রতিরোধমূলক পরামর্শ
+🌿 ৪. জৈব বা ঘরোয়া প্রতিরোধমূলক পরামর্শ
 
 ভাষা খুব সহজ, সম্মানসূচক এবং সরাসরি বাংলাদেশি কৃষকদের উপযোগী রাখুন।`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -140,11 +147,19 @@ async function analyzeImageWithGemini(imageUrl, userText, apiKey) {
             })
         });
 
-        const data = await response.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'ছবিটি স্পষ্ট নয়। দয়া করে আক্রান্ত পাতার ওপর থেকে কাছে নিয়ে আলোতে আরেকটি পরিষ্কার ছবি তুলুন।';
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Gemini Vision returned non-JSON:', responseText.substring(0, 300));
+            return 'ছবিটি প্রসেস করতে সাময়িক সমস্যা হয়েছে। দয়া করে পাতার আরেকটি ছবি পাঠান।';
+        }
+
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'ছবিটি স্পষ্ট নয়। দয়া করে আক্রান্ত পাতার ওপর থেকে কাছে নিয়ে আলোতে আরেকটি পরিষ্কার ছবি তুলুন।';
     } catch (e) {
         console.error('Gemini Vision Error:', e);
-        return 'ছবিটি প্রসেস করতে সাময়িক সমস্যা হয়েছে। দয়া করে পাতার আরেকটি ছবি পাঠান।';
+        return 'ছবিটি প্রসেস করতে সাময়িক সমস্যা হয়েছে। দয়া করে পাতার আরেকটি ছবি পাঠান।';
     }
 }
 
@@ -168,7 +183,7 @@ async function sendMessengerReply(recipientId, text, pageAccessToken) {
         if (!response.ok) {
             console.error('Failed to send Messenger message:', resData);
         } else {
-            console.log('Messenger message successfully delivered to:', recipientId);
+            console.log('Messenger message delivered to:', recipientId);
         }
     }
 }
