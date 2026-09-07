@@ -1187,10 +1187,11 @@
         function toggleVoiceRecording() {
             const micBtn = document.getElementById('chat-mic-btn');
             const input = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-box');
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
             if (!SpeechRec) {
-                alert(currentLang === 'en' ? 'Voice recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.' : 'আপনার ব্রাউজারে ভয়েস সাপোর্ট নেই। গুগল ক্রোম (Google Chrome) ব্রাউজার ব্যবহার করুন।');
+                if (chatBox) chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Voice not supported. Use Google Chrome browser.' : 'ভয়েস সাপোর্ট নেই। Google Chrome ব্রাউজার ব্যবহার করুন।'}</div>`;
                 return;
             }
 
@@ -1199,7 +1200,11 @@
                 return;
             }
 
-            try {
+            // Request microphone permission first
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                // Stop the stream immediately, we just needed permission
+                stream.getTracks().forEach(track => track.stop());
+
                 recognition = new SpeechRec();
                 recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
                 recognition.continuous = false;
@@ -1208,10 +1213,9 @@
                 recognition.onstart = () => {
                     isRecording = true;
                     if (micBtn) {
-                        micBtn.classList.remove('bg-gray-100', 'text-gray-500');
-                        micBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
+                        micBtn.className = 'w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center transition flex-shrink-0 animate-pulse';
                     }
-                    if (input) input.placeholder = currentLang === 'en' ? 'Listening... Speak now' : 'শুনছি... আপনার ফসলের কথা বলুন';
+                    if (input) input.placeholder = currentLang === 'en' ? '🎙️ Listening... Speak now' : '🎙️ শুনছি... বলুন...';
                 };
 
                 recognition.onresult = (e) => {
@@ -1221,23 +1225,29 @@
                 };
 
                 recognition.onerror = (e) => {
-                    console.error('Speech recognition error:', e.error);
+                    console.error('Speech error:', e.error);
+                    if (chatBox && e.error === 'not-allowed') {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ মাইক্রোফোন ব্লক করা আছে। ব্রাউজারের Address Bar-এ 🔒 আইকনে ক্লিক করে Microphone Allow করুন।</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
                 };
 
                 recognition.onend = () => {
                     isRecording = false;
                     if (micBtn) {
-                        micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
-                        micBtn.classList.add('bg-gray-100', 'text-gray-500');
+                        micBtn.className = 'w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0';
                     }
                     if (input) input.placeholder = currentLang === 'en' ? 'Type or ask anything...' : 'কিছু লিখুন বা প্রশ্ন করুন...';
                 };
 
                 recognition.start();
-            } catch (err) {
-                console.error('Voice mic error:', err);
-                isRecording = false;
-            }
+            }).catch(function(err) {
+                console.error('Mic permission denied:', err);
+                if (chatBox) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Click the 🔒 icon in address bar and Allow Microphone.' : 'মাইক্রোফোন ব্লক করা আছে। Address Bar-এ 🔒 আইকনে ক্লিক করে Microphone Allow করুন।'}</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
         }
 
         // --- Photo / Leaf Camera Upload Logic ---
