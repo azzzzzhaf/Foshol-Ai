@@ -1193,9 +1193,7 @@
 
                     let replyText = data.reply;
                     if (!replyText || data.error) {
-                        replyText = currentLang === 'en'
-                            ? `✅ <b>AI Diagnosis:</b> Plant leaf analyzed successfully (<b>High Confidence</b>).<br>• <b>Suspected Condition:</b> Early Fungal Blight / Blast.<br>• <b>Recommended Spray:</b> Nativo 75 WG (0.6g/L water) or Mancozeb.<br>• <b>Action:</b> Spray during late afternoon, avoid water stagnation.`
-                            : `✅ <b>এআই রোগ নির্ণয়:</b> পাতার ছবি সফলভাবে বিশ্লেষণ করা হয়েছে (<b>উচ্চ নির্ভুলতা</b>)।<br>• <b>সম্ভাব্য রোগ:</b> ছত্রাকজনিত ব্লাইট / ব্লাস্ট আক্রমণ।<br>• <b>অনুমোদিত স্প্রে:</b> নাটিভো ৭৫ ডব্লিউজি (০.৬ গ্রাম/লিটার) অথবা ম্যানকোজেব।<br>• <b>পরামর্শ:</b> শেষ বিকেলে স্প্রে করুন এবং ক্ষেতে অতিরিক্ত পানি জমতে দেবেন না।`;
+                        throw new Error(data.error || 'Failed to analyze image');
                     }
 
                     chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${replyText}</div>`;
@@ -1204,7 +1202,7 @@
                 } catch (err) {
                     const scanEl = document.getElementById(typingId);
                     if (scanEl) scanEl.remove();
-                    chatBox.innerHTML += `<div class="chat-message chat-ai">✅ <b>${currentLang === 'en' ? 'Diagnosis:' : 'রোগ নির্ণয়:'}</b> ${currentLang === 'en' ? 'Leaf analyzed. Spray Fungicide (1ml/1L water) and ensure proper soil drainage.' : 'পাতা বিশ্লেষণ সম্পন্ন। ছত্রাকনাশক (১ মিলি/লিটার) স্প্রে করুন এবং ক্ষেতের ড্রেনেজ ব্যবস্থা সচল রাখুন।'}</div>`;
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">❌ <b>Error:</b> ${err.message}. (Vercel-এ GEMINI_API_KEY চেক করুন)</div>`;
                     chatBox.scrollTop = chatBox.scrollHeight;
                 }
             };
@@ -1243,11 +1241,13 @@
                 if (data.reply) {
                     chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
                 } else {
-                    throw new Error(data.error || 'No reply');
+                    throw new Error(data.error || 'No reply from server');
                 }
             } catch (err) {
                 const typingEl = document.getElementById(typingId);
                 if (typingEl) typingEl.remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">❌ <b>Error:</b> ${err.message}. (দয়া করে Vercel-এ GEMINI_API_KEY চেক করুন)</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
 
                 let replyEn = "I am Foshol AI Assistant. I can help diagnose crop diseases, calculate fertilizer, check wholesale mandi market prices, and give localized weather advisories. How can I assist your farm today?";
                 let replyBn = "আমি ফসল এআই সহকারী। আমি ফসলের রোগ নির্ণয়, সারের সঠিক হিসাব, আজকের পাইকারি বাজার দর এবং আবহাওয়ার পরামর্শ দিতে পারি। আজ আপনার খামারের জন্য কীভাবে সাহায্য করতে পারি?";
