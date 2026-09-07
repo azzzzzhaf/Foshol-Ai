@@ -129,8 +129,12 @@
             if (!user) {
                 // Not logged in, kick out
                 window.location.href = '/login.html';
+            } else if (user.email !== 'levi6t9@gmail.com') {
+                // Not the admin, kick out
+                alert("Access Denied: This dashboard is for Admins only.");
+                window.location.href = '/';
             } else {
-                // Logged in, show panel
+                // Logged in as Admin, show panel
                 loader.classList.add('hidden');
                 
                 document.getElementById('user-email').innerText = user.email;

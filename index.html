@@ -1559,17 +1559,32 @@
             const mobBtn = document.getElementById('mobile-login-btn');
             
             if (user) {
-                // Auto logged in! Change Login button to Dashboard
-                const dashHtml = `<i class="fa-solid fa-chart-pie"></i> <span class="lang-en">Dashboard</span><span class="lang-bn hidden">ড্যাশবোর্ড</span>`;
+                const isAdmin = user.email === 'levi6t9@gmail.com';
                 
-                if (deskBtn) {
-                    deskBtn.href = '/admin.html';
-                    deskBtn.innerHTML = dashHtml;
-                    deskBtn.className = "border border-f-dark bg-f-dark text-white px-4 py-1.5 rounded-full font-bold text-sm hover:bg-green-800 transition flex items-center gap-2";
-                }
-                if (mobBtn) {
-                    mobBtn.href = '/admin.html';
-                    mobBtn.innerHTML = `<div class="w-8 h-8 rounded-full bg-f-dark flex items-center justify-center text-white"><i class="fa-solid fa-chart-pie"></i></div> <span class="lang-en">Dashboard</span><span class="lang-bn hidden">ড্যাশবোর্ড</span>`;
+                if (isAdmin) {
+                    // Admin UI
+                    const adminHtml = `<i class="fa-solid fa-screwdriver-wrench"></i> <span class="lang-en">Admin Panel</span><span class="lang-bn hidden">অ্যাডমিন</span>`;
+                    if (deskBtn) {
+                        deskBtn.href = '/admin.html';
+                        deskBtn.innerHTML = adminHtml;
+                        deskBtn.className = "border border-red-600 bg-red-600 text-white px-4 py-1.5 rounded-full font-bold text-sm hover:bg-red-700 transition flex items-center gap-2 shadow-lg";
+                    }
+                    if (mobBtn) {
+                        mobBtn.href = '/admin.html';
+                        mobBtn.innerHTML = `<div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white"><i class="fa-solid fa-screwdriver-wrench"></i></div> <span class="lang-en text-red-600">Admin Panel</span><span class="lang-bn hidden text-red-600">অ্যাডমিন</span>`;
+                    }
+                } else {
+                    // Normal User UI
+                    const userHtml = `<i class="fa-solid fa-user-check"></i> <span class="lang-en">Profile</span><span class="lang-bn hidden">প্রোফাইল</span>`;
+                    if (deskBtn) {
+                        deskBtn.href = '#'; // Can be changed to /profile.html later
+                        deskBtn.innerHTML = userHtml;
+                        deskBtn.className = "border border-f-dark bg-green-50 text-f-dark px-4 py-1.5 rounded-full font-bold text-sm transition flex items-center gap-2";
+                    }
+                    if (mobBtn) {
+                        mobBtn.href = '#';
+                        mobBtn.innerHTML = `<div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-f-dark"><i class="fa-solid fa-user-check"></i></div> <span class="lang-en">Profile</span><span class="lang-bn hidden">প্রোফাইল</span>`;
+                    }
                 }
             } else {
                 // Not logged in, keep as Login
@@ -1577,6 +1592,11 @@
                 if (deskBtn) {
                     deskBtn.href = '/login.html';
                     deskBtn.innerHTML = loginHtml;
+                    deskBtn.className = "border border-f-dark text-f-dark px-4 py-1.5 rounded-full font-bold text-sm hover:bg-green-50 transition flex items-center gap-2";
+                }
+                if (mobBtn) {
+                    mobBtn.href = '/login.html';
+                    mobBtn.innerHTML = `<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-user"></i></div> <span class="lang-en">Login</span><span class="lang-bn hidden">লগিন</span>`;
                 }
             }
             
