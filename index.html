@@ -918,17 +918,26 @@
                 </div>
             </div>
         </div>
-        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-2 items-center">
-            <button id="chat-mic-btn" onclick="toggleVoiceRecording()" class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Voice Message">
-                <i class="fa-solid fa-microphone"></i>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-1.5 items-center">
+            <!-- Mic Button -->
+            <button id="chat-mic-btn" onclick="toggleVoiceRecording()" class="w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0" title="Voice Message">
+                <i class="fa-solid fa-microphone text-sm"></i>
             </button>
-            <button onclick="document.getElementById('chat-photo-input').click()" class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Upload Photo">
-                <i class="fa-solid fa-camera"></i>
+            <!-- Camera Button (opens device camera directly) -->
+            <button onclick="document.getElementById('chat-camera-input').click()" class="w-9 h-9 bg-blue-50 text-blue-400 rounded-full flex items-center justify-center hover:bg-blue-100 transition flex-shrink-0" title="Take Photo">
+                <i class="fa-solid fa-camera text-sm"></i>
             </button>
-            <input type="file" id="chat-photo-input" accept="image/*" class="hidden" onchange="handleChatPhotoUpload(event)">
+            <input type="file" id="chat-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleChatPhotoUpload(event)">
+            <!-- Gallery Button (pick from phone gallery) -->
+            <button onclick="document.getElementById('chat-gallery-input').click()" class="w-9 h-9 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center hover:bg-purple-100 transition flex-shrink-0" title="Gallery">
+                <i class="fa-solid fa-image text-sm"></i>
+            </button>
+            <input type="file" id="chat-gallery-input" accept="image/*" class="hidden" onchange="handleChatPhotoUpload(event)">
+            <!-- Text Input -->
             <input type="text" id="chat-input" placeholder="Type or ask anything..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0">
-                <i class="fa-solid fa-paper-plane"></i>
+            <!-- Send Button -->
+            <button onclick="sendChatMessage()" class="w-9 h-9 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
             </button>
         </div>
     </div>
