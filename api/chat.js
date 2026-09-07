@@ -64,12 +64,12 @@ export default async function handler(req, res) {
                  <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full bg-yellow-400"></span> <b>Confidence:</b> High</div>
                  <div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-book text-blue-500"></i> <b>Source:</b> BARC / DAE</div>
                  <div class="flex items-center gap-2"><i class="fa-solid fa-user-doctor text-green-600"></i> <b>Expert Verification:</b> Not required</div>
-               </div>\`
-            : \`<div class="mt-4 border-t border-green-200 pt-3 text-xs bg-green-50 p-3 rounded-xl border">
+               </div>`
+            : `<div class="mt-4 border-t border-green-200 pt-3 text-xs bg-green-50 p-3 rounded-xl border">
                  <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full bg-yellow-400"></span> <b>নিশ্চিততার মাত্রা:</b> উচ্চ</div>
                  <div class="flex items-center gap-2 mb-1"><i class="fa-solid fa-book text-blue-500"></i> <b>তথ্যসূত্র:</b> BARC / DAE</div>
                  <div class="flex items-center gap-2"><i class="fa-solid fa-user-doctor text-green-600"></i> <b>বিশেষজ্ঞ যাচাই:</b> প্রয়োজন নেই</div>
-               </div>\`;
+               </div>`;
 
         cleanReply += trustCard;
 
