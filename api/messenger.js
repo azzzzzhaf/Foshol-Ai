@@ -22,25 +22,26 @@ export default async function handler(req, res) {
         const body = req.body;
 
         if (body.object === 'page') {
-            // Immediately respond 200 OK to Meta
-            res.status(200).send('EVENT_RECEIVED');
-
             for (const entry of body.entry || []) {
-                const webhookEvent = entry.messaging?.[0];
-                if (!webhookEvent) continue;
+                for (const webhookEvent of entry.messaging || []) {
+                    // Ignore echo messages from the page/bot itself
+                    if (webhookEvent.message?.is_echo) continue;
 
-                const senderId = webhookEvent.sender?.id;
-                const message = webhookEvent.message;
+                    const senderId = webhookEvent.sender?.id;
+                    const message = webhookEvent.message;
 
-                if (!senderId || !message) continue;
+                    if (!senderId || !message) continue;
 
-                try {
-                    await handleMessage(senderId, message, PAGE_ACCESS_TOKEN, GEMINI_API_KEY);
-                } catch (err) {
-                    console.error('Error handling messenger message:', err);
+                    try {
+                        await handleMessage(senderId, message, PAGE_ACCESS_TOKEN, GEMINI_API_KEY);
+                    } catch (err) {
+                        console.error('Error handling messenger message:', err);
+                    }
                 }
             }
-            return;
+
+            // Respond 200 OK AFTER processing so Vercel Serverless Function does not terminate prematurely
+            return res.status(200).send('EVENT_RECEIVED');
         }
 
         return res.status(404).send('Not Found');
@@ -158,6 +159,7 @@ async function sendMessengerReply(recipientId, text, pageAccessToken) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 recipient: { id: recipientId },
+                messaging_type: 'RESPONSE',
                 message: { text: chunk }
             })
         });
@@ -165,6 +167,8 @@ async function sendMessengerReply(recipientId, text, pageAccessToken) {
         const resData = await response.json();
         if (!response.ok) {
             console.error('Failed to send Messenger message:', resData);
+        } else {
+            console.log('Messenger message successfully delivered to:', recipientId);
         }
     }
 }
