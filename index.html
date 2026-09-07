@@ -117,8 +117,18 @@
 
 
 
-        
         <div class="hidden md:flex items-center gap-4">
+            <!-- Desktop Weather Widget -->
+            <div id="desktop-weather-widget" class="flex items-center gap-3 bg-green-50 px-3 py-1.5 rounded-full border border-green-100 cursor-pointer hover:bg-green-100 transition" onclick="requestWeatherUpdate(true)">
+                <div class="text-xs font-bold text-green-800 flex flex-col">
+                    <span id="d-weather-loc" class="flex items-center gap-1"><i class="fa-solid fa-location-dot text-red-500"></i> <span class="lang-en">Set Location</span><span class="lang-bn hidden">লোকেশন সেট করুন</span></span>
+                    <div class="flex items-center gap-2 mt-0.5 text-[10px] text-gray-600">
+                        <span id="d-weather-temp"><i class="fa-solid fa-temperature-half text-orange-400"></i> --°C</span>
+                        <span id="d-weather-hum"><i class="fa-solid fa-droplet text-blue-400"></i> --%</span>
+                        <span id="d-weather-rain"><i class="fa-solid fa-cloud-rain text-gray-500"></i> --%</span>
+                    </div>
+                </div>
+            </div>
             <button onclick="toggleLanguage()" class="border-2 border-gray-200 text-gray-600 px-4 py-1.5 rounded-full font-bold text-sm hover:border-f-dark hover:text-f-dark transition flex items-center gap-2">
                 <i class="fa-solid fa-language text-f-gold"></i> <span class="lang-btn-text">বাংলা</span>
             </button>
@@ -139,6 +149,19 @@
     
     <!-- Mobile Menu Dropdown -->
     <div id="mobile-menu" class="hidden flex-col bg-white shadow-2xl fixed w-full top-[76px] left-0 z-40 px-6 py-6 md:hidden gap-5 border-t border-gray-100 transition-all duration-300">
+        <!-- Mobile Weather Widget -->
+        <div id="mobile-weather-widget" class="flex items-center justify-between bg-green-50 px-4 py-3 rounded-xl border border-green-100 cursor-pointer" onclick="requestWeatherUpdate(true)">
+            <div class="flex flex-col">
+                <span id="m-weather-loc" class="text-sm font-bold text-green-800 flex items-center gap-1"><i class="fa-solid fa-location-dot text-red-500"></i> <span class="lang-en">Set Location</span><span class="lang-bn hidden">লোকেশন সেট করুন</span></span>
+                <div class="flex items-center gap-3 mt-1 text-xs text-gray-600 font-bold">
+                    <span id="m-weather-temp"><i class="fa-solid fa-temperature-half text-orange-400"></i> --°C</span>
+                    <span id="m-weather-hum"><i class="fa-solid fa-droplet text-blue-400"></i> --%</span>
+                    <span id="m-weather-rain"><i class="fa-solid fa-cloud-rain text-gray-500"></i> --%</span>
+                </div>
+            </div>
+            <i class="fa-solid fa-rotate-right text-gray-400"></i>
+        </div>
+
         <a href="/" class="mobile-link text-gray-800 font-bold text-lg border-b border-gray-100 pb-3 flex items-center gap-3 rounded-lg bg-gray-50" data-path="/">
             <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-f-dark"><i class="fa-solid fa-house"></i></div>
             <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
@@ -1421,6 +1444,103 @@
             setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+
+        // --- Weather Widget Logic ---
+        async function requestWeatherUpdate(force = false) {
+            let lat, lon, city = 'Unknown';
+            const savedWeatherStr = localStorage.getItem('foshol_weather_cache');
+            let savedWeather = savedWeatherStr ? JSON.parse(savedWeatherStr) : null;
+
+            // Use cache if within 1 hour unless forced
+            if (!force && savedWeather && (Date.now() - savedWeather.timestamp < 3600 * 1000)) {
+                updateWeatherUI(savedWeather.city, savedWeather.temp, savedWeather.hum, savedWeather.rain);
+                return;
+            }
+
+            if (navigator.geolocation) {
+                // Show loading
+                updateWeatherUI('Locating...', '--', '--', '--');
+                
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        lat = position.coords.latitude;
+                        lon = position.coords.longitude;
+                        
+                        try {
+                            // 1. Reverse Geocode (BigDataCloud - Free, no API key)
+                            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${currentLang}`);
+                            const geoData = await geoRes.json();
+                            city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Unknown';
+
+                            // 2. Fetch Weather (Open-Meteo - Free, no API key)
+                            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&timezone=auto`);
+                            const weatherData = await weatherRes.json();
+                            
+                            const temp = Math.round(weatherData.current.temperature_2m);
+                            const hum = Math.round(weatherData.current.relative_humidity_2m);
+                            const rain = Math.round(weatherData.current.precipitation_probability || 0);
+
+                            // Save to Cache
+                            const cacheData = { city, temp, hum, rain, lat, lon, timestamp: Date.now() };
+                            localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
+
+                            // Update UI
+                            updateWeatherUI(city, temp, hum, rain);
+                            
+                            // Send Context to Chat History (Silently)
+                            const sysMsg = currentLang === 'en' 
+                                ? `System Context: User's live location is ${city}, Temperature: ${temp}°C, Humidity: ${hum}%, Rain Probability: ${rain}%.`
+                                : `সিস্টেম কনটেক্সট: কৃষকের বর্তমান এলাকা ${city}, তাপমাত্রা ${temp}°C, আর্দ্রতা ${hum}%, বৃষ্টির সম্ভাবনা ${rain}%।`;
+                            updateChatHistory('user', sysMsg);
+
+                        } catch (e) {
+                            console.error('Weather error:', e);
+                            updateWeatherUI('Error', '--', '--', '--');
+                        }
+                    },
+                    (error) => {
+                        console.error('Geolocation error:', error);
+                        updateWeatherUI('Denied', '--', '--', '--');
+                        if (force) alert(currentLang === 'en' ? 'Location access denied or unavailable. Please enable it in browser settings.' : 'লোকেশন পারমিশন দেওয়া হয়নি। ব্রাউজার সেটিংসে গিয়ে লোকেশন Allow করুন।');
+                    }
+                );
+            } else {
+                updateWeatherUI('Not Supported', '--', '--', '--');
+            }
+        }
+
+        function updateWeatherUI(city, temp, hum, rain) {
+            // Desktop
+            const dLoc = document.getElementById('d-weather-loc');
+            const dTemp = document.getElementById('d-weather-temp');
+            const dHum = document.getElementById('d-weather-hum');
+            const dRain = document.getElementById('d-weather-rain');
+            
+            if(dLoc) dLoc.innerHTML = `<i class="fa-solid fa-location-dot text-red-500"></i> ${city}`;
+            if(dTemp) dTemp.innerHTML = `<i class="fa-solid fa-temperature-half text-orange-400"></i> ${temp}°C`;
+            if(dHum) dHum.innerHTML = `<i class="fa-solid fa-droplet text-blue-400"></i> ${hum}%`;
+            if(dRain) dRain.innerHTML = `<i class="fa-solid fa-cloud-rain text-gray-500"></i> ${rain}%`;
+
+            // Mobile
+            const mLoc = document.getElementById('m-weather-loc');
+            const mTemp = document.getElementById('m-weather-temp');
+            const mHum = document.getElementById('m-weather-hum');
+            const mRain = document.getElementById('m-weather-rain');
+
+            if(mLoc) mLoc.innerHTML = `<i class="fa-solid fa-location-dot text-red-500"></i> ${city}`;
+            if(mTemp) mTemp.innerHTML = `<i class="fa-solid fa-temperature-half text-orange-400"></i> ${temp}°C`;
+            if(mHum) mHum.innerHTML = `<i class="fa-solid fa-droplet text-blue-400"></i> ${hum}%`;
+            if(mRain) mRain.innerHTML = `<i class="fa-solid fa-cloud-rain text-gray-500"></i> ${rain}%`;
+        }
+
+        // Initialize Weather on page load if cache exists, otherwise wait for user click to avoid intrusive prompt
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedWeatherStr = localStorage.getItem('foshol_weather_cache');
+            if (savedWeatherStr) {
+                // Background update without prompt
+                requestWeatherUpdate(false);
+            }
+        });
     </script>
 
     <!-- Dynamic Admin Blogs Logic -->
