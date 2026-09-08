@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Farming & Green Society - Foshol AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'f-dark': '#155d35',
+                        'f-gold': '#ffb900',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- Top Notice -->
+    <div class="bg-emerald-800 text-white text-xs md:text-sm font-bold text-center py-2 px-4 shadow-inner">
+        <span class="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2"></span>
+        <span class="lang-en">Green Society Initiative: Promoting 100% Eco-Friendly Agriculture</span>
+        <span class="lang-bn hidden">সবুজ সমাজ উদ্যোগ: ১০০% পরিবেশবান্ধব কৃষিকাজ প্রচার</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/" class="text-2xl md:text-3xl font-black tracking-tighter text-f-dark flex items-center gap-2 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-green-50 rounded-xl group-hover:bg-f-dark transition-colors duration-300">
+                        <i class="fa-solid fa-leaf text-f-dark group-hover:text-f-gold transition-colors duration-300"></i>
+                    </div>
+                    Foshol<span class="text-f-gold">.</span>Ai
+                </a>
+
+                <div class="hidden md:flex space-x-8 font-bold text-sm text-gray-600">
+                    <a href="/about.html" class="hover:text-f-dark transition flex items-center gap-1"><i class="fa-solid fa-circle-info"></i> <span class="lang-en">About</span><span class="lang-bn hidden">আমাদের সম্পর্কে</span></a>
+                    <a href="/services.html" class="hover:text-f-dark transition flex items-center gap-1"><i class="fa-solid fa-microchip"></i> <span class="lang-en">AI Tools</span><span class="lang-bn hidden">এআই টুলস</span></a>
+                    <a href="/store.html" class="hover:text-f-dark transition flex items-center gap-1"><i class="fa-solid fa-shop"></i> <span class="lang-en">Store</span><span class="lang-bn hidden">স্টোর</span></a>
+                    <a href="/organic.html" class="text-f-dark border-b-2 border-f-dark pb-1 flex items-center gap-1"><i class="fa-solid fa-seedling"></i> <span class="lang-en">Organic</span><span class="lang-bn hidden">জৈব কৃষি</span></a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleLanguage()" class="border-2 border-gray-200 hover:border-f-dark px-3 py-1.5 rounded-xl font-bold text-sm transition text-gray-600 hover:text-f-dark flex items-center gap-2">
+                        <i class="fa-solid fa-language text-f-dark"></i> <span id="lang-btn-text">EN/BN</span>
+                    </button>
+                    <a href="/" class="border border-f-dark bg-green-50 text-f-dark px-4 py-1.5 rounded-full font-bold text-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-house"></i> <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="relative bg-emerald-900 py-20 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1592982537447-6f2a6a0a3824?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-emerald-900 via-emerald-900/90 to-transparent"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <span class="bg-emerald-500/30 text-emerald-100 font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider mb-4 inline-block border border-emerald-400/30">
+                <i class="fa-solid fa-globe"></i> Green Society Project
+            </span>
+            <h1 class="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+                <span class="lang-en">Organic Farming <span class="text-f-gold">Hub</span></span>
+                <span class="lang-bn hidden">জৈব কৃষি <span class="text-f-gold">হাব</span></span>
+            </h1>
+            <p class="text-emerald-100 text-lg md:text-xl max-w-2xl font-medium">
+                <span class="lang-en">Protect our soil, water, and future. Learn how to grow chemical-free crops, make organic fertilizers at home, and choose the right crops for your soil type.</span>
+                <span class="lang-bn hidden">মাটি, পানি এবং ভবিষ্যৎ রক্ষা করুন। রাসায়নিক মুক্ত ফসল ফলানো, বাড়িতে জৈব সার তৈরি করা এবং মাটির ধরন অনুযায়ী সঠিক ফসল নির্বাচন করার পদ্ধতি জানুন।</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-16 space-y-16">
+        
+        <!-- Smart Crop Suggester -->
+        <section class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-gray-100 overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-f-gold/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+            
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-black text-gray-800 mb-2 flex items-center gap-3">
+                    <i class="fa-solid fa-microchip text-f-dark"></i>
+                    <span class="lang-en">AI Crop & Soil Suggester</span>
+                    <span class="lang-bn hidden">এআই মাটি ও ফসল বিশ্লেষক</span>
+                </h2>
+                <p class="text-gray-500 mb-8 font-medium">
+                    <span class="lang-en">Select your soil type and current season to get eco-friendly crop recommendations that naturally enrich your soil without needing excessive chemical fertilizers.</span>
+                    <span class="lang-bn hidden">আপনার এলাকার মাটির ধরন এবং বর্তমান ঋতু নির্বাচন করুন। এআই আপনাকে পরিবেশবান্ধব ফসলের নাম জানাবে, যা অতিরিক্ত রাসায়নিক সার ছাড়াই মাটিতে ভালোভাবে জন্মায়।</span>
+                </p>
+                
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="lang-en">Soil Type</span><span class="lang-bn hidden">মাটির ধরন</span>
+                            </label>
+                            <select id="soil-type" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-f-dark font-medium">
+                                <option value="loamy" class="lang-en">Loamy Soil (দোআঁশ মাটি)</option>
+                                <option value="loamy" class="lang-bn hidden">দোআঁশ মাটি (Loamy Soil)</option>
+                                <option value="clay" class="lang-en">Clay Soil (এঁটেল মাটি)</option>
+                                <option value="clay" class="lang-bn hidden">এঁটেল মাটি (Clay Soil)</option>
+                                <option value="sandy" class="lang-en">Sandy Soil (বেলে মাটি)</option>
+                                <option value="sandy" class="lang-bn hidden">বেলে মাটি (Sandy Soil)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <span class="lang-en">Current Season</span><span class="lang-bn hidden">বর্তমান ঋতু (সময়)</span>
+                            </label>
+                            <select id="season-type" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-f-dark font-medium">
+                                <option value="summer" class="lang-en">Summer / Kharif-1 (গ্রীষ্মকাল)</option>
+                                <option value="summer" class="lang-bn hidden">গ্রীষ্মকাল / খরিফ-১ (Summer)</option>
+                                <option value="monsoon" class="lang-en">Monsoon / Kharif-2 (বর্ষাকাল)</option>
+                                <option value="monsoon" class="lang-bn hidden">বর্ষাকাল / খরিফ-২ (Monsoon)</option>
+                                <option value="winter" class="lang-en">Winter / Rabi (শীতকাল)</option>
+                                <option value="winter" class="lang-bn hidden">শীতকাল / রবি (Winter)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button onclick="analyzeCrop()" id="btn-analyze" class="w-full bg-f-dark text-white font-bold py-4 rounded-2xl hover:bg-green-800 transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 
+                        <span class="lang-en">Analyze & Suggest Crops</span>
+                        <span class="lang-bn hidden">বিশ্লেষণ করে ফসল সাজেস্ট করুন</span>
+                    </button>
+                    
+                    <div id="ai-result" class="hidden mt-6 bg-white p-6 rounded-2xl border-2 border-emerald-200">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Organic DIY Guide -->
+        <section>
+            <div class="text-center mb-10">
+                <span class="text-f-gold font-bold tracking-wider uppercase text-sm"><i class="fa-solid fa-book-open"></i> DIY Guides</span>
+                <h2 class="text-3xl font-black text-gray-800 mt-2">
+                    <span class="lang-en">Make Organic Inputs at Home</span>
+                    <span class="lang-bn hidden">বাড়িতেই তৈরি করুন জৈব সার ও কীটনাশক</span>
+                </h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Vermicompost -->
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <div class="h-56 relative">
+                        <img src="https://images.unsplash.com/photo-1581006852262-e4307cf6283a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-f-dark">Fertilizer</div>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <span class="lang-en">Vermicompost (Earthworm Fertilizer)</span>
+                            <span class="lang-bn hidden">কেঁচো কম্পোস্ট (ভার্মিকম্পোস্ট) সার</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                            <span class="lang-en">Vermicompost is 100% natural and enriches soil with microorganisms. You can make it at home using cow dung and earthworms.</span>
+                            <span class="lang-bn hidden">কেঁচো কম্পোস্ট ১০০% প্রাকৃতিক এবং মাটির উর্বরতা মারাত্মকভাবে বৃদ্ধি করে। গোবর ও কেঁচো দিয়ে সহজেই এটি বানানো যায়।</span>
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-xl text-sm border border-gray-200">
+                            <ul class="space-y-2 text-gray-700">
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Mix 15-day old cow dung with dry leaves.</span><span class="lang-bn hidden">১৫ দিনের পুরনো গোবরের সাথে শুকনো পাতা মেশান।</span></li>
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Release Eisenia fetida earthworms into the pit.</span><span class="lang-bn hidden">গর্তে 'এজিনিয়া ফেটিডা' জাতের কেঁচো ছেড়ে দিন।</span></li>
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Keep it moist. Ready in 45-60 days.</span><span class="lang-bn hidden">হালকা ভেজা রাখুন। ৪৫-৬০ দিনের মধ্যে সার তৈরি!</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neem Pesticide -->
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <div class="h-56 relative">
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-f-dark">Pesticide</div>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <span class="lang-en">Neem Leaf Extract (Natural Pesticide)</span>
+                            <span class="lang-bn hidden">নিম পাতার রস (প্রাকৃতিক কীটনাশক)</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                            <span class="lang-en">Stop buying toxic chemical sprays. Neem leaf extract is highly effective against aphids, mealybugs, and caterpillars.</span>
+                            <span class="lang-bn hidden">ক্ষতিকর রাসায়নিক স্প্রে কেনা বন্ধ করুন। জাব পোকা, মিলিবাগ ও লেদা পোকা দমনে নিম পাতার রস অত্যন্ত কার্যকর।</span>
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-xl text-sm border border-gray-200">
+                            <ul class="space-y-2 text-gray-700">
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Boil 1kg of fresh neem leaves in 5L water.</span><span class="lang-bn hidden">১ কেজি তাজা নিম পাতা ৫ লিটার পানিতে সেদ্ধ করুন।</span></li>
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Leave it overnight to cool and steep.</span><span class="lang-bn hidden">সারা রাত ভিজিয়ে রেখে ঠান্ডা হতে দিন।</span></li>
+                                <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <span class="lang-en">Filter it, mix with a little soap, and spray directly.</span><span class="lang-bn hidden">ছেঁকে নিয়ে সামান্য সাবান পানি মিশিয়ে গাছে স্প্রে করুন।</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eco Warrior Leaderboard -->
+        <section class="bg-emerald-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            
+            <div class="text-center mb-10 relative z-10">
+                <span class="bg-emerald-800 text-emerald-100 font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider mb-2 inline-block border border-emerald-700">
+                    <i class="fa-solid fa-medal text-f-gold"></i> Community Heroes
+                </span>
+                <h2 class="text-3xl font-black text-white mt-2">
+                    <span class="lang-en">Top Eco-Warriors of the Month</span>
+                    <span class="lang-bn hidden">মাসের সেরা পরিবেশবান্ধব কৃষক (ইকো-ওয়ারিয়র)</span>
+                </h2>
+                <p class="text-emerald-100 mt-2 text-sm max-w-xl mx-auto">
+                    <span class="lang-en">These farmers successfully reduced chemical usage by 80% using Foshol AI's organic guidelines and accurate dosing.</span>
+                    <span class="lang-bn hidden">এই কৃষকরা ফসল এআই-এর গাইডলাইন ব্যবহার করে তাদের জমিতে ক্ষতিকর রাসায়নিকের ব্যবহার ৮০% কমিয়ে এনেছেন।</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                <!-- Rank 2 -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl text-center transform md:translate-y-4">
+                    <div class="w-16 h-16 mx-auto bg-gray-300 rounded-full mb-4 border-4 border-gray-400 flex items-center justify-center text-xl font-bold text-gray-600 shadow-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1506869640319-a1b655513d2f?w=200&h=200&fit=crop" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Rahim Uddin</h3>
+                    <p class="text-emerald-200 text-xs mt-1">Rajshahi • Saved 50kg Urea</p>
+                    <div class="mt-4 flex justify-center text-f-gold text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star text-white/30"></i></div>
+                </div>
+
+                <!-- Rank 1 -->
+                <div class="bg-gradient-to-b from-f-gold/90 to-f-gold/60 backdrop-blur-md border border-f-gold p-8 rounded-3xl text-center shadow-2xl relative">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-f-dark font-black px-4 py-1 rounded-full text-xs shadow-lg uppercase tracking-wider">Rank #1</div>
+                    <div class="w-20 h-20 mx-auto bg-white rounded-full mb-4 border-4 border-white flex items-center justify-center text-2xl font-bold text-f-dark shadow-xl overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1595878715977-2e8f8df18ea8?w=200&h=200&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute bottom-0 right-0 bg-f-dark text-white rounded-full w-6 h-6 flex items-center justify-center text-xs border-2 border-white"><i class="fa-solid fa-crown text-f-gold"></i></div>
+                    </div>
+                    <h3 class="text-xl font-black text-f-dark">Abdul Karim</h3>
+                    <p class="text-f-dark/80 font-bold text-xs mt-1">Bogura • 100% Organic Farm</p>
+                    <div class="mt-4 flex justify-center text-white text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                </div>
+
+                <!-- Rank 3 -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl text-center transform md:translate-y-4">
+                    <div class="w-16 h-16 mx-auto bg-amber-700/50 rounded-full mb-4 border-4 border-amber-600 flex items-center justify-center text-xl font-bold text-white shadow-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1534080185121-6967046e9fb5?w=200&h=200&fit=crop" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Shorif Mia</h3>
+                    <p class="text-emerald-200 text-xs mt-1">Cumilla • Avoided Toxic Spray</p>
+                    <div class="mt-4 flex justify-center text-f-gold text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-solid fa-star text-white/30"></i></div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8 border-t-4 border-f-dark">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i class="fa-solid fa-leaf text-f-gold text-2xl"></i>
+                <span class="text-2xl font-black tracking-tighter">Foshol<span class="text-f-gold">.</span>Ai</span>
+            </div>
+            <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+                <span class="lang-en">Empowering Bangladeshi farmers with AI, fighting climate change, and building a Green Society.</span>
+                <span class="lang-bn hidden">কৃত্রিম বুদ্ধিমত্তার মাধ্যমে বাংলাদেশের কৃষকদের ক্ষমতায়ন, জলবায়ু পরিবর্তন মোকাবেলা এবং একটি সবুজ সমাজ গঠন।</span>
+            </p>
+            <p class="text-gray-600 text-xs">&copy; 2026 Foshol AI. Green Society Project Entry.</p>
+        </div>
+    </footer>
+
+    <!-- Logic for AI Crop Suggester & Language -->
+    <script>
+        // Language Toggle Logic
+        let currentLang = localStorage.getItem('foshol_lang') || 'en';
+        
+        function applyLanguage() {
+            const elsEn = document.querySelectorAll('.lang-en');
+            const elsBn = document.querySelectorAll('.lang-bn');
+            
+            if (currentLang === 'en') {
+                elsEn.forEach(el => el.classList.remove('hidden'));
+                elsBn.forEach(el => el.classList.add('hidden'));
+                const btnText = document.getElementById('lang-btn-text');
+                if(btnText) btnText.innerText = 'EN/BN';
+            } else {
+                elsEn.forEach(el => el.classList.add('hidden'));
+                elsBn.forEach(el => el.classList.remove('hidden'));
+                const btnText = document.getElementById('lang-btn-text');
+                if(btnText) btnText.innerText = 'বাংলা/EN';
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('foshol_lang', currentLang);
+            applyLanguage();
+        }
+
+        window.addEventListener('DOMContentLoaded', applyLanguage);
+
+        // AI Crop Analyzer Logic
+        function analyzeCrop() {
+            const btn = document.getElementById('btn-analyze');
+            const soil = document.getElementById('soil-type').value;
+            const season = document.getElementById('season-type').value;
+            const resultBox = document.getElementById('ai-result');
+            
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span class="lang-en">Analyzing soil data...</span><span class="lang-bn hidden">মাটি বিশ্লেষণ করা হচ্ছে...</span>`;
+            btn.classList.add('opacity-80');
+            
+            // Reapply lang to new button state
+            setTimeout(applyLanguage, 10);
+            
+            resultBox.classList.add('hidden');
+
+            // Simulate AI processing delay
+            setTimeout(() => {
+                let recEn = '';
+                let recBn = '';
+                
+                if (soil === 'loamy' && season === 'summer') {
+                    recEn = "Loamy soil in summer is perfect for <b>Jute (পাট)</b>, <b>Okra (ঢেঁড়স)</b>, and <b>Maize (ভুট্টা)</b>. These crops require less chemical fertilizer in loamy soil and improve soil structure naturally.";
+                    recBn = "গ্রীষ্মকালে দোআঁশ মাটিতে <b>পাট</b>, <b>ঢেঁড়স</b>, এবং <b>ভুট্টা</b> সবচেয়ে ভালো জন্মায়। এই মাটিতে এদের জন্য খুব সামান্য রাসায়নিক সার লাগে এবং এগুলো মাটির গঠন প্রাকৃতিকভাবে উন্নত করে।";
+                } else if (soil === 'clay' && season === 'monsoon') {
+                    recEn = "Clay soil retains water well during monsoon. This is ideal for <b>Aman Rice (আমন ধান)</b>. Use <i>Azolla (অ্যাজোলা)</i> bio-fertilizer in the water to reduce Urea dependency by 30%!";
+                    recBn = "বর্ষাকালে এঁটেল মাটি পানি ধরে রাখে, যা <b>আমন ধান</b> চাষের জন্য সেরা। ধানের জমিতে <i>অ্যাজোলা (Azolla)</i> নামক পানাপাতা ব্যবহার করলে ইউরিয়া সারের ব্যবহার ৩০% পর্যন্ত কমানো সম্ভব!";
+                } else if (soil === 'sandy' && season === 'winter') {
+                    recEn = "Sandy soil drains quickly. Winter is ideal for <b>Watermelon (তরমুজ)</b>, <b>Potato (আলু)</b>, and <b>Groundnut (বাদাম)</b>. Use heavy organic compost to retain soil moisture.";
+                    recBn = "বেলে মাটিতে পানি তাড়াতাড়ি শুকিয়ে যায়। শীতকালে <b>তরমুজ</b>, <b>আলু</b> এবং <b>বাদাম</b> চাষ করা সবচেয়ে ভালো। মাটির আর্দ্রতা ধরে রাখতে প্রচুর পরিমাণে জৈব কম্পোস্ট সার ব্যবহার করুন।";
+                } else {
+                    recEn = "For this combination, focus on <b>Legumes (ডালজাতীয় ফসল)</b>. Beans, lentils, or peas naturally fix nitrogen from the air into the soil, completely eliminating the need for toxic Urea fertilizer.";
+                    recBn = "এই মাটি ও ঋতুর জন্য <b>ডালজাতীয় ফসল</b> চাষ করা সবচেয়ে ভালো। শিম, মসুর বা মটরশুটি বাতাস থেকে সরাসরি নাইট্রোজেন টেনে মাটিতে জমা করে, ফলে কোনো বিষাক্ত ইউরিয়া সারের প্রয়োজন হয় কাশী সারের।";
+                }
+
+                resultBox.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900 mb-1">
+                                <span class="lang-en">Green AI Suggestion:</span>
+                                <span class="lang-bn hidden">সবুজ এআই পরামর্শ:</span>
+                            </h4>
+                            <p class="text-gray-700 text-sm leading-relaxed">
+                                <span class="lang-en">${recEn}</span>
+                                <span class="lang-bn hidden">${recBn}</span>
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                resultBox.classList.remove('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span class="lang-en">Analyze & Suggest Crops</span><span class="lang-bn hidden">বিশ্লেষণ করে ফসল সাজেস্ট করুন</span>`;
+                btn.classList.remove('opacity-80');
+                applyLanguage();
+                
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

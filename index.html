@@ -98,6 +98,10 @@
             <a href="/" class="desktop-link text-f-dark transition border-b-2 border-f-dark pb-1" data-path="/">
                 <span class="lang-en">Home</span><span class="lang-bn hidden">হোম</span>
             </a>
+            <a href="/organic.html" class="desktop-link hover:text-green-600 transition text-green-700" data-path="/organic">
+                <i class="fa-solid fa-leaf text-green-500 mr-1"></i>
+                <span class="lang-en">Organic</span><span class="lang-bn hidden">জৈব কৃষি</span>
+            </a>
             <a href="/about" class="desktop-link hover:text-f-dark transition" data-path="/about">
                 <span class="lang-en">About Us</span><span class="lang-bn hidden">আমাদের লক্ষ্য</span>
             </a>
@@ -274,11 +278,34 @@
                 </div>
             </div>
 
+            <!-- Slide 4: Green Society -->
+            <div class="slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 z-0">
+                <div class="absolute inset-0 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(6, 78, 59, 0.9), rgba(6, 78, 59, 0.4)), url('https://images.unsplash.com/photo-1592982537447-6f2a6a0a3824?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')"></div>
+                <div class="relative z-20 h-full flex flex-col justify-center px-8 md:px-20 max-w-3xl">
+                    <div class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider mb-6 bg-emerald-500 inline-flex px-4 py-1.5 rounded-full w-max text-white">
+                        <i class="fa-solid fa-globe border-2 border-white rounded-full p-0.5"></i> 
+                        <span class="lang-en">Green Society Project</span><span class="lang-bn hidden">সবুজ সমাজ উদ্যোগ</span>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black text-white leading-tight mb-6 drop-shadow-lg">
+                        <span class="lang-en">Towards 100% Eco-Friendly <br><span class="text-emerald-300">Agriculture</span></span>
+                        <span class="lang-bn hidden">১০০% পরিবেশবান্ধব <br><span class="text-emerald-300">কৃষিকাজের দিকে</span></span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-green-50 mb-8 max-w-2xl font-medium">
+                        <span class="lang-en">Reduce toxic chemicals. Make organic fertilizers at home and get smart crop suggestions to protect our environment.</span>
+                        <span class="lang-bn hidden">বিষাক্ত রাসায়নিকের ব্যবহার কমান। বাড়িতে জৈব সার তৈরি করুন এবং পরিবেশ রক্ষায় স্মার্ট এআই ফসলের পরামর্শ নিন।</span>
+                    </p>
+                    <a href="/organic.html" class="bg-emerald-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-emerald-700 transition w-max shadow-lg shadow-emerald-500/30">
+                        <span class="lang-en">Explore Green Hub</span><span class="lang-bn hidden">গ্রিন হাব ভিজিট করুন</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Slider Dots -->
             <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-30">
                 <button class="dot active w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(0)"></button>
                 <button class="dot w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(1)"></button>
                 <button class="dot w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(2)"></button>
+                <button class="dot w-3 h-3 bg-white/50 rounded-full" onclick="goToSlide(3)"></button>
             </div>
         </div>
     </section>
@@ -1608,14 +1635,14 @@
     <!-- Dynamic Admin Blogs Logic (Firebase) -->
     <script type="module">
         import { db } from './firebase-config.js';
-        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         window.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('krishi-blog-grid');
             if (!container) return;
 
             try {
-                const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
+                const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"), limit(3));
                 const querySnapshot = await getDocs(q);
                 
                 if (!querySnapshot.empty) {
@@ -1751,78 +1778,8 @@
     </script>
 
 
-    <!-- INVESTOR PITCH DECK MODAL -->
-    <div id="pitch-modal" class="hidden fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-white max-w-2xl w-full rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
-            <div class="bg-gradient-to-r from-f-dark to-emerald-800 text-white p-6 md:p-8 flex justify-between items-start relative">
-                <div>
-                    <span class="bg-f-gold text-f-dark font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">Pre-Seed Round • $150K Target</span>
-                    <h2 class="text-2xl md:text-3xl font-black">Foshol AI — Investor Snapshot</h2>
-                    <p class="text-green-100 text-sm mt-1">AI-Powered Agritech Infrastructure for 16.5M Farmers in Bangladesh</p>
-                </div>
-                <button onclick="closePitchModal()" class="text-white/80 hover:text-white text-2xl p-2"><i class="fa-solid fa-times"></i></button>
-            </div>
-
-            <div class="p-6 md:p-8 overflow-y-auto space-y-6 text-sm text-gray-700">
-                <div class="grid grid-cols-3 gap-4 text-center">
-                    <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
-                        <div class="text-2xl font-black text-f-dark">$4.2B</div>
-                        <div class="text-xs text-gray-500 font-bold uppercase mt-1">Market Size (TAM)</div>
-                    </div>
-                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                        <div class="text-2xl font-black text-amber-600">3.2M</div>
-                        <div class="text-xs text-gray-500 font-bold uppercase mt-1">Smartphone Farmers (SAM)</div>
-                    </div>
-                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                        <div class="text-2xl font-black text-blue-600">98.2%</div>
-                        <div class="text-xs text-gray-500 font-bold uppercase mt-1">Diagnostic Accuracy</div>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-900 uppercase tracking-wider text-xs flex items-center gap-2"><i class="fa-solid fa-bullseye text-red-500"></i> The Problem</h3>
-                    <p class="bg-gray-50 p-3.5 rounded-xl border border-gray-100 leading-relaxed">
-                        Bangladeshi farmers lose up to <b>35% of their yield</b> annually due to delayed crop disease diagnosis, counterfeit chemicals from local vendors, and lack of real-time wholesale price transparency.
-                    </p>
-                </div>
-
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-900 uppercase tracking-wider text-xs flex items-center gap-2"><i class="fa-solid fa-microchip text-f-dark"></i> Our AI Solution</h3>
-                    <p class="bg-gray-50 p-3.5 rounded-xl border border-gray-100 leading-relaxed">
-                        A proprietary multi-modal Agritech AI platform that runs directly on mobile web & messaging apps (WhatsApp/Telegram). Farmers take a photo of an infected leaf to get an <b>instant treatment protocol</b>, calculate precise fertilizer dosages, and purchase authentic inputs directly.
-                    </p>
-                </div>
-
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-900 uppercase tracking-wider text-xs flex items-center gap-2"><i class="fa-solid fa-coins text-f-gold"></i> 3 Revenue Streams</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div class="p-3 border border-gray-200 rounded-xl">
-                            <div class="font-bold text-gray-900 mb-1">1. B2B Input Sales</div>
-                            <div class="text-xs text-gray-500">6-10% commission on certified seeds, fertilizers & machinery.</div>
-                        </div>
-                        <div class="p-3 border border-gray-200 rounded-xl">
-                            <div class="font-bold text-gray-900 mb-1">2. Credit Scoring</div>
-                            <div class="text-xs text-gray-500">Farm yield data licensing to rural banks & micro-insurers (MFI).</div>
-                        </div>
-                        <div class="p-3 border border-gray-200 rounded-xl">
-                            <div class="font-bold text-gray-900 mb-1">3. Corporate SaaS</div>
-                            <div class="text-xs text-gray-500">Enterprise contract farming advisory for PRAN, ACI, Square.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div>
-                        <div class="font-bold text-emerald-900">Seeking $150,000 Pre-Seed Investment</div>
-                        <div class="text-xs text-emerald-700">Allocation: 50% AI Model & Data Pipeline • 30% Farmer Hub Acquisition • 20% Operations</div>
-                    </div>
-                    <a href="mailto:invest@foshol.ai?subject=Foshol%20AI%20Pre-Seed%20Inquiry" class="bg-f-dark text-white font-bold px-6 py-2.5 rounded-xl hover:bg-green-800 transition whitespace-nowrap shadow">
-                        Contact Founders
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
 
 </body>
+
 </html>
