@@ -1044,10 +1044,11 @@
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 const code = data.current_weather.weathercode;
+                const isDay = data.current_weather.is_day;
                 
-                let icon = 'fa-sun text-yellow-400';
-                let descEn = 'Sunny';
-                let descBn = 'রৌদ্রোজ্জ্বল';
+                let icon = isDay ? 'fa-sun text-yellow-400' : 'fa-moon text-blue-200';
+                let descEn = isDay ? 'Clear' : 'Clear Night';
+                let descBn = isDay ? 'পরিষ্কার আকাশ' : 'পরিষ্কার রাত';
                 
                 if (code > 3 && code < 50) { icon = 'fa-cloud text-gray-300'; descEn = 'Cloudy'; descBn = 'মেঘলা'; }
                 else if (code >= 50 && code < 80) { icon = 'fa-cloud-rain text-blue-300'; descEn = 'Rainy'; descBn = 'বৃষ্টি'; }
