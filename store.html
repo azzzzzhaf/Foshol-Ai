@@ -436,88 +436,98 @@
         }
     </script>
 
-    <script>
-        if (!localStorage.getItem('foshol_products')) {
-            const defaults = [
-                { titleEn: 'Premium Urea Fertilizer (50kg)', titleBn: 'প্রিমিয়াম ইউরিয়া সার (৫০ কেজি)', price: '1200', img: 'https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?w=500', category: 'Fertilizer' },
-                { titleEn: 'High-Yield BRRI Dhan 28 Seeds', titleBn: 'উচ্চ ফলনশীল ব্রি ধান ২৮ বীজ', price: '850', img: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500', category: 'Seeds' },
-                { titleEn: 'Organic Pesticide (500ml)', titleBn: 'জৈব কীটনাশক (৫০০ মিলি)', price: '450', img: 'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=500', category: 'Pesticide' },
-                { titleEn: 'Modern Farming Tractor Rent (Per Day)', titleBn: 'আধুনিক ট্রাক্টর ভাড়া (প্রতিদিন)', price: '3000', img: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500', category: 'Equipment' }
-            ];
-            localStorage.setItem('foshol_products', JSON.stringify(defaults));
-        } else {
-            let stored = JSON.parse(localStorage.getItem('foshol_products') || '[]');
-            let changed = false;
-            stored = stored.map(p => {
-                if (p.img && p.img.includes('1586201375761')) {
-                    p.img = 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500';
-                    changed = true;
-                }
-                if (p.img && p.img.includes('1592982537447')) {
-                    p.img = 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=500';
-                    changed = true;
-                }
-                return p;
-            });
-            if (changed) localStorage.setItem('foshol_products', JSON.stringify(stored));
-        }
+    <!-- Dynamic Store Rendering (Firebase) -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        function loadStore() {
-            const products = JSON.parse(localStorage.getItem('foshol_products') || '[]');
-            const grid = document.getElementById('store-grid');
-            let html = '';
-            
-            if(products.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500">No products available.</div>';
-                return;
-            }
-
-            products.forEach((p, index) => {
-                html += `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col">
-                    <div class="h-48 bg-gray-100 relative">
-                        <img src="${p.img}" class="w-full h-full object-cover">
-                        <div class="absolute top-3 left-3 bg-white/90 px-2 py-1 rounded text-xs font-bold text-f-dark uppercase">${p.category}</div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
-                            <span class="lang-en">${p.titleEn}</span><span class="lang-bn hidden">${p.titleBn}</span>
-                        </h3>
-                        <div class="text-2xl font-black text-f-dark mb-4 mt-auto">৳${p.price}</div>
-                        <button onclick="openModal(${index})" class="w-full bg-f-gold text-f-dark font-bold py-2.5 rounded-xl hover:bg-yellow-500 transition shadow-sm">
-                            <span class="lang-en">Buy Now</span><span class="lang-bn hidden">এখনই কিনুন</span>
-                        </button>
-                    </div>
-                </div>`;
-            });
-            grid.innerHTML = html;
-            setTimeout(applyLanguage, 50);
-        }
-
+        let allProducts = [];
         let selectedProduct = null;
-        function openModal(index) {
-            const products = JSON.parse(localStorage.getItem('foshol_products'));
-            selectedProduct = products[index];
+
+        async function loadStore() {
+            const grid = document.getElementById('store-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 font-bold"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading products...</div>';
+
+            try {
+                const q = query(collection(db, "store"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500">No products available in the store yet.</div>';
+                    allProducts = [];
+                    return;
+                }
+
+                let html = '';
+                allProducts = [];
+                let index = 0;
+
+                querySnapshot.forEach((doc) => {
+                    const p = doc.data();
+                    allProducts.push(p);
+
+                    // Backward compatibility with legacy local storage title format if needed, though new CMS uses 'name'
+                    const titleEn = p.name || p.titleEn;
+                    const titleBn = p.name || p.titleBn;
+
+                    html += `
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="h-48 bg-gray-100 relative">
+                            <img src="${p.img}" onerror="this.src='https://images.unsplash.com/photo-1625244724120-1fd1d34d00f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover">
+                            <div class="absolute top-3 left-3 bg-white/90 px-2 py-1 rounded text-xs font-bold text-f-dark uppercase">${p.category}</div>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                                <span class="lang-en">${titleEn}</span><span class="lang-bn hidden">${titleBn}</span>
+                            </h3>
+                            <div class="text-2xl font-black text-f-dark mb-4 mt-auto">৳${p.price}</div>
+                            <button onclick="window.openModal(${index})" class="w-full bg-f-gold text-f-dark font-bold py-2.5 rounded-xl hover:bg-yellow-500 transition shadow-sm">
+                                <span class="lang-en">Buy Now</span><span class="lang-bn hidden">এখনই কিনুন</span>
+                            </button>
+                        </div>
+                    </div>`;
+                    index++;
+                });
+                grid.innerHTML = html;
+                setTimeout(() => { if(typeof applyLanguage === 'function') applyLanguage() }, 50);
+            } catch (error) {
+                console.error("Error loading store:", error);
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-red-500">Error loading products.</div>';
+            }
+        }
+
+        window.openModal = (index) => {
+            selectedProduct = allProducts[index];
+            const titleEn = selectedProduct.name || selectedProduct.titleEn;
+            const titleBn = selectedProduct.name || selectedProduct.titleBn;
+            
             document.getElementById('modal-img').src = selectedProduct.img;
-            document.getElementById('modal-title').innerText = currentLang === 'en' ? selectedProduct.titleEn : selectedProduct.titleBn;
+            document.getElementById('modal-title').innerText = (typeof currentLang !== 'undefined' && currentLang === 'en') ? titleEn : titleBn;
             document.getElementById('modal-price').innerText = selectedProduct.price;
             document.getElementById('checkout-modal').classList.remove('hidden');
-        }
-        function closeModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
-        function placeOrder() {
+        };
+
+        window.closeModal = () => { document.getElementById('checkout-modal').classList.add('hidden'); };
+        
+        window.placeOrder = () => {
             const name = document.getElementById('order-name').value;
             const phone = document.getElementById('order-phone').value;
             const addr = document.getElementById('order-address').value;
-            if(!name || !phone || !addr) { alert(currentLang === 'en' ? "Please fill all fields!" : "সব তথ্য দিন!"); return; }
-            closeModal();
+            const langEn = (typeof currentLang !== 'undefined' && currentLang === 'en');
+            if(!name || !phone || !addr) { alert(langEn ? "Please fill all fields!" : "সব তথ্য দিন!"); return; }
+            window.closeModal();
             document.getElementById('success-modal').classList.remove('hidden');
-        }
-        function closeSuccessModal() {
+        };
+
+        window.closeSuccessModal = () => {
             document.getElementById('success-modal').classList.add('hidden');
             document.getElementById('order-name').value = '';
             document.getElementById('order-phone').value = '';
             document.getElementById('order-address').value = '';
-        }
+        };
+
         window.addEventListener('DOMContentLoaded', loadStore);
     </script>
 
