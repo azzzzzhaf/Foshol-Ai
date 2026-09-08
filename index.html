@@ -68,7 +68,7 @@
 <body class="text-gray-800 antialiased scroll-smooth relative">
 
     <!-- Live Weather Top Bar -->
-    <div class="bg-green-900 text-white text-sm py-1.5 px-4 flex justify-between items-center z-50 relative">
+    <div class="bg-green-900 text-white text-sm py-1.5 px-4 flex justify-between items-center z-50 relative cursor-pointer hover:bg-green-800 transition" onclick="requestWeatherUpdate(true)" title="Click to update location">
         <div class="flex items-center gap-3">
             <span class="flex h-2 w-2 relative">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -1036,11 +1036,11 @@
 
         // --- Live Weather Fetch ---
         // --- Live Weather Top Bar Fetch ---
-        async function fetchWeather() {
+        async function fetchWeather(lat = 23.8103, lon = 90.4125, city = 'Dhaka') {
             const weatherEl = document.getElementById('weather-data');
             if (!weatherEl) return;
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current_weather=true');
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 const code = data.current_weather.weathercode;
@@ -1057,7 +1057,7 @@
                 weatherEl.innerHTML = `
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
-                        <span>Dhaka</span>
+                        <span>${city}</span>
                         <span class="mx-1">•</span>
                         <i class="fa-solid ${icon}"></i>
                         <span>${temp}°C</span>
@@ -1071,7 +1071,7 @@
                 weatherEl.innerHTML = `
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
-                        <span>Dhaka</span>
+                        <span>${city}</span>
                         <span class="mx-1">•</span>
                         <i class="fa-solid fa-sun text-yellow-400"></i>
                         <span>32°C</span>
@@ -1521,6 +1521,7 @@
 
                             // Update UI
                             updateWeatherUI(city, temp, hum, rain);
+                            fetchWeather(lat, lon, city); // Update Top Bar
                             
                             // Send Context to Chat History (Silently)
                             const sysMsg = currentLang === 'en' 
@@ -1533,10 +1534,34 @@
                             updateWeatherUI('Error', '--', '--', '--');
                         }
                     },
-                    (error) => {
+                    async (error) => {
                         console.error('Geolocation error:', error);
-                        updateWeatherUI('Denied', '--', '--', '--');
-                        if (force) alert(currentLang === 'en' ? 'Location access denied or unavailable. Please enable it in browser settings.' : 'লোকেশন পারমিশন দেওয়া হয়নি। ব্রাউজার সেটিংসে গিয়ে লোকেশন Allow করুন।');
+                        // Fallback to IP-based location if GPS is denied
+                        try {
+                            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=${currentLang}`);
+                            const geoData = await geoRes.json();
+                            const ipLat = geoData.latitude || 23.8103;
+                            const ipLon = geoData.longitude || 90.4125;
+                            const city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Dhaka';
+
+                            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ipLat}&longitude=${ipLon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&timezone=auto`);
+                            const weatherData = await weatherRes.json();
+                            
+                            const temp = Math.round(weatherData.current.temperature_2m);
+                            const hum = Math.round(weatherData.current.relative_humidity_2m);
+                            const rain = Math.round(weatherData.current.precipitation_probability || 0);
+
+                            const cacheData = { city, temp, hum, rain, lat: ipLat, lon: ipLon, timestamp: Date.now() };
+                            localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
+
+                            updateWeatherUI(city, temp, hum, rain);
+                            fetchWeather(ipLat, ipLon, city);
+
+                            if (force) alert(currentLang === 'en' ? `GPS denied. Using approximate IP location: ${city}. For exact weather, enable GPS in browser settings.` : `GPS অফ আছে। ইন্টারনেট আইপি থেকে আনুমানিক লোকেশন (${city}) ব্যবহার করা হচ্ছে। সঠিক ওয়েদার পেতে ব্রাউজার সেটিংসে Location Allow করুন।`);
+                        } catch (fallbackErr) {
+                            updateWeatherUI('Denied', '--', '--', '--');
+                            if (force) alert(currentLang === 'en' ? 'Location access denied.' : 'লোকেশন পারমিশন দেওয়া হয়নি।');
+                        }
                     }
                 );
             } else {
