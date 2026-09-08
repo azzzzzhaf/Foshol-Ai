@@ -426,14 +426,22 @@
             const weatherEl = document.getElementById('weather-data');
             if (!weatherEl) return;
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=23.8103&longitude=90.4125&current_weather=true');
+                // Get approximate location via IP
+                const geoRes = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en');
+                const geoData = await geoRes.json();
+                const lat = geoData.latitude || 23.8103;
+                const lon = geoData.longitude || 90.4125;
+                const city = geoData.locality || geoData.city || 'Dhaka';
+
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`);
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 const code = data.current_weather.weathercode;
+                const isDay = data.current_weather.is_day;
                 
-                let icon = 'fa-sun text-yellow-400';
-                let descEn = 'Sunny';
-                let descBn = 'রৌদ্রোজ্জ্বল';
+                let icon = isDay ? 'fa-sun text-yellow-400' : 'fa-moon text-blue-200';
+                let descEn = isDay ? 'Clear' : 'Clear Night';
+                let descBn = isDay ? 'পরিষ্কার আকাশ' : 'পরিষ্কার রাত';
                 
                 if (code > 3 && code < 50) { icon = 'fa-cloud text-gray-300'; descEn = 'Cloudy'; descBn = 'মেঘলা'; }
                 else if (code >= 50 && code < 80) { icon = 'fa-cloud-rain text-blue-300'; descEn = 'Rainy'; descBn = 'বৃষ্টি'; }
@@ -442,7 +450,7 @@
                 weatherEl.innerHTML = `
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
-                        <span>Dhaka</span>
+                        <span>${city}</span>
                         <span class="mx-1">•</span>
                         <i class="fa-solid ${icon}"></i>
                         <span>${temp}°C</span>
@@ -516,6 +524,16 @@
             openServiceChat(enMsg, bnMsg);
         }
 
+        let chatHistory = [];
+        let lastChatTime = Date.now();
+
+        function updateChatHistory(role, text) {
+            const now = Date.now();
+            if (now - lastChatTime > 15 * 60 * 1000) chatHistory = [];
+            chatHistory.push({ role, text });
+            lastChatTime = now;
+        }
+
         async function sendChatMessage() {
             const input = document.getElementById('chat-input');
             if(!input) return;
@@ -531,51 +549,39 @@
 
             const typingId = "typing-" + Date.now();
             let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
-            
-            if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি') || message.includes('leaf') || message.includes('scan') || message.includes('ব্লাইট')) {
-                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
-                    <div class="relative w-12 h-12">
-                        <i class="fa-solid fa-leaf text-4xl text-green-500 absolute inset-0"></i>
-                        <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
-                    </div>
-                    <span class="text-green-700 font-bold text-xs"><span class="lang-en">AI Leaf Scanner analyzing image...</span><span class="lang-bn hidden">এআই লিফ স্ক্যানার ছবি বিশ্লেষণ করছে...</span></span>
-                </div>`;
-            }
             chatBox.innerHTML += typingHtml;
-            setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Intelligent Domain-Specific AI Simulation
-            setTimeout(() => {
+            updateChatHistory('user', message);
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, lang: currentLang, history: chatHistory })
+                });
+
+                const data = await res.json();
+                
                 const typingEl = document.getElementById(typingId);
                 if (typingEl) typingEl.remove();
-                
-                let replyEn = "I am Foshol AI Assistant. I can help diagnose crop diseases, calculate fertilizer, check wholesale mandi market prices, and give localized weather advisories. How can I assist your farm today?";
-                let replyBn = "আমি ফসল এআই সহকারী। আমি ফসলের রোগ নির্ণয়, সারের সঠিক হিসাব, আজকের পাইকারি বাজার দর এবং আবহাওয়ার পরামর্শ দিতে পারি। আজ আপনার খামারের জন্য কীভাবে সাহায্য করতে পারি?";
-                const msgLower = message.toLowerCase();
-                
-                if (msgLower.includes('market') || msgLower.includes('দাম') || msgLower.includes('দর') || msgLower.includes('price')) {
-                    replyEn = "Based on today's Karwan Bazar wholesale index, Tomatoes are selling at ৳45/kg (Retail: ৳60/kg) and Onions at ৳45/kg. Middlemen margins are high on Green Chilies. For the complete live visual chart, view our <a href='/market' class='text-green-600 font-bold underline'>Market Prices Page</a>.";
-                    replyBn = "আজকের কাওরান বাজার পাইকারি ইনডেক্স অনুযায়ী, টমেটো প্রতি কেজি ৳৪৫ (খুচরা ৳৬০) এবং পেঁয়াজ ৳৪৫ দরে বিক্রি হচ্ছে। কাঁচামরিচে লাভ সবচেয়ে বেশি। সম্পূর্ণ লাইভ চার্ট দেখতে আমাদের <a href='/market' class='text-green-600 font-bold underline'>বাজার দর পেজ</a> দেখুন।";
-                } else if (msgLower.includes('weather') || msgLower.includes('আবহাওয়া') || msgLower.includes('বৃষ্টি') || msgLower.includes('rain')) {
-                    replyEn = "Current Dhaka weather is 32°C. Scattered rain is predicted over the next 48 hours in Rajshahi and Sylhet. Please check drainage channels for vegetable fields. Full forecast is available on the <a href='/weather' class='text-blue-600 font-bold underline'>Farming Weather Page</a>.";
-                    replyBn = "ঢাকার বর্তমান তাপমাত্রা ৩২°C। রাজশাহী ও সিলেট অঞ্চলে আগামী ৪৮ ঘণ্টায় বৃষ্টির সম্ভাবনা রয়েছে। সবজি ক্ষেতের নিষ্কাশন নালা পরিষ্কার রাখুন। বিস্তারিত ৭ দিনের পূর্বাভাস দেখতে <a href='/weather' class='text-blue-600 font-bold underline'>কৃষি আবহাওয়া পেজ</a> দেখুন।";
-                } else if (msgLower.includes('medicine') || msgLower.includes('ঔষধ') || msgLower.includes('ওষুধ') || msgLower.includes('পোকামাকড়') || msgLower.includes('পচন') || msgLower.includes('fungus')) {
-                    replyEn = "For fungal diseases like Late Blight or Blast, recommended fungicides include Amistar Top (1ml/1L water) or Score. Spray during calm, late afternoons. For exact crop dosages, see our <a href='/medicine' class='text-teal-600 font-bold underline'>Medicine Dosage Tool</a>.";
-                    replyBn = "লেট ব্লাইট বা ব্লাস্ট রোগের জন্য এমিটার টপ (১মিলি/১লিটার পানি) অথবা স্কোর অনুমোদিত। শেষ বিকেলে স্প্রে করা উত্তম। ফসল অনুযায়ী সঠিক মাত্রার জন্য আমাদের <a href='/medicine' class='text-teal-600 font-bold underline'>ঔষধের সঠিক মাত্রা পেজ</a> দেখুন।";
-                } else if (msgLower.includes('fertilizer') || msgLower.includes('সার') || msgLower.includes('ইউরিয়া') || msgLower.includes('urea')) {
-                    replyEn = "For high-yield rice (BRRI 28/29), standard requirement is ~0.9kg Urea, 0.4kg TSP, and 0.5kg MoP per decimal. Calculate for your exact land size on our <a href='/fertilizer' class='text-purple-600 font-bold underline'>Fertilizer Calculator</a>.";
-                    replyBn = "উচ্চ ফলনশীল ধানের (ব্রি ২৮/২৯) জন্য প্রতি শতকে প্রায় ০.৯ কেজি ইউরিয়া, ০.৪ কেজি টিএসপি এবং ০.৫ কেজি পটাশ প্রয়োজন। আপনার জমির সঠিক হিসাব করতে আমাদের <a href='/fertilizer' class='text-purple-600 font-bold underline'>সার ক্যালকুলেটর</a> ব্যবহার করুন।";
-                } else if (msgLower.includes('রোগ') || msgLower.includes('detect') || msgLower.includes('ছবি') || msgLower.includes('পাতা') || msgLower.includes('ব্লাস্ট')) {
-                    replyEn = "✅ <b>AI Diagnosis:</b> Sample shows <b>Rice Blast (ব্লাস্ট রোগ)</b> with <b>98.4% Confidence</b>.<br>• Recommended Spray: Tricyclazole 75 WP (0.75g/L) or Nativo 75 WG (0.6g/L).<br>• Action: Stop excess Urea application immediately to prevent spore spread.";
-                    replyBn = "✅ <b>এআই রোগ নির্ণয়:</b> নমুনায় <b>ধানের ব্লাস্ট রোগ (৯৮.৪% নির্ভুলতা)</b> শনাক্ত হয়েছে।<br>• অনুমোদিত ছত্রাকনাশক: ট্রাইসাইক্লাজোল ৭৫ ডব্লিউপি (০.৭৫ গ্রাম/লিটার) অথবা নাটিভো ৭৫ ডব্লিউজি।<br>• পরামর্শ: জমিতে অতিরিক্ত ইউরিয়া সার দেওয়া এখনই বন্ধ রাখুন।";
-                }
 
-                const finalReply = currentLang === 'en' ? replyEn : replyBn;
-                chatBox.innerHTML += `<div class="chat-message chat-ai">${finalReply}</div>`;
-                setTimeout(applyLanguage, 10);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1200);
+                if (data.reply) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
+                    updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, ''));
+                } else if (data.error) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">⚠️ ${data.error}</div>`;
+                } else {
+                    throw new Error('No reply');
+                }
+            } catch (err) {
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Connection error. Please try again.' : 'সংযোগ ত্রুটি। আবার চেষ্টা করুন।'}</div>`;
+            }
+
+            setTimeout(applyLanguage, 10);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 
@@ -590,7 +596,11 @@
 
         function calcFert() {
             const crop = document.getElementById('fert-crop').value;
-            const land = parseFloat(document.getElementById('fert-land').value) || 0;
+            let land = parseFloat(document.getElementById('fert-land').value) || 0;
+            if (land < 0) {
+                land = 0;
+                document.getElementById('fert-land').value = '';
+            }
             const r = rates[crop] || rates['Rice'];
             
             const html = `
@@ -598,44 +608,55 @@
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs">N</div>
                         <div>
-                            <div class="font-bold text-gray-900">Urea (ইউরিয়া)</div>
-                            <div class="text-[11px] text-gray-400">Nitrogen source for fast growth</div>
+                            <div class="font-bold text-gray-900"><span class="lang-en">Urea</span><span class="lang-bn hidden">ইউরিয়া</span></div>
+                            <div class="text-[11px] text-gray-400"><span class="lang-en">Nitrogen for fast growth</span><span class="lang-bn hidden">দ্রুত বৃদ্ধির জন্য নাইট্রোজেন</span></div>
                         </div>
                     </div>
-                    <div class="font-black text-purple-900 text-xl">${(r.Urea * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                    <div class="font-black text-purple-900 text-xl">${(r.Urea * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold"><span class="lang-en">KG</span><span class="lang-bn hidden">কেজি</span></span></div>
                 </div>
                 <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-black text-xs">P</div>
                         <div>
-                            <div class="font-bold text-gray-900">TSP / DAP (টিএসপি)</div>
-                            <div class="text-[11px] text-gray-400">Phosphorus for strong roots</div>
+                            <div class="font-bold text-gray-900"><span class="lang-en">TSP / DAP</span><span class="lang-bn hidden">টিএসপি / ডিএপি</span></div>
+                            <div class="text-[11px] text-gray-400"><span class="lang-en">Phosphorus for strong roots</span><span class="lang-bn hidden">মজবুত শিকড়ের জন্য ফসফরাস</span></div>
                         </div>
                     </div>
-                    <div class="font-black text-purple-900 text-xl">${(r.TSP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                    <div class="font-black text-purple-900 text-xl">${(r.TSP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold"><span class="lang-en">KG</span><span class="lang-bn hidden">কেজি</span></span></div>
                 </div>
                 <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-black text-xs">K</div>
                         <div>
-                            <div class="font-bold text-gray-900">MoP (মিউরেট অব পটাশ)</div>
-                            <div class="text-[11px] text-gray-400">Potassium for disease resistance</div>
+                            <div class="font-bold text-gray-900"><span class="lang-en">MoP</span><span class="lang-bn hidden">এমওপি (পটাশ)</span></div>
+                            <div class="text-[11px] text-gray-400"><span class="lang-en">Potassium for disease resistance</span><span class="lang-bn hidden">রোগ প্রতিরোধ ক্ষমতার জন্য পটাশিয়াম</span></div>
                         </div>
                     </div>
-                    <div class="font-black text-purple-900 text-xl">${(r.MoP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                    <div class="font-black text-purple-900 text-xl">${(r.MoP * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold"><span class="lang-en">KG</span><span class="lang-bn hidden">কেজি</span></span></div>
                 </div>
                 <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-xs">S</div>
                         <div>
-                            <div class="font-bold text-gray-900">Gypsum (জিপসাম / গন্ধক)</div>
-                            <div class="text-[11px] text-gray-400">Sulfur for soil conditioning</div>
+                            <div class="font-bold text-gray-900"><span class="lang-en">Gypsum</span><span class="lang-bn hidden">জিপসাম</span></div>
+                            <div class="text-[11px] text-gray-400"><span class="lang-en">Sulfur for soil conditioning</span><span class="lang-bn hidden">মাটির উর্বরতার জন্য সালফার</span></div>
                         </div>
                     </div>
-                    <div class="font-black text-purple-900 text-xl">${(r.Gypsum * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold">KG</span></div>
+                    <div class="font-black text-purple-900 text-xl">${(r.Gypsum * land).toFixed(1)} <span class="text-xs text-gray-500 font-bold"><span class="lang-en">KG</span><span class="lang-bn hidden">কেজি</span></span></div>
+                </div>
+                <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl shadow-sm border border-purple-100/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-black text-xs">Zn</div>
+                        <div>
+                            <div class="font-bold text-gray-900"><span class="lang-en">Zinc</span><span class="lang-bn hidden">দস্তা (জিংক)</span></div>
+                            <div class="text-[11px] text-gray-400"><span class="lang-en">Essential micronutrient</span><span class="lang-bn hidden">অত্যাবশ্যকীয় অনুখাদ্য</span></div>
+                        </div>
+                    </div>
+                    <div class="font-black text-purple-900 text-xl">${(r.Zinc * land).toFixed(2)} <span class="text-xs text-gray-500 font-bold"><span class="lang-en">KG</span><span class="lang-bn hidden">কেজি</span></span></div>
                 </div>
             `;
             document.getElementById('fert-results').innerHTML = html;
+            setTimeout(applyLanguage, 10);
         }
 
         function askAI() {
