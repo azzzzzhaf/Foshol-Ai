@@ -1238,9 +1238,10 @@
             sendChatMessage();
         }
 
-        // --- Voice Recording Logic (Web Speech API) ---
+        // --- Voice Recording Logic (Messenger Style: Click→Record→Click→Send) ---
         let recognition = null;
         let isRecording = false;
+        let voiceTimer = null;
 
         function toggleVoiceRecording() {
             const micBtn = document.getElementById('chat-mic-btn');
@@ -1248,71 +1249,102 @@
             const chatBox = document.getElementById('chat-box');
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+            // If Speech API not supported, show warning
             if (!SpeechRec) {
-                if (chatBox) chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Voice not supported. Use Google Chrome browser.' : 'ভয়েস সাপোর্ট নেই। Google Chrome ব্রাউজার ব্যবহার করুন।'}</div>`;
+                if (chatBox) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Voice not supported on this browser. Use Chrome on Android or Desktop.' : 'এই ব্রাউজারে ভয়েস সাপোর্ট নেই। অ্যান্ড্রয়েডে Chrome ব্যবহার করুন।'}</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
                 return;
             }
 
+            // If already recording → Stop and send
             if (isRecording && recognition) {
                 recognition.stop();
                 return;
             }
 
-            // Check if mediaDevices exists before asking permission (fixes old mobile/webviews)
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                // If not supported, try starting SpeechRec directly
-                startSpeechRecognition(SpeechRec, micBtn, input, chatBox);
-            } else {
+            // Start recording
+            recognition = new SpeechRec();
+            recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            let finalTranscript = '';
+
+            recognition.onstart = () => {
+                isRecording = true;
+                finalTranscript = '';
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-stop text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center transition flex-shrink-0 animate-pulse shadow-lg shadow-red-400/50';
+                }
+                if (input) {
+                    input.value = '';
+                    input.placeholder = currentLang === 'en' ? '🎙️ Listening... tap 🔴 to send' : '🎙️ শুনছি... 🔴 চাপুন পাঠাতে';
+                }
+            };
+
+            recognition.onresult = (e) => {
+                let interim = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalTranscript += e.results[i][0].transcript + ' ';
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                // Show live text in input box as user speaks
+                if (input) input.value = (finalTranscript + interim).trim();
+            };
+
+            recognition.onerror = (e) => {
+                console.error('Speech error:', e.error);
+                if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic blocked. Go to browser Settings → Site Settings → Microphone → Allow.' : 'মাইক ব্লক আছে। ব্রাউজার Settings → Site Settings → Microphone → Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-microphone text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0';
+                }
+                if (input) input.placeholder = currentLang === 'en' ? 'Type or ask anything...' : 'কিছু লিখুন বা প্রশ্ন করুন...';
+                
+                // Auto-send if there's text
+                const text = (input ? input.value.trim() : '') || finalTranscript.trim();
+                if (text) {
+                    if (input) input.value = text;
+                    sendChatMessage();
+                }
+            };
+
+            // Try to get mic permission first, then start
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
                     stream.getTracks().forEach(track => track.stop());
-                    startSpeechRecognition(SpeechRec, micBtn, input, chatBox);
+                    recognition.start();
                 }).catch(function(err) {
                     console.error('Mic permission denied:', err);
                     if (chatBox) {
-                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Click 🔒 to Allow.' : 'মাইক্রোফোন ব্লক করা আছে। Address Bar-এ 🔒 আইকনে ক্লিক করে Allow করুন।'}</div>`;
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Allow it in browser settings.' : 'মাইক্রোফোন ব্লক আছে। ব্রাউজার সেটিংস থেকে Allow করুন।'}</div>`;
                         chatBox.scrollTop = chatBox.scrollHeight;
                     }
                 });
-            }
-        }
-
-        function startSpeechRecognition(SpeechRec, micBtn, input, chatBox) {
-            recognition = new SpeechRec();
-            recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-                recognition.onstart = () => {
-                    isRecording = true;
-                    if (micBtn) {
-                        micBtn.className = 'w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center transition flex-shrink-0 animate-pulse';
-                    }
-                    if (input) input.placeholder = currentLang === 'en' ? '🎙️ Listening... Speak now' : '🎙️ শুনছি... বলুন...';
-                };
-
-                recognition.onresult = (e) => {
-                    const transcript = e.results[0][0].transcript;
-                    if (input) input.value = transcript;
-                    sendChatMessage();
-                };
-
-                recognition.onerror = (e) => {
-                    console.error('Speech error:', e.error);
-                    if (chatBox && e.error === 'not-allowed') {
-                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ মাইক্রোফোন ব্লক করা আছে। ব্রাউজারের Address Bar-এ 🔒 আইকনে ক্লিক করে Microphone Allow করুন।</div>`;
+            } else {
+                // Directly try (some browsers don't have mediaDevices)
+                try { recognition.start(); } catch(e) {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic not available on this device.' : 'এই ডিভাইসে মাইক পাওয়া যাচ্ছে না।'}</div>`;
                         chatBox.scrollTop = chatBox.scrollHeight;
                     }
-                };
-
-                recognition.onend = () => {
-                    isRecording = false;
-                    if (micBtn) {
-                        micBtn.className = 'w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0';
-                    }
-                    if (input) input.placeholder = currentLang === 'en' ? 'Type or ask anything...' : 'কিছু লিখুন বা প্রশ্ন করুন...';
-                };
-
-                recognition.start();
+                }
+            }
         }
 
         // --- Photo / Leaf Camera Upload Logic ---
@@ -1424,15 +1456,15 @@
             chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            // Add user message to history
+            updateChatHistory('user', message);
+
             try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message, lang: currentLang, history: chatHistory })
                 });
-                
-                // Add user message to local history *after* attempting to send
-                updateChatHistory('user', message);
 
                 const data = await res.json();
                 
@@ -1441,136 +1473,164 @@
 
                 if (data.reply) {
                     chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
-                    updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, '')); // store plain text
+                    updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, ''));
+                } else if (data.error) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">⚠️ ${data.error}</div>`;
                 } else {
-                    throw new Error(data.error || 'No reply from server');
+                    throw new Error('No reply');
                 }
             } catch (err) {
                 const typingEl = document.getElementById(typingId);
                 if (typingEl) typingEl.remove();
-                chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">❌ <b>Error:</b> ${err.message}. (দয়া করে Vercel-এ GEMINI_API_KEY চেক করুন)</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-
-                let replyEn = "I am Foshol AI Assistant. I can help diagnose crop diseases, calculate fertilizer, check wholesale mandi market prices, and give localized weather advisories. How can I assist your farm today?";
-                let replyBn = "আমি ফসল এআই সহকারী। আমি ফসলের রোগ নির্ণয়, সারের সঠিক হিসাব, আজকের পাইকারি বাজার দর এবং আবহাওয়ার পরামর্শ দিতে পারি। আজ আপনার খামারের জন্য কীভাবে সাহায্য করতে পারি?";
-                const msgLower = message.toLowerCase();
-
-                if (msgLower.includes('market') || msgLower.includes('দাম') || msgLower.includes('দর') || msgLower.includes('price')) {
-                    replyEn = "Based on today's Karwan Bazar wholesale index, Tomatoes are selling at ৳45/kg (Retail: ৳60/kg) and Onions at ৳45/kg. For the complete live visual chart, view our <a href='/market' class='text-green-600 font-bold underline'>Market Prices Page</a>.";
-                    replyBn = "আজকের কাওরান বাজার পাইকারি ইনডেক্স অনুযায়ী, টমেটো প্রতি কেজি ৳৪৫ (খুচরা ৳৬০) এবং পেঁয়াজ ৳৪৫ দরে বিক্রি হচ্ছে। সম্পূর্ণ লাইভ চার্ট দেখতে আমাদের <a href='/market' class='text-green-600 font-bold underline'>বাজার দর পেজ</a> দেখুন।";
-                } else if (msgLower.includes('weather') || msgLower.includes('আবহাওয়া') || msgLower.includes('বৃষ্টি') || msgLower.includes('rain')) {
-                    replyEn = "Current Dhaka weather is 32°C. Scattered rain is predicted over the next 48 hours in Rajshahi and Sylhet. Full forecast is available on the <a href='/weather' class='text-blue-600 font-bold underline'>Farming Weather Page</a>.";
-                    replyBn = "ঢাকার বর্তমান তাপমাত্রা ৩২°C। রাজশাহী ও সিলেট অঞ্চলে আগামী ৪৮ ঘণ্টায় বৃষ্টির সম্ভাবনা রয়েছে। বিস্তারিত ৭ দিনের পূর্বাভাস দেখতে <a href='/weather' class='text-blue-600 font-bold underline'>কৃষি আবহাওয়া পেজ</a> দেখুন।";
-                } else if (msgLower.includes('medicine') || msgLower.includes('ঔষধ') || msgLower.includes('ওষুধ') || msgLower.includes('পোকামাকড়') || msgLower.includes('পচন') || msgLower.includes('fungus')) {
-                    replyEn = "For fungal diseases like Late Blight or Blast, recommended fungicides include Amistar Top (1ml/1L water) or Score. Spray during calm, late afternoons. For exact crop dosages, see our <a href='/medicine' class='text-teal-600 font-bold underline'>Medicine Dosage Tool</a>.";
-                    replyBn = "লেট ব্লাইট বা ব্লাস্ট রোগের জন্য এমিটার টপ (১মিলি/১লিটার পানি) অথবা স্কোর অনুমোদিত। শেষ বিকেলে স্প্রে করা উত্তম। ফসল অনুযায়ী সঠিক মাত্রার জন্য আমাদের <a href='/medicine' class='text-teal-600 font-bold underline'>ঔষধের সঠিক মাত্রা পেজ</a> দেখুন।";
-                } else if (msgLower.includes('fertilizer') || msgLower.includes('সার') || msgLower.includes('ইউরিয়া') || msgLower.includes('urea')) {
-                    replyEn = "For high-yield rice (BRRI 28/29), standard requirement is ~0.9kg Urea, 0.4kg TSP, and 0.5kg MoP per decimal. Calculate on our <a href='/fertilizer' class='text-purple-600 font-bold underline'>Fertilizer Calculator</a>.";
-                    replyBn = "উচ্চ ফলনশীল ধানের (ব্রি ২৮/২৯) জন্য প্রতি শতকে প্রায় ০.৯ কেজি ইউরিয়া, ০.৪ কেজি টিএসপি এবং ০.৫ কেজি পটাশ প্রয়োজন। হিসাব করতে আমাদের <a href='/fertilizer' class='text-purple-600 font-bold underline'>সার ক্যালকুলেটর</a> ব্যবহার করুন।";
-                } else if (msgLower.includes('রোগ') || msgLower.includes('detect') || msgLower.includes('ছবি') || msgLower.includes('পাতা') || msgLower.includes('ব্লাস্ট')) {
-                    replyEn = "✅ <b>AI Diagnosis:</b> Sample shows <b>Rice Blast (ব্লাস্ট রোগ)</b> with <b>98.4% Confidence</b>.<br>• Recommended Spray: Tricyclazole 75 WP (0.75g/L) or Nativo 75 WG (0.6g/L).<br>• Action: Stop excess Urea application immediately to prevent spore spread.";
-                    replyBn = "✅ <b>এআই রোগ নির্ণয়:</b> নমুনায় <b>ধানের ব্লাস্ট রোগ (৯৮.৪% নির্ভুলতা)</b> শনাক্ত হয়েছে।<br>• অনুমোদিত ছত্রাকনাশক: ট্রাইসাইক্লাজোল ৭৫ ডব্লিউপি (০.৭৫ গ্রাম/লিটার) অথবা নাটিভো ৭৫ ডব্লিউজি।<br>• পরামর্শ: জমিতে অতিরিক্ত ইউরিয়া সার দেওয়া এখনই বন্ধ রাখুন।";
-                }
-
-                const finalReply = currentLang === 'en' ? replyEn : replyBn;
-                chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${finalReply}</div>`;
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Connection error. Please try again.' : 'সংযোগ ত্রুটি। আবার চেষ্টা করুন।'}</div>`;
             }
 
             setTimeout(applyLanguage, 10);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // --- Weather Widget Logic ---
-        async function requestWeatherUpdate(force = false) {
-            let lat, lon, city = 'Unknown';
-            const savedWeatherStr = localStorage.getItem('foshol_weather_cache');
-            let savedWeather = savedWeatherStr ? JSON.parse(savedWeatherStr) : null;
+        // --- Weather Widget Logic (Auto IP + GPS Upgrade) ---
 
-            // Use cache if within 1 hour unless forced
-            if (!force && savedWeather && (Date.now() - savedWeather.timestamp < 3600 * 1000)) {
-                updateWeatherUI(savedWeather.city, savedWeather.temp, savedWeather.hum, savedWeather.rain);
-                return;
-            }
+        // Step 1: IP-based auto location (works without any permission, runs on page load)
+        async function autoDetectWeather() {
+            const weatherEl = document.getElementById('weather-data');
+            try {
+                // BigDataCloud returns lat/lon from IP without any permission needed
+                const geoRes = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en');
+                const geoData = await geoRes.json();
+                const lat = geoData.latitude || 23.8103;
+                const lon = geoData.longitude || 90.4125;
+                const city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Dhaka';
 
-            if (navigator.geolocation) {
-                // Show loading
-                updateWeatherUI('Locating...', '--', '--', '--');
+                // Fetch weather for this IP location
+                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&current_weather=true&timezone=auto`);
+                const weatherData = await weatherRes.json();
                 
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        lat = position.coords.latitude;
-                        lon = position.coords.longitude;
-                        
-                        try {
-                            // 1. Reverse Geocode (BigDataCloud - Free, no API key)
-                            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${currentLang}`);
-                            const geoData = await geoRes.json();
-                            city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Unknown';
+                const temp = Math.round(weatherData.current.temperature_2m);
+                const hum = Math.round(weatherData.current.relative_humidity_2m);
+                const rain = Math.round(weatherData.current.precipitation_probability || 0);
+                const code = weatherData.current_weather.weathercode;
+                const isDay = weatherData.current_weather.is_day;
 
-                            // 2. Fetch Weather (Open-Meteo - Free, no API key)
-                            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&timezone=auto`);
-                            const weatherData = await weatherRes.json();
-                            
-                            const temp = Math.round(weatherData.current.temperature_2m);
-                            const hum = Math.round(weatherData.current.relative_humidity_2m);
-                            const rain = Math.round(weatherData.current.precipitation_probability || 0);
+                // Save to cache
+                const cacheData = { city, temp, hum, rain, lat, lon, isDay, code, timestamp: Date.now() };
+                localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
 
-                            // Save to Cache
-                            const cacheData = { city, temp, hum, rain, lat, lon, timestamp: Date.now() };
-                            localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
+                // Update both Top Bar and Widget
+                updateTopBar(city, temp, code, isDay);
+                updateWeatherUI(city, temp, hum, rain);
 
-                            // Update UI
-                            updateWeatherUI(city, temp, hum, rain);
-                            fetchWeather(lat, lon, city); // Update Top Bar
-                            
-                            // Send Context to Chat History (Silently)
-                            const sysMsg = currentLang === 'en' 
-                                ? `System Context: User's live location is ${city}, Temperature: ${temp}°C, Humidity: ${hum}%, Rain Probability: ${rain}%.`
-                                : `সিস্টেম কনটেক্সট: কৃষকের বর্তমান এলাকা ${city}, তাপমাত্রা ${temp}°C, আর্দ্রতা ${hum}%, বৃষ্টির সম্ভাবনা ${rain}%।`;
-                            updateChatHistory('user', sysMsg);
+                // Silently add weather context to AI chat
+                const sysMsg = currentLang === 'en' 
+                    ? `System Context: User location is ${city}, Temperature: ${temp}°C, Humidity: ${hum}%, Rain: ${rain}%.`
+                    : `সিস্টেম কনটেক্সট: কৃষকের এলাকা ${city}, তাপমাত্রা ${temp}°C, আর্দ্রতা ${hum}%, বৃষ্টি ${rain}%।`;
+                updateChatHistory('user', sysMsg);
 
-                        } catch (e) {
-                            console.error('Weather error:', e);
-                            updateWeatherUI('Error', '--', '--', '--');
-                        }
-                    },
-                    async (error) => {
-                        console.error('Geolocation error:', error);
-                        // Fallback to IP-based location if GPS is denied
-                        try {
-                            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=${currentLang}`);
-                            const geoData = await geoRes.json();
-                            const ipLat = geoData.latitude || 23.8103;
-                            const ipLon = geoData.longitude || 90.4125;
-                            const city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Dhaka';
-
-                            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ipLat}&longitude=${ipLon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&timezone=auto`);
-                            const weatherData = await weatherRes.json();
-                            
-                            const temp = Math.round(weatherData.current.temperature_2m);
-                            const hum = Math.round(weatherData.current.relative_humidity_2m);
-                            const rain = Math.round(weatherData.current.precipitation_probability || 0);
-
-                            const cacheData = { city, temp, hum, rain, lat: ipLat, lon: ipLon, timestamp: Date.now() };
-                            localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
-
-                            updateWeatherUI(city, temp, hum, rain);
-                            fetchWeather(ipLat, ipLon, city);
-
-                            if (force) alert(currentLang === 'en' ? `GPS denied. Using approximate IP location: ${city}. For exact weather, enable GPS in browser settings.` : `GPS অফ আছে। ইন্টারনেট আইপি থেকে আনুমানিক লোকেশন (${city}) ব্যবহার করা হচ্ছে। সঠিক ওয়েদার পেতে ব্রাউজার সেটিংসে Location Allow করুন।`);
-                        } catch (fallbackErr) {
-                            updateWeatherUI('Denied', '--', '--', '--');
-                            if (force) alert(currentLang === 'en' ? 'Location access denied.' : 'লোকেশন পারমিশন দেওয়া হয়নি।');
-                        }
-                    }
-                );
-            } else {
-                updateWeatherUI('Not Supported', '--', '--', '--');
+            } catch (err) {
+                console.error('Auto weather error:', err);
+                // Fallback to hardcoded Dhaka
+                fetchWeather();
             }
         }
 
+        // Step 2: GPS upgrade (called when user clicks topbar or weather widget)
+        async function requestWeatherUpdate(force = false) {
+            const savedWeatherStr = localStorage.getItem('foshol_weather_cache');
+            let savedWeather = savedWeatherStr ? JSON.parse(savedWeatherStr) : null;
+
+            // Use cache if within 30 min unless forced
+            if (!force && savedWeather && (Date.now() - savedWeather.timestamp < 1800 * 1000)) {
+                updateWeatherUI(savedWeather.city, savedWeather.temp, savedWeather.hum, savedWeather.rain);
+                updateTopBar(savedWeather.city, savedWeather.temp, savedWeather.code || 0, savedWeather.isDay !== undefined ? savedWeather.isDay : 1);
+                return;
+            }
+
+            // Show loading state
+            updateWeatherUI('📍 Locating...', '--', '--', '--');
+            const weatherEl = document.getElementById('weather-data');
+            if (weatherEl) weatherEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Updating...</span>';
+
+            // Try GPS first
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        // GPS success! Use exact coordinates
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        try {
+                            const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${currentLang}`);
+                            const geoData = await geoRes.json();
+                            const city = geoData.locality || geoData.city || geoData.principalSubdivision || 'Unknown';
+
+                            const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&current_weather=true&timezone=auto`);
+                            const weatherData = await weatherRes.json();
+                            
+                            const temp = Math.round(weatherData.current.temperature_2m);
+                            const hum = Math.round(weatherData.current.relative_humidity_2m);
+                            const rain = Math.round(weatherData.current.precipitation_probability || 0);
+                            const code = weatherData.current_weather.weathercode;
+                            const isDay = weatherData.current_weather.is_day;
+
+                            const cacheData = { city, temp, hum, rain, lat, lon, code, isDay, timestamp: Date.now() };
+                            localStorage.setItem('foshol_weather_cache', JSON.stringify(cacheData));
+
+                            updateWeatherUI(city, temp, hum, rain);
+                            updateTopBar(city, temp, code, isDay);
+
+                            const sysMsg = currentLang === 'en' 
+                                ? `System Context: User's exact GPS location is ${city}, Temperature: ${temp}°C, Humidity: ${hum}%, Rain: ${rain}%.`
+                                : `সিস্টেম কনটেক্সট: কৃষকের GPS লোকেশন ${city}, তাপমাত্রা ${temp}°C, আর্দ্রতা ${hum}%, বৃষ্টি ${rain}%।`;
+                            updateChatHistory('user', sysMsg);
+
+                        } catch (e) {
+                            console.error('Weather fetch error:', e);
+                            autoDetectWeather(); // Fallback to IP
+                        }
+                    },
+                    (error) => {
+                        // GPS denied or unavailable — fallback to IP silently
+                        console.log('GPS denied, falling back to IP location');
+                        autoDetectWeather();
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } else {
+                // No geolocation API — fallback to IP
+                autoDetectWeather();
+            }
+        }
+
+        // Top Bar renderer
+        function updateTopBar(city, temp, code, isDay) {
+            const weatherEl = document.getElementById('weather-data');
+            if (!weatherEl) return;
+
+            let icon = isDay ? 'fa-sun text-yellow-400' : 'fa-moon text-blue-200';
+            let descEn = isDay ? 'Clear' : 'Clear Night';
+            let descBn = isDay ? 'পরিষ্কার আকাশ' : 'পরিষ্কার রাত';
+            
+            if (code > 3 && code < 50) { icon = 'fa-cloud text-gray-300'; descEn = 'Cloudy'; descBn = 'মেঘলা'; }
+            else if (code >= 50 && code < 80) { icon = 'fa-cloud-rain text-blue-300'; descEn = 'Rainy'; descBn = 'বৃষ্টি'; }
+            else if (code >= 80) { icon = 'fa-cloud-bolt text-yellow-300'; descEn = 'Storm'; descBn = 'ঝড়ো আবহাওয়া'; }
+
+            weatherEl.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-red-400 text-xs"></i>
+                    <span>${city}</span>
+                    <span class="mx-1">•</span>
+                    <i class="fa-solid ${icon}"></i>
+                    <span>${temp}°C</span>
+                    <span class="mx-1">•</span>
+                    <span class="lang-en">${descEn}</span>
+                    <span class="lang-bn hidden">${descBn}</span>
+                </div>
+            `;
+            applyLanguage();
+        }
+
         function updateWeatherUI(city, temp, hum, rain) {
-            // Desktop
+            // Desktop Widget
             const dLoc = document.getElementById('d-weather-loc');
             const dTemp = document.getElementById('d-weather-temp');
             const dHum = document.getElementById('d-weather-hum');
@@ -1581,7 +1641,7 @@
             if(dHum) dHum.innerHTML = `<i class="fa-solid fa-droplet text-blue-400"></i> ${hum}%`;
             if(dRain) dRain.innerHTML = `<i class="fa-solid fa-cloud-rain text-gray-500"></i> ${rain}%`;
 
-            // Mobile
+            // Mobile Widget
             const mLoc = document.getElementById('m-weather-loc');
             const mTemp = document.getElementById('m-weather-temp');
             const mHum = document.getElementById('m-weather-hum');
@@ -1593,12 +1653,18 @@
             if(mRain) mRain.innerHTML = `<i class="fa-solid fa-cloud-rain text-gray-500"></i> ${rain}%`;
         }
 
-        // Initialize Weather on page load if cache exists, otherwise wait for user click to avoid intrusive prompt
+        // Auto-run on page load — no permission needed!
         window.addEventListener('DOMContentLoaded', () => {
             const savedWeatherStr = localStorage.getItem('foshol_weather_cache');
-            if (savedWeatherStr) {
-                // Background update without prompt
-                requestWeatherUpdate(false);
+            const savedWeather = savedWeatherStr ? JSON.parse(savedWeatherStr) : null;
+            
+            // If cache exists and fresh (<30 min), use it instantly
+            if (savedWeather && (Date.now() - savedWeather.timestamp < 1800 * 1000)) {
+                updateWeatherUI(savedWeather.city, savedWeather.temp, savedWeather.hum, savedWeather.rain);
+                updateTopBar(savedWeather.city, savedWeather.temp, savedWeather.code || 0, savedWeather.isDay !== undefined ? savedWeather.isDay : 1);
+            } else {
+                // No cache or stale — auto-detect from IP (no GPS permission needed)
+                autoDetectWeather();
             }
         });
     </script>
