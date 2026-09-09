@@ -299,16 +299,18 @@
             </div>
         </div>
 
-        <div class="p-3 border-t border-gray-200 bg-white rounded-b-3xl flex gap-2 items-center">
-            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition shrink-0" title="Voice Message" onclick="sendSuggested('How do I use voice advisory in Bangla?', 'বাংলায় ভয়েস পরামর্শ কীভাবে নিব?')">
-                <i class="fa-solid fa-microphone text-f-dark"></i>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-3xl flex gap-1.5 items-center relative">
+            <button id="chat-mic-btn" onclick="toggleVoiceRecording()" class="w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0" title="Voice Message">
+                <i class="fa-solid fa-microphone text-sm"></i>
             </button>
-            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition shrink-0" title="Upload Photo" onclick="sendSuggested('Diagnose fungal disease on my rice leaf', 'আমার ধানের পাতার ছবি স্ক্যান করে রোগ নির্ণয় করুন')">
-                <i class="fa-solid fa-camera text-f-dark"></i>
+            <button class="w-9 h-9 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Upload Photo" onclick="document.getElementById('chat-photo-input').click()">
+                <i class="fa-solid fa-camera text-sm"></i>
             </button>
-            <input type="text" id="chat-input" placeholder="Type or ask anything..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition shrink-0 shadow">
-                <i class="fa-solid fa-paper-plane text-xs"></i>
+            <input type="file" id="chat-photo-input" accept="image/*" class="hidden" onchange="handleChatPhotoUpload(event)">
+            
+            <input type="text" id="chat-input" placeholder="Type or ask anything..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark focus:border-transparent min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-9 h-9 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0 shadow-md">
+                <i class="fa-solid fa-paper-plane text-xs relative -ml-0.5 mt-0.5"></i>
             </button>
         </div>
     </div>
@@ -532,6 +534,170 @@
             if (now - lastChatTime > 15 * 60 * 1000) chatHistory = [];
             chatHistory.push({ role, text });
             lastChatTime = now;
+        }
+
+        let isRecording = false;
+        let recognition = null;
+
+        function toggleVoiceRecording() {
+            const micBtn = document.getElementById('chat-mic-btn');
+            const input = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-box');
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRec) {
+                if (chatBox) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Voice not supported on this browser. Use Chrome on Android or Desktop.' : 'এই ব্রাউজারে ভয়েস সাপোর্ট করে না। অ্যান্ড্রয়েড বা ডেস্কটপে Chrome ব্যবহার করুন।'}</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+                return;
+            }
+
+            if (isRecording && recognition) {
+                recognition.stop();
+                return;
+            }
+
+            recognition = new SpeechRec();
+            recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            let finalTranscript = '';
+
+            recognition.onstart = () => {
+                isRecording = true;
+                finalTranscript = '';
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-stop text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center transition flex-shrink-0 animate-pulse shadow-lg shadow-red-400/50';
+                }
+                if (input) {
+                    input.value = '';
+                    input.placeholder = currentLang === 'en' ? '🎙️ Listening... tap 🛑 to send' : '🎙️ শুনছি... 🛑 ট্যাপ করে পাঠান';
+                }
+            };
+
+            recognition.onresult = (e) => {
+                let interim = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalTranscript += e.results[i][0].transcript + ' ';
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                if (input) input.value = (finalTranscript + interim).trim();
+            };
+
+            recognition.onerror = (e) => {
+                if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic blocked. Go to browser Settings -> Site Settings -> Microphone -> Allow.' : 'মাইক ব্লক করা আছে। ব্রাউজারের Settings -> Site Settings -> Microphone -> Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-microphone text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0';
+                }
+                if (input) input.placeholder = currentLang === 'en' ? 'Type or ask anything...' : 'কিছু লিখুন বা জিজ্ঞাসা করুন...';
+                
+                const text = (input ? input.value.trim() : '') || finalTranscript.trim();
+                if (text) {
+                    if (input) input.value = text;
+                    sendChatMessage();
+                }
+            };
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    recognition.start();
+                }).catch(function(err) {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Allow it in browser settings.' : 'মাইক্রোফোন ব্লক করা আছে। ব্রাউজার সেটিংসে গিয়ে Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            } else {
+                try { recognition.start(); } catch(e) {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic not available on this device.' : 'এই ডিভাইসে মাইক পাওয়া যাচ্ছে না।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            }
+        }
+
+        async function handleChatPhotoUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            event.target.value = '';
+
+            const chatBox = document.getElementById('chat-box');
+            if (!chatBox) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Url = e.target.result;
+
+                chatBox.innerHTML += `
+                    <div class="chat-message chat-user flex flex-col gap-2 max-w-[85%]">
+                        <img src="${base64Url}" class="rounded-xl max-h-44 object-cover border border-white/20">
+                        <span class="text-xs text-white/90">🖼️ ${currentLang === 'en' ? 'Crop leaf photo uploaded' : 'ফসলের পাতার ছবি আপলোড করা হয়েছে'}</span>
+                    </div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                const typingId = "scan-" + Date.now();
+                chatBox.innerHTML += `
+                    <div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-300 bg-green-50 p-4">
+                        <div class="relative w-12 h-12">
+                            <i class="fa-solid fa-microchip text-4xl text-green-600 animate-pulse"></i>
+                        </div>
+                        <span class="text-green-800 font-bold text-xs">
+                            ${currentLang === 'en' ? 'AI Leaf Scanner analyzing photo with Gemini...' : 'এআই লিফ স্ক্যানার ছবি বিশ্লেষণ করছে...'}
+                        </span>
+                    </div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                try {
+                    const photoMessage = currentLang === 'en' ? 'Analyze this plant leaf photo and diagnose disease, dosage and cure.' : 'এই ফসলের পাতার ছবি স্ক্যান করে রোগ নির্ণয়, ঔষধের মাত্রা ও সমাধান জানাও।';
+                    
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: photoMessage,
+                            image: { data: base64Url, mimeType: file.type || 'image/jpeg' },
+                            lang: currentLang,
+                            history: chatHistory
+                        })
+                    });
+
+                    const data = await res.json();
+                    document.getElementById(typingId)?.remove();
+
+                    if (data.reply) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
+                        updateChatHistory('user', photoMessage);
+                        updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, ''));
+                    } else {
+                        throw new Error('No reply');
+                    }
+                } catch (err) {
+                    document.getElementById(typingId)?.remove();
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Failed to process image.' : 'ছবি স্ক্যান করতে সমস্যা হয়েছে।'}</div>`;
+                }
+
+                setTimeout(applyLanguage, 10);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+            reader.readAsDataURL(file);
         }
 
         async function sendChatMessage() {
