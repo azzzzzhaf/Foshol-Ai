@@ -353,41 +353,51 @@
     </button>
 
     <!-- AI Chat Box -->
-    <div id="chat-widget" class="fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col h-[480px]">
-        <div class="bg-f-dark text-white p-4 rounded-t-3xl flex justify-between items-center shadow-md">
-            <div class="font-bold flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-f-gold"><i class="fa-solid fa-leaf"></i></div>
-                <div>
-                    <div class="text-sm leading-tight">Foshol AI</div>
-                    <div class="text-[10px] text-green-200 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online • Fast Advisory</div>
+    <div id="chat-widget" class="fixed bottom-24 right-6 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 chat-hidden flex flex-col" style="width:380px; height:500px; min-width:300px; min-height:350px; max-width:90vw; max-height:85vh; resize:both; overflow:hidden;">
+        <!-- Chat Header (Draggable) -->
+        <div id="chat-header" class="bg-f-dark text-white p-4 rounded-t-2xl flex justify-between items-center select-none" style="cursor:move;">
+            <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-leaf text-f-gold"></i> <span class="lang-en">Foshol AI Assistant</span><span class="lang-bn hidden">ফসল AI সহকারী</span></div>
+            <div class="flex items-center gap-2">
+                <button onclick="expandChatWidget()" class="text-white/70 hover:text-white text-sm" title="Expand"><i class="fa-solid fa-expand"></i></button>
+                <button onclick="toggleChat()" class="text-white hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+            </div>
+        </div>
+        <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50">
+            <div class="chat-message chat-ai w-[90%] md:w-[85%]">
+                <span class="lang-en">Hello! I am Foshol AI. Please select your crop or describe the problem:</span>
+                <span class="lang-bn hidden">আসসালামু আলাইকুম! আমি ফসল AI। আপনার ফসল নির্বাচন করুন অথবা সমস্যার কথা লিখুন:</span>
+                
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button onclick="sendSuggested('🌾 Rice', '🌾 ধান')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌾 <span class="lang-en">Rice</span><span class="lang-bn hidden">ধান</span></button>
+                    <button onclick="sendSuggested('🥔 Potato', '🥔 আলু')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥔 <span class="lang-en">Potato</span><span class="lang-bn hidden">আলু</span></button>
+                    <button onclick="sendSuggested('🍅 Tomato', '🍅 টমেটো')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🍅 <span class="lang-en">Tomato</span><span class="lang-bn hidden">টমেটো</span></button>
+                    <button onclick="sendSuggested('🌶️ Chili', '🌶️ মরিচ')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🌶️ <span class="lang-en">Chili</span><span class="lang-bn hidden">মরিচ</span></button>
+                    <button onclick="sendSuggested('🥭 Mango', '🥭 আম')" class="bg-white text-f-dark border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-green-50 transition shadow-sm">🥭 <span class="lang-en">Mango</span><span class="lang-bn hidden">আম</span></button>
                 </div>
             </div>
-            <button onclick="toggleChat()" class="text-white hover:text-red-300 w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-times text-lg"></i></button>
         </div>
-        
-        <div id="chat-box" class="flex-1 p-4 overflow-y-auto flex flex-col bg-gray-50 gap-2">
-            <div class="chat-message chat-ai">
-                <span class="lang-en">🌾 Assalamu Alaikum! I am Foshol AI Assistant. Ask me any farming question, check today's market price, or calculate fertilizer!</span>
-                <span class="lang-bn hidden">🌾 আসসালামু আলাইকুম! আমি ফসল এআই সহকারী। যেকোনো ফসলের সমস্যা, আজকের পাইকারি বাজার দর বা সারের হিসাব জানতে আমাকে জিজ্ঞাসা করুন!</span>
+        <div class="p-3 border-t border-gray-200 bg-white rounded-b-2xl flex gap-1.5 items-center relative">
+            <!-- Mic Button -->
+            <button id="chat-mic-btn" onclick="toggleVoiceRecording()" class="w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0" title="Voice Message">
+                <i class="fa-solid fa-microphone text-sm"></i>
+            </button>
+            <button class="w-9 h-9 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition flex-shrink-0" title="Upload Photo" onclick="document.getElementById('chat-photo-input').click()">
+                <i class="fa-solid fa-camera text-sm"></i>
+            </button>
+            <input type="file" id="chat-photo-input" accept="image/*" class="hidden" onchange="handleChatPhotoUpload(event)">
+            
+            <input type="text" id="chat-input" placeholder="Type or ask anything..." class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark focus:border-transparent min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="w-9 h-9 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition flex-shrink-0 shadow-md">
+                <i class="fa-solid fa-paper-plane text-xs relative -ml-0.5 mt-0.5"></i>
+            </button>
+            <!-- Visual Resize Handle -->
+            <div class="absolute bottom-1 right-1 text-gray-300 pointer-events-none">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15L15 21M21 8L8 21"/></svg>
             </div>
-        </div>
-
-        <div class="p-3 border-t border-gray-200 bg-white rounded-b-3xl flex gap-2 items-center">
-            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition shrink-0" title="Voice Message" onclick="sendSuggested('How do I use voice advisory in Bangla?', 'বাংলায় ভয়েস পরামর্শ কীভাবে নিব?')">
-                <i class="fa-solid fa-microphone text-f-dark"></i>
-            </button>
-            <button class="w-10 h-10 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center hover:bg-gray-200 transition shrink-0" title="Upload Photo" onclick="sendSuggested('Diagnose fungal disease on my rice leaf', 'আমার ধানের পাতার ছবি স্ক্যান করে রোগ নির্ণয় করুন')">
-                <i class="fa-solid fa-camera text-f-dark"></i>
-            </button>
-            <input type="text" id="chat-input" placeholder="Type or ask anything..." class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-f-dark min-w-0" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="w-10 h-10 bg-f-dark text-white rounded-full flex items-center justify-center hover:bg-green-800 transition shrink-0 shadow">
-                <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
         </div>
     </div>
 
-    
-    <!-- INVESTOR PITCH DECK MODAL -->
+
     <div id="pitch-modal" class="hidden fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white max-w-2xl w-full rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
             <div class="bg-gradient-to-r from-f-dark to-emerald-800 text-white p-6 md:p-8 flex justify-between items-start relative">
@@ -570,25 +580,282 @@
         }
 
         // --- AI Chat Logic ---
-        function toggleChat() {
-            const w = document.getElementById('chat-widget');
-            if(w) w.classList.toggle('chat-hidden');
-        }
+        // --- Drag Chat Widget by Header ---
+        (function() {
+            const header = document.getElementById('chat-header');
+            const widget = document.getElementById('chat-widget');
+            if (!header || !widget) return;
 
-        function openServiceChat(enPrompt, bnPrompt) {
-            const chatWidget = document.getElementById("chat-widget");
-            if (chatWidget && chatWidget.classList.contains("chat-hidden")) {
-                toggleChat();
-            }
-            const msg = currentLang === "en" ? enPrompt : bnPrompt;
-            const input = document.getElementById('chat-input');
-            if(input) { input.value = msg; sendChatMessage(); }
-        }
+            let isDragging = false, startX, startY, origLeft, origTop;
+
+            header.addEventListener('mousedown', function(e) {
+                if (e.target.closest('button')) return; // Don't drag when clicking buttons
+                isDragging = true;
+                const rect = widget.getBoundingClientRect();
+                startX = e.clientX;
+                startY = e.clientY;
+                origLeft = rect.left;
+                origTop = rect.top;
+                widget.style.transition = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                widget.style.left = (origLeft + dx) + 'px';
+                widget.style.top = (origTop + dy) + 'px';
+                widget.style.right = 'auto';
+                widget.style.bottom = 'auto';
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    widget.style.transition = '';
+                }
+            });
+
+            // Touch support for mobile
+            header.addEventListener('touchstart', function(e) {
+                if (e.target.closest('button')) return;
+                isDragging = true;
+                const touch = e.touches[0];
+                const rect = widget.getBoundingClientRect();
+                startX = touch.clientX;
+                startY = touch.clientY;
+                origLeft = rect.left;
+                origTop = rect.top;
+                widget.style.transition = 'none';
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                widget.style.left = (origLeft + dx) + 'px';
+                widget.style.top = (origTop + dy) + 'px';
+                widget.style.right = 'auto';
+                widget.style.bottom = 'auto';
+            }, { passive: true });
+
+            document.addEventListener('touchend', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    widget.style.transition = '';
+                }
+            });
+        })();
 
         function sendSuggested(enMsg, bnMsg) {
-            openServiceChat(enMsg, bnMsg);
+            const msg = currentLang === 'en' ? enMsg : bnMsg;
+            document.getElementById('chat-input').value = msg;
+            sendChatMessage();
         }
 
+        // --- Voice Recording Logic (Messenger Style: Click→Record→Click→Send) ---
+        let recognition = null;
+        let isRecording = false;
+        let voiceTimer = null;
+
+        function toggleVoiceRecording() {
+            const micBtn = document.getElementById('chat-mic-btn');
+            const input = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-box');
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            // If Speech API not supported, show warning
+            if (!SpeechRec) {
+                if (chatBox) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Voice not supported on this browser. Use Chrome on Android or Desktop.' : 'এই ব্রাউজারে ভয়েস সাপোর্ট নেই। অ্যান্ড্রয়েডে Chrome ব্যবহার করুন।'}</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+                return;
+            }
+
+            // If already recording → Stop and send
+            if (isRecording && recognition) {
+                recognition.stop();
+                return;
+            }
+
+            // Start recording
+            recognition = new SpeechRec();
+            recognition.lang = currentLang === 'en' ? 'en-US' : 'bn-BD';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            let finalTranscript = '';
+
+            recognition.onstart = () => {
+                isRecording = true;
+                finalTranscript = '';
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-stop text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-500 text-white rounded-full flex items-center justify-center transition flex-shrink-0 animate-pulse shadow-lg shadow-red-400/50';
+                }
+                if (input) {
+                    input.value = '';
+                    input.placeholder = currentLang === 'en' ? '🎙️ Listening... tap 🔴 to send' : '🎙️ শুনছি... 🔴 চাপুন পাঠাতে';
+                }
+            };
+
+            recognition.onresult = (e) => {
+                let interim = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalTranscript += e.results[i][0].transcript + ' ';
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                // Show live text in input box as user speaks
+                if (input) input.value = (finalTranscript + interim).trim();
+            };
+
+            recognition.onerror = (e) => {
+                console.error('Speech error:', e.error);
+                if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic blocked. Go to browser Settings → Site Settings → Microphone → Allow.' : 'মাইক ব্লক আছে। ব্রাউজার Settings → Site Settings → Microphone → Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fa-solid fa-microphone text-sm"></i>';
+                    micBtn.className = 'w-9 h-9 bg-red-50 text-red-400 rounded-full flex items-center justify-center hover:bg-red-100 transition flex-shrink-0';
+                }
+                if (input) input.placeholder = currentLang === 'en' ? 'Type or ask anything...' : 'কিছু লিখুন বা প্রশ্ন করুন...';
+                
+                // Auto-send if there's text
+                const text = (input ? input.value.trim() : '') || finalTranscript.trim();
+                if (text) {
+                    if (input) input.value = text;
+                    sendChatMessage();
+                }
+            };
+
+            // Try to get mic permission first, then start
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    recognition.start();
+                }).catch(function(err) {
+                    console.error('Mic permission denied:', err);
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Microphone blocked. Allow it in browser settings.' : 'মাইক্রোফোন ব্লক আছে। ব্রাউজার সেটিংস থেকে Allow করুন।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            } else {
+                // Directly try (some browsers don't have mediaDevices)
+                try { recognition.start(); } catch(e) {
+                    if (chatBox) {
+                        chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Mic not available on this device.' : 'এই ডিভাইসে মাইক পাওয়া যাচ্ছে না।'}</div>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            }
+        }
+
+        // --- Photo / Leaf Camera Upload Logic ---
+        async function handleChatPhotoUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            event.target.value = '';
+
+            const chatBox = document.getElementById('chat-box');
+            if (!chatBox) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Url = e.target.result;
+
+                // 1. Show user message with photo thumbnail
+                chatBox.innerHTML += `
+                    <div class="chat-message chat-user flex flex-col gap-2 max-w-[85%]">
+                        <img src="${base64Url}" class="rounded-xl max-h-44 object-cover border border-white/20">
+                        <span class="text-xs text-white/90">📸 ${currentLang === 'en' ? 'Crop leaf photo uploaded' : 'ফসলের পাতার ছবি আপলোড করা হয়েছে'}</span>
+                    </div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // 2. Show Scanning Leaf Typing Indicator
+                const typingId = "scan-" + Date.now();
+                chatBox.innerHTML += `
+                    <div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-300 bg-green-50 p-4">
+                        <div class="relative w-12 h-12">
+                            <i class="fa-solid fa-microchip text-4xl text-green-600 animate-pulse"></i>
+                        </div>
+                        <span class="text-green-800 font-bold text-xs">
+                            ${currentLang === 'en' ? 'AI Leaf Scanner analyzing photo with Gemini...' : 'এআই লিফ স্ক্যানার ছবি বিশ্লেষণ করছে...'}
+                        </span>
+                    </div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // 3. Send to Gemini /api/chat with base64 image
+                try {
+                    const photoMessage = currentLang === 'en' ? 'Analyze this plant leaf photo and diagnose disease, dosage and cure.' : 'এই ফসলের পাতার ছবি পরীক্ষা করে রোগ নির্ণয়, ঔষধের মাত্রা ও প্রতিকার জানান।';
+                    
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: photoMessage,
+                            image: {
+                                data: base64Url,
+                                mimeType: file.type || 'image/jpeg'
+                            },
+                            lang: currentLang,
+                            history: chatHistory
+                        })
+                    });
+                    
+                    updateChatHistory('user', photoMessage); // store user context
+
+                    const data = await res.json();
+                    const scanEl = document.getElementById(typingId);
+                    if (scanEl) scanEl.remove();
+
+                    let replyText = data.reply;
+                    if (!replyText || data.error) {
+                        throw new Error(data.error || 'Failed to analyze image');
+                    }
+
+                    chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${replyText}</div>`;
+                    updateChatHistory('model', replyText.replace(/<[^>]*>?/gm, '')); // store reply
+                    setTimeout(applyLanguage, 10);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } catch (err) {
+                    const scanEl = document.getElementById(typingId);
+                    if (scanEl) scanEl.remove();
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">❌ <b>Error:</b> ${err.message}. (Vercel-এ GEMINI_API_KEY চেক করুন)</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- Chat History Management (15 Minutes Expiration) ---
+        let chatHistory = [];
+        let lastChatTime = 0;
+
+        function updateChatHistory(role, text) {
+            const now = Date.now();
+            // Clear history if more than 15 minutes have passed (15 * 60 * 1000 ms)
+            if (now - lastChatTime > 15 * 60 * 1000) {
+                chatHistory = [];
+            }
+            chatHistory.push({ role, text });
+            lastChatTime = now;
+        }
+
+        // --- Live Send Chat Message Logic ---
         async function sendChatMessage() {
             const input = document.getElementById('chat-input');
             if(!input) return;
@@ -603,53 +870,43 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = "typing-" + Date.now();
-            let typingHtml = `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
-            
-            if(message.includes('রোগ') || message.includes('detect') || message.includes('ছবি') || message.includes('leaf') || message.includes('scan') || message.includes('ব্লাইট')) {
-                typingHtml = `<div id="${typingId}" class="chat-message chat-ai flex flex-col items-center gap-3 text-center border-2 border-green-200 bg-green-50 p-4">
-                    <div class="relative w-12 h-12">
-                        <i class="fa-solid fa-leaf text-4xl text-green-500 absolute inset-0"></i>
-                        <div class="absolute inset-0 bg-green-500/20 border-t-2 border-green-500 animate-ping rounded-full"></div>
-                    </div>
-                    <span class="text-green-700 font-bold text-xs"><span class="lang-en">AI Leaf Scanner analyzing image...</span><span class="lang-bn hidden">এআই লিফ স্ক্যানার ছবি বিশ্লেষণ করছে...</span></span>
-                </div>`;
-            }
-            chatBox.innerHTML += typingHtml;
-            setTimeout(applyLanguage, 10);
+            chatBox.innerHTML += `<div id="${typingId}" class="chat-message chat-ai typing-indicator"><span></span><span></span><span></span></div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Intelligent Domain-Specific AI Simulation
-            setTimeout(() => {
+            // Add user message to history
+            updateChatHistory('user', message);
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, lang: currentLang, history: chatHistory })
+                });
+
+                const data = await res.json();
+                
                 const typingEl = document.getElementById(typingId);
                 if (typingEl) typingEl.remove();
-                
-                let replyEn = "I am Foshol AI Assistant. I can help diagnose crop diseases, calculate fertilizer, check wholesale mandi market prices, and give localized weather advisories. How can I assist your farm today?";
-                let replyBn = "আমি ফসল এআই সহকারী। আমি ফসলের রোগ নির্ণয়, সারের সঠিক হিসাব, আজকের পাইকারি বাজার দর এবং আবহাওয়ার পরামর্শ দিতে পারি। আজ আপনার খামারের জন্য কীভাবে সাহায্য করতে পারি?";
-                const msgLower = message.toLowerCase();
-                
-                if (msgLower.includes('market') || msgLower.includes('দাম') || msgLower.includes('দর') || msgLower.includes('price')) {
-                    replyEn = "Based on today's Karwan Bazar wholesale index, Tomatoes are selling at ৳45/kg (Retail: ৳60/kg) and Onions at ৳45/kg. Middlemen margins are high on Green Chilies. For the complete live visual chart, view our <a href='/market' class='text-green-600 font-bold underline'>Market Prices Page</a>.";
-                    replyBn = "আজকের কাওরান বাজার পাইকারি ইনডেক্স অনুযায়ী, টমেটো প্রতি কেজি ৳৪৫ (খুচরা ৳৬০) এবং পেঁয়াজ ৳৪৫ দরে বিক্রি হচ্ছে। কাঁচামরিচে লাভ সবচেয়ে বেশি। সম্পূর্ণ লাইভ চার্ট দেখতে আমাদের <a href='/market' class='text-green-600 font-bold underline'>বাজার দর পেজ</a> দেখুন।";
-                } else if (msgLower.includes('weather') || msgLower.includes('আবহাওয়া') || msgLower.includes('বৃষ্টি') || msgLower.includes('rain')) {
-                    replyEn = "Current Dhaka weather is 32°C. Scattered rain is predicted over the next 48 hours in Rajshahi and Sylhet. Please check drainage channels for vegetable fields. Full forecast is available on the <a href='/weather' class='text-blue-600 font-bold underline'>Farming Weather Page</a>.";
-                    replyBn = "ঢাকার বর্তমান তাপমাত্রা ৩২°C। রাজশাহী ও সিলেট অঞ্চলে আগামী ৪৮ ঘণ্টায় বৃষ্টির সম্ভাবনা রয়েছে। সবজি ক্ষেতের নিষ্কাশন নালা পরিষ্কার রাখুন। বিস্তারিত ৭ দিনের পূর্বাভাস দেখতে <a href='/weather' class='text-blue-600 font-bold underline'>কৃষি আবহাওয়া পেজ</a> দেখুন।";
-                } else if (msgLower.includes('medicine') || msgLower.includes('ঔষধ') || msgLower.includes('ওষুধ') || msgLower.includes('পোকামাকড়') || msgLower.includes('পচন') || msgLower.includes('fungus')) {
-                    replyEn = "For fungal diseases like Late Blight or Blast, recommended fungicides include Amistar Top (1ml/1L water) or Score. Spray during calm, late afternoons. For exact crop dosages, see our <a href='/medicine' class='text-teal-600 font-bold underline'>Medicine Dosage Tool</a>.";
-                    replyBn = "লেট ব্লাইট বা ব্লাস্ট রোগের জন্য এমিটার টপ (১মিলি/১লিটার পানি) অথবা স্কোর অনুমোদিত। শেষ বিকেলে স্প্রে করা উত্তম। ফসল অনুযায়ী সঠিক মাত্রার জন্য আমাদের <a href='/medicine' class='text-teal-600 font-bold underline'>ঔষধের সঠিক মাত্রা পেজ</a> দেখুন।";
-                } else if (msgLower.includes('fertilizer') || msgLower.includes('সার') || msgLower.includes('ইউরিয়া') || msgLower.includes('urea')) {
-                    replyEn = "For high-yield rice (BRRI 28/29), standard requirement is ~0.9kg Urea, 0.4kg TSP, and 0.5kg MoP per decimal. Calculate for your exact land size on our <a href='/fertilizer' class='text-purple-600 font-bold underline'>Fertilizer Calculator</a>.";
-                    replyBn = "উচ্চ ফলনশীল ধানের (ব্রি ২৮/২৯) জন্য প্রতি শতকে প্রায় ০.৯ কেজি ইউরিয়া, ০.৪ কেজি টিএসপি এবং ০.৫ কেজি পটাশ প্রয়োজন। আপনার জমির সঠিক হিসাব করতে আমাদের <a href='/fertilizer' class='text-purple-600 font-bold underline'>সার ক্যালকুলেটর</a> ব্যবহার করুন।";
-                } else if (msgLower.includes('রোগ') || msgLower.includes('detect') || msgLower.includes('ছবি') || msgLower.includes('পাতা') || msgLower.includes('ব্লাস্ট')) {
-                    replyEn = "✅ <b>AI Diagnosis:</b> Sample shows <b>Rice Blast (ব্লাস্ট রোগ)</b> with <b>98.4% Confidence</b>.<br>• Recommended Spray: Tricyclazole 75 WP (0.75g/L) or Nativo 75 WG (0.6g/L).<br>• Action: Stop excess Urea application immediately to prevent spore spread.";
-                    replyBn = "✅ <b>এআই রোগ নির্ণয়:</b> নমুনায় <b>ধানের ব্লাস্ট রোগ (৯৮.৪% নির্ভুলতা)</b> শনাক্ত হয়েছে।<br>• অনুমোদিত ছত্রাকনাশক: ট্রাইসাইক্লাজোল ৭৫ ডব্লিউপি (০.৭৫ গ্রাম/লিটার) অথবা নাটিভো ৭৫ ডব্লিউজি।<br>• পরামর্শ: জমিতে অতিরিক্ত ইউরিয়া সার দেওয়া এখনই বন্ধ রাখুন।";
-                }
 
-                const finalReply = currentLang === 'en' ? replyEn : replyBn;
-                chatBox.innerHTML += `<div class="chat-message chat-ai">${finalReply}</div>`;
-                setTimeout(applyLanguage, 10);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1200);
+                if (data.reply) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai leading-relaxed">${data.reply}</div>`;
+                    updateChatHistory('model', data.reply.replace(/<[^>]*>?/gm, ''));
+                } else if (data.error) {
+                    chatBox.innerHTML += `<div class="chat-message chat-ai text-red-600">⚠️ ${data.error}</div>`;
+                } else {
+                    throw new Error('No reply');
+                }
+            } catch (err) {
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                chatBox.innerHTML += `<div class="chat-message chat-ai text-orange-600 text-xs">⚠️ ${currentLang === 'en' ? 'Connection error. Please try again.' : 'সংযোগ ত্রুটি। আবার চেষ্টা করুন।'}</div>`;
+            }
+
+            setTimeout(applyLanguage, 10);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
+
+
     </script>
 
 
